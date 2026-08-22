@@ -6,3 +6,7 @@ dist/
 Thumbs.db
 data/*.json
 data/*.csv
+.stitch-mcp/
+stitch_output/
+stitch_src/
+
