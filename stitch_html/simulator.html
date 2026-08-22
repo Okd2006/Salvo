@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Salvo Recovery Simulator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#3adfab",
+                        "inverse-on-surface": "#23323e",
+                        "on-secondary-fixed-variant": "#414751",
+                        "surface-container-highest": "#283643",
+                        "background": "#051520",
+                        "primary-container": "#00c896",
+                        "on-secondary-container": "#b6bcc8",
+                        "surface-bright": "#2c3b48",
+                        "on-surface": "#d5e4f5",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#3adfab",
+                        "on-tertiary-container": "#762b05",
+                        "surface": "#051520",
+                        "tertiary-fixed": "#ffdbce",
+                        "tertiary-container": "#ff9467",
+                        "surface-container-lowest": "#020f1b",
+                        "on-primary-container": "#004d38",
+                        "on-primary": "#003828",
+                        "inverse-surface": "#d5e4f5",
+                        "on-tertiary": "#591d00",
+                        "primary": "#42e5b0",
+                        "surface-variant": "#283643",
+                        "tertiary": "#ffbca2",
+                        "error": "#ffb4ab",
+                        "primary-fixed": "#60fcc6",
+                        "surface-container-high": "#1d2b38",
+                        "surface-dim": "#051520",
+                        "on-tertiary-fixed-variant": "#7b2f09",
+                        "outline-variant": "#3c4a43",
+                        "surface-container": "#12212d",
+                        "on-tertiary-fixed": "#370e00",
+                        "on-primary-fixed-variant": "#00513b",
+                        "on-error": "#690005",
+                        "on-secondary": "#2b313a",
+                        "inverse-primary": "#006c4f",
+                        "surface-container-low": "#0e1d29",
+                        "on-primary-fixed": "#002116",
+                        "secondary-container": "#464c56",
+                        "tertiary-fixed-dim": "#ffb598",
+                        "secondary": "#c1c7d3",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#161c25",
+                        "on-surface-variant": "#bbcac1",
+                        "secondary-fixed-dim": "#c1c7d3",
+                        "secondary-fixed": "#dde2ef",
+                        "on-background": "#d5e4f5",
+                        "outline": "#85948c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "sidebar_width": "240px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Geist"],
+                        "metric-md": ["JetBrains Mono"],
+                        "label-caps": ["JetBrains Mono"],
+                        "metric-lg": ["JetBrains Mono"],
+                        "body-md": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "metric-md": ["16px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+                        "metric-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.04em", "fontWeight": "500" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F14; /* Global Level 0 */
+            color: #d5e4f5; /* Global Text */
+        }
+        .surface-level-1 {
+            background-color: #131922;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .surface-level-2 {
+            background-color: #1C2530;
+            box-shadow: 0px 16px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        /* Custom Scrollbar for sleekness */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #283643;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3c4a43;
+        }
+        
+        .table-row-hover:hover {
+             background-color: #1C2530;
+             transition: background-color 0.2s ease;
+        }
+        
+        .chip-active {
+            background-color: rgba(0, 200, 150, 0.1);
+            color: #00C896;
+        }
+        .dot-active {
+            width: 4px;
+            height: 4px;
+            background-color: #00C896;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased h-screen flex overflow-hidden font-body-md text-body-md">
+<!-- SideNavBar -->
+<aside class="bg-surface-container dark:bg-surface-container flex flex-col h-full py-md px-sm w-sidebar_width h-screen sticky left-0 top-0 bg-surface-container-high border-r border-outline-variant flat no shadows hidden md:flex shrink-0 z-40">
+<div class="mb-xl px-sm flex items-center gap-3">
+<img class="w-8 h-8 rounded-DEFAULT object-cover" data-alt="A stylized minimalist corporate logo featuring a sleek geometric 'S' symbol in vibrant teal against a dark background, representing an advanced institutional AI financial system. High definition, sharp edges, modern fintech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy62jsQe77yMtBX9xN7_ir2OrNNNxwQxDDx8K-HtI-JCHQAsofKcjhXCp-SQLxlARQ2tcTic6BoUDpR--9iNftg0MDTi4EZyMYvMeAjhwoV7iboTmun7tfebLV10xUGcqti5VQLe7je1hthqle81Kzx7ryO_j7DSi7efTlPGImSz0IZOaQxQkPk5V0w0kLGDWeJjnpeOilrC1boz8baO1HsZLctm8tMzm83k4L5_lhqeM8lVhaXOX2"/>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">Salvo AI</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Institutional Recovery</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">psychology</span>
+<span class="font-body-md text-body-md">Diagnosis</span>
+</a>
+<!-- Active Tab: Simulator -->
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-primary font-bold border-r-2 border-primary bg-surface-container-highest opacity-90 transition-opacity" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">model_training</span>
+<span class="font-body-md text-body-md">Simulator</span>
+</a>
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">timeline</span>
+<span class="font-body-md text-body-md">Execution</span>
+</a>
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="font-body-md text-body-md">Audit</span>
+</a>
+</nav>
+<div class="mt-auto pt-md space-y-sm">
+<button class="w-full py-2 px-4 rounded-DEFAULT bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 18px;">play_arrow</span>
+                Run Recovery
+            </button>
+<div class="pt-sm border-t border-outline-variant space-y-1">
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-sm py-2 rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">contact_support</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background flex justify-between items-center px-lg w-full h-16 sticky top-0 z-30 bg-background border-b border-outline-variant flat no shadows shrink-0">
+<div class="flex items-center gap-md">
+<!-- Mobile Menu Button (hidden on desktop) -->
+<button class="md:hidden text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex space-x-lg hidden sm:flex">
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1 scale-95 transition-transform uppercase" href="#">Merchant Portal</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-150 uppercase" href="#">API Docs</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-DEFAULT chip-active font-label-caps text-label-caps border border-primary/20">
+<span class="dot-active"></span>
+                    System Active
+                </div>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-150 uppercase hidden sm:block border border-[#7C8B9A] px-3 py-1.5 rounded-DEFAULT hover:bg-surface-container-highest">Support</button>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full ml-2 object-cover border border-outline-variant" data-alt="A small, professional headshot of an executive in a dark tailored suit against a muted grey background. High resolution, stark lighting, serious corporate tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXNXzpYZLIdpBzXJDXm5EssEo2OTnCMD_CvyXCdGBHWt7lT9aj67sjoiZujNwin5-EpyC3g3IUtUgg7oVdSXPuNqHSoKGnFatkL9rkyuTM82FIRLI2EYe-SxWn_8bS8D0oAnPG9aNhNbqFx_3PvCT7hXiggGveL4Ufts6Tw8Iy88EpN_bcOtHPSQYN7V-q9l8arCkv1clB8X3nuo_ILKu3iwxmYWaunzb6nv8OYC8smID2RKK7_qC6"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-gutter relative">
+<!-- Background Accent -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+<div class="max-w-[1200px] mx-auto space-y-xl">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface">Recovery Simulator</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-2xl">Compare algorithmic strategies against your pending decline volume. Projections are based on 30-day historical conversion models.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-4 py-2 border border-[#7C8B9A] text-[#F5F7F9] font-headline-sm text-headline-sm rounded-DEFAULT hover:bg-surface-container-highest transition-colors">
+                            Export Data
+                        </button>
+<button class="px-6 py-2 bg-[#00C896] text-[#0B0F14] font-headline-sm text-headline-sm font-semibold rounded-DEFAULT hover:bg-primary transition-colors flex items-center gap-2">
+                            Approve Recovery Plan
+                            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Strategy Comparison Ledger -->
+<div class="surface-level-1 rounded-xl overflow-hidden flex flex-col">
+<div class="px-lg py-md border-b border-outline-variant bg-surface-container flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Strategy Evaluation</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined" style="font-size: 16px;">update</span>
+                            Data current as of 14:30 UTC
+                        </div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left whitespace-nowrap">
+<thead class="bg-surface-container-low border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">
+<tr>
+<th class="px-lg py-4 font-semibold">Strategy Model</th>
+<th class="px-lg py-4 font-semibold text-right">Transactions Affected</th>
+<th class="px-lg py-4 font-semibold text-right">Predicted Recovery</th>
+<th class="px-lg py-4 font-semibold text-right">Intervention Cost</th>
+<th class="px-lg py-4 font-semibold text-right text-primary">NET Recovery</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50">
+<tr class="table-row-hover group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-surface-container-highest flex items-center justify-center border border-outline-variant text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 18px;">refresh</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Smart Retries</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Velocity-adjusted rebilling</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-on-surface">
+                                        14,205
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-on-surface">
+                                        $245,600.00
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-error">
+                                        -$1,420.50
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md font-bold text-primary">
+                                        $244,179.50
+                                    </td>
+</tr>
+<tr class="table-row-hover group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-surface-container-highest flex items-center justify-center border border-outline-variant text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 18px;">alt_route</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Fallback Routing</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Cross-border gateway pivot</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-on-surface">
+                                        8,430
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-on-surface">
+                                        $182,450.00
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-error">
+                                        -$4,215.00
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md font-bold text-primary">
+                                        $178,235.00
+                                    </td>
+</tr>
+<tr class="table-row-hover group bg-primary/5 border-l-2 border-primary">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-primary/20 flex items-center justify-center border border-primary/30 text-primary">
+<span class="material-symbols-outlined" style="font-size: 18px;">verified_user</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+                                                    Pre-emptive Verification
+                                                    <span class="px-2 py-0.5 rounded-sm bg-primary/20 text-primary font-label-caps text-label-caps text-[9px] border border-primary/30">RECOMMENDED</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">3D Secure step-up orchestration</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-on-surface">
+                                        21,850
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-on-surface">
+                                        $412,890.00
+                                    </td>
+<td class="px-lg py-md text-right font-metric-md text-metric-md text-error">
+                                        -$8,740.00
+                                    </td>
+<td class="px-lg py-md text-right font-metric-lg text-metric-lg font-bold text-primary tracking-tight">
+                                        $404,150.00
+                                    </td>
+</tr>
+</tbody>
+<tfoot class="bg-surface-container-lowest border-t border-outline-variant">
+<tr>
+<td class="px-lg py-md text-right font-label-caps text-label-caps text-on-surface-variant uppercase" colspan="4">
+                                        Total Projected Gain (Recommended Strategy)
+                                    </td>
+<td class="px-lg py-md text-right font-metric-lg text-metric-lg font-bold text-primary">
+                                        $404,150.00
+                                    </td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

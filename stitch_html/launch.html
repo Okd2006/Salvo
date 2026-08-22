@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Salvo - Institutional Recovery</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#d5e4f5",
+                    "surface-tint": "#3adfab",
+                    "surface-dim": "#051520",
+                    "background": "#051520",
+                    "surface-container-highest": "#283643",
+                    "outline-variant": "#3c4a43",
+                    "surface-container": "#12212d",
+                    "on-primary-container": "#004d38",
+                    "surface": "#051520",
+                    "on-error": "#690005",
+                    "surface-variant": "#283643",
+                    "inverse-on-surface": "#23323e",
+                    "on-primary-fixed": "#002116",
+                    "secondary-fixed": "#dde2ef",
+                    "inverse-primary": "#006c4f",
+                    "surface-container-lowest": "#020f1b",
+                    "tertiary-fixed": "#ffdbce",
+                    "on-primary-fixed-variant": "#00513b",
+                    "primary-fixed-dim": "#3adfab",
+                    "primary": "#42e5b0",
+                    "surface-container-high": "#1d2b38",
+                    "on-tertiary-container": "#762b05",
+                    "on-surface": "#d5e4f5",
+                    "tertiary-fixed-dim": "#ffb598",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#ffbca2",
+                    "surface-bright": "#2c3b48",
+                    "on-secondary": "#2b313a",
+                    "error-container": "#93000a",
+                    "on-secondary-container": "#b6bcc8",
+                    "on-secondary-fixed": "#161c25",
+                    "primary-fixed": "#60fcc6",
+                    "on-tertiary": "#591d00",
+                    "outline": "#85948c",
+                    "secondary": "#c1c7d3",
+                    "error": "#ffb4ab",
+                    "inverse-surface": "#d5e4f5",
+                    "primary-container": "#00c896",
+                    "surface-container-low": "#0e1d29",
+                    "on-tertiary-fixed-variant": "#7b2f09",
+                    "on-secondary-fixed-variant": "#414751",
+                    "on-tertiary-fixed": "#370e00",
+                    "secondary-fixed-dim": "#c1c7d3",
+                    "on-surface-variant": "#bbcac1",
+                    "secondary-container": "#464c56",
+                    "tertiary-container": "#ff9467",
+                    "on-primary": "#003828"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "base": "8px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "sidebar_width": "240px",
+                    "gutter": "24px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "metric-lg": [
+                            "JetBrains Mono"
+                    ],
+                    "metric-md": [
+                            "JetBrains Mono"
+                    ],
+                    "display-lg": [
+                            "Geist"
+                    ],
+                    "headline-sm": [
+                            "Geist"
+                    ],
+                    "label-caps": [
+                            "JetBrains Mono"
+                    ],
+                    "headline-md": [
+                            "Geist"
+                    ],
+                    "body-sm": [
+                            "Geist"
+                    ],
+                    "body-md": [
+                            "Geist"
+                    ]
+            },
+            "fontSize": {
+                    "metric-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "metric-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "display-lg": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-sm": [
+                            "18px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "label-caps": [
+                            "11px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.06em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-sm": [
+                            "13px",
+                            {
+                                    "lineHeight": "18px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+        }
+      }
+    }
+    </script>
+<style>
+        body {
+            background-color: #0B0F14;
+            color: #d5e4f5;
+            font-family: 'Geist', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Persistent Shader Background */
+        #shader-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.6; /* Adjust for aesthetic */
+            pointer-events: none;
+        }
+
+        /* Scroll Reveal Animation */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Font specifics */
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* The Reveal Section Specifics */
+        .pinned-section {
+            height: 200vh; /* Allow for scrolling duration */
+        }
+        .sticky-content {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Custom Button */
+        .btn-primary {
+            background-color: #00C896;
+            color: #0B0F14;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background-color: #00e0a8;
+        }
+    </style>
+</head>
+<body class="antialiased">
+<!-- Persistent Shader Background -->
+<!-- STITCH_SHADER_START:ANIMATION_8 class="" -->
+<div class="" style="display:block;width:100%;height:100%;min-height:200px;">
+<canvas id="shader-canvas-ANIMATION_8" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_8');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `
+precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Create a very subtle, slow-moving gradient noise for the background
+    float noise = sin(uv.x * 2.0 + u_time * 0.2) * cos(uv.y * 2.0 + u_time * 0.1);
+    noise += sin(uv.x * 5.0 - u_time * 0.3) * 0.5;
+    
+    // Base color #0B0F14
+    vec3 baseColor = vec3(0.043, 0.059, 0.078);
+    // Subtle slate #131922
+    vec3 accentColor = vec3(0.075, 0.098, 0.133);
+    
+    vec3 finalColor = mix(baseColor, accentColor, noise * 0.15);
+    
+    // Darken edges
+    float vignette = 1.0 - length(uv - 0.5) * 0.8;
+    finalColor *= vignette;
+    
+    gl_FragColor = vec4(finalColor, 1.0);
+}
+`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_8 -->
+<!-- Top Navigation (Shell suppressed based on prompt, but keeping a minimal brand header) -->
+<header class="fixed top-0 left-0 w-full p-lg z-50 mix-blend-difference flex justify-between items-center">
+<div class="font-bold text-headline-sm tracking-tight">Salvo</div>
+</header>
+<!-- Section 1: Hero -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 pt-[204px] pb-[204px]">
+<div class="max-w-4xl mx-auto scroll-reveal">
+<h1 class="font-display-lg text-[64px] leading-[1.1] md:text-[80px] font-semibold mb-6 tracking-tight">Step into the world of recovered revenue.</h1>
+<p class="text-on-surface-variant font-body-md text-xl md:text-2xl max-w-2xl mx-auto font-light">Every failed payment, diagnosed and recovered in milliseconds.</p>
+</div>
+</section>
+<!-- Section 2: The Problem -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 border-t border-outline-variant/30">
+<div class="w-full max-w-6xl mx-auto scroll-reveal">
+<h2 class="font-headline-md text-3xl md:text-4xl mb-12 text-on-surface-variant">Payments fail in a hundred different ways.</h2>
+<!-- Sparse animated SVG visualization (placeholder representation) -->
+<div class="w-full h-32 relative flex items-center justify-center opacity-70">
+<div class="w-full h-[1px] bg-outline-variant relative overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-1/4 bg-on-surface-variant animate-[slide_3s_ease-in-out_infinite]"></div>
+</div>
+<style>
+                    @keyframes slide {
+                        0% { left: -25%; opacity: 0;}
+                        50% { opacity: 1; }
+                        100% { left: 100%; opacity: 0; }
+                    }
+                </style>
+</div>
+</div>
+</section>
+<!-- Section 3: The Reveal (Pinned) -->
+<section class="pinned-section relative z-10 border-t border-outline-variant/30 bg-[#0B0F14]/80 backdrop-blur-sm" id="reveal-section">
+<div class="sticky-content">
+<div class="text-center w-full max-w-5xl px-4 scroll-reveal">
+<h2 class="font-headline-sm text-on-surface-variant mb-8 uppercase tracking-[0.2em] text-sm">Introducing Salvo</h2>
+<!-- The Scrubbing Number -->
+<div class="font-metric-lg text-[10vw] md:text-[120px] leading-none mb-8 transition-colors duration-200" id="scrub-number" style="color: #FF6B4A;">
+                    $42,850.00
+                </div>
+<p class="font-body-md text-lg md:text-xl text-on-surface-variant opacity-0 transition-opacity duration-700" id="reveal-subtext">
+                    The first autonomous recovery agent built for Razorpay merchants
+                </p>
+</div>
+</div>
+</section>
+<!-- Section 4: Compounding Results -->
+<section class="min-h-screen flex flex-col justify-center px-4 md:px-24 relative z-10 bg-[#051520] border-t border-outline-variant/30 py-24">
+<div class="max-w-7xl mx-auto w-full">
+<h2 class="font-headline-md text-3xl md:text-5xl mb-24 text-on-surface-variant scroll-reveal">Compounding Results</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-24 gap-x-12">
+<!-- Metric 1 -->
+<div class="scroll-reveal delay-[100ms] border-l-2 border-outline-variant/50 pl-6">
+<div class="font-metric-lg text-primary text-5xl md:text-6xl mb-4 metric-counter" data-suffix="%" data-target="94.2">0.0%</div>
+<div class="font-body-sm text-on-surface-variant text-lg">Recovery Rate Improvement</div>
+</div>
+<!-- Metric 2 -->
+<div class="scroll-reveal delay-[200ms] border-l-2 border-outline-variant/50 pl-6">
+<div class="font-metric-lg text-primary text-5xl md:text-6xl mb-4 metric-counter" data-suffix=" / Sec" data-target="1204">0</div>
+<div class="font-body-sm text-on-surface-variant text-lg">Transactions Diagnosed</div>
+</div>
+<!-- Metric 3 -->
+<div class="scroll-reveal delay-[300ms] border-l-2 border-outline-variant/50 pl-6">
+<div class="font-metric-lg text-primary text-5xl md:text-6xl mb-4 metric-counter" data-suffix="%" data-target="-42">0%</div>
+<div class="font-body-sm text-on-surface-variant text-lg">False-Positive Reduction</div>
+</div>
+<!-- Metric 4 -->
+<div class="scroll-reveal delay-[400ms] border-l-2 border-outline-variant/50 pl-6">
+<div class="font-metric-lg text-primary text-5xl md:text-6xl mb-4 metric-counter" data-prefix="$" data-suffix="M" data-target="8.45">$0.00M</div>
+<div class="font-body-sm text-on-surface-variant text-lg">Net Revenue Recovered</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Close -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-20 bg-black">
+<div class="max-w-3xl mx-auto scroll-reveal">
+<h2 class="font-display-lg text-5xl md:text-7xl font-bold mb-12 tracking-tight">Recover what's already yours.</h2>
+<a class="btn-primary text-lg px-8 py-4" href="#">Start Recovery Protocol</a>
+</div>
+</section>
+<!-- Embedded Scroll Logic -->
+<!-- The prompt implies <!-- STITCH_THREEJS_START:ANIMATION_9 class="" -->
+<div class="" style="display:block;width:100%;height:100%;min-height:200px;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_9" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_9');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  
+const container = document.getElementById('salvo-scroll-story');
+if (container) {
+  // Intersection Observer for staggered reveals and count-up animations
+  const observerOptions = {
+    threshold: 0.2
+  };
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        
+        // Trigger count-up if it's a metric
+        const metric = entry.target.querySelector('[data-count-to]');
+        if (metric && !metric.dataset.counted) {
+          const targetValue = parseFloat(metric.dataset.countTo);
+          const duration = 2000;
+          const startTime = performance.now();
+          const startValue = 0;
+
+          const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out expo
+            const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            const currentValue = (easeProgress * targetValue).toFixed(metric.dataset.decimals || 0);
+            
+            metric.textContent = metric.dataset.prefix + currentValue.toLocaleString() + metric.dataset.suffix;
+
+            if (progress < 1) {
+              requestAnimationFrame(updateCounter);
+            } else {
+              metric.dataset.counted = "true";
+            }
+          };
+          requestAnimationFrame(updateCounter);
+        }
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+  // Scroll scrubbing for the Reveal section (Coral to Teal)
+  window.addEventListener('scroll', () => {
+    const revealSection = document.querySelector('#reveal-section');
+    if (revealSection) {
+      const rect = revealSection.getBoundingClientRect();
+      const sectionHeight = revealSection.offsetHeight;
+      const scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - window.innerHeight)));
+      
+      const coral = { r: 255, g: 107, b: 74 }; // #FF6B4A
+      const teal = { r: 0, g: 200, b: 150 };  // #00C896
+      
+      const r = Math.round(coral.r + (teal.r - coral.r) * scrollProgress);
+      const g = Math.round(coral.g + (teal.g - coral.g) * scrollProgress);
+      const b = Math.round(coral.b + (teal.b - coral.b) * scrollProgress);
+      
+      const colorMetrics = revealSection.querySelectorAll('.scrub-color');
+      colorMetrics.forEach(metric => {
+        metric.style.color = `rgb(${r}, ${g}, ${b})`;
+      });
+
+      // Opacity for subtext reveal
+      const subtext = revealSection.querySelector('.scrub-opacity');
+      if (subtext) {
+        subtext.style.opacity = Math.max(0, (scrollProgress - 0.5) * 2);
+      }
+    }
+  });
+}
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_9 --> contains the logic, 
+         but since we must ensure functionality, inline JS is provided to fulfill the requirements 
+         while respecting the instruction structure. -->
+<script>
+        // --- Scroll Reveal Logic ---
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Optional: unobserve after reveal
+                    // revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // --- The Reveal Scrub Logic (Section 3) ---
+        const revealSection = document.getElementById('reveal-section');
+        const scrubNumber = document.getElementById('scrub-number');
+        const revealSubtext = document.getElementById('reveal-subtext');
+
+        // Simple color interpolation: Coral (#FF6B4A) to Teal (#00C896)
+        function interpolateColor(progress) {
+            // #FF6B4A -> 255, 107, 74
+            // #00C896 -> 0, 200, 150
+            const r = Math.round(255 + (0 - 255) * progress);
+            const g = Math.round(107 + (200 - 107) * progress);
+            const b = Math.round(74 + (150 - 74) * progress);
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        window.addEventListener('scroll', () => {
+            if(!revealSection) return;
+            
+            const rect = revealSection.getBoundingClientRect();
+            // Calculate progress based on scroll through the pinned section
+            // Starts when top hits 0, ends when bottom hits window height
+            const scrollTotal = rect.height - window.innerHeight;
+            let progress = -rect.top / scrollTotal;
+            
+            progress = Math.max(0, Math.min(1, progress));
+
+            if (rect.top <= window.innerHeight && rect.bottom >= 0) {
+                // Scrub Color
+                scrubNumber.style.color = interpolateColor(progress);
+                
+                // Fade in subtext at the end (last 20%)
+                if(progress > 0.8) {
+                    const subProgress = (progress - 0.8) / 0.2;
+                    revealSubtext.style.opacity = subProgress;
+                } else {
+                    revealSubtext.style.opacity = 0;
+                }
+            }
+        });
+
+        // --- Metric Counters Logic (Section 4) ---
+        const counters = document.querySelectorAll('.metric-counter');
+        
+        const counterObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseFloat(entry.target.getAttribute('data-target'));
+                    const prefix = entry.target.getAttribute('data-prefix') || '';
+                    const suffix = entry.target.getAttribute('data-suffix') || '';
+                    
+                    let current = 0;
+                    const duration = 2000; // ms
+                    const stepTime = 20; // ms
+                    const steps = duration / stepTime;
+                    const increment = target / steps;
+                    
+                    const isDecimal = entry.target.getAttribute('data-target').includes('.');
+
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        
+                        let displayVal = current;
+                        if(isDecimal) {
+                            displayVal = current.toFixed(2);
+                        } else {
+                            displayVal = Math.round(current);
+                        }
+
+                        entry.target.textContent = `${prefix}${displayVal}${suffix}`;
+                    }, stepTime);
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+    </script>
+</body></html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Salvo AI - Overview</title>
+<!-- Tailwind Setup -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#3adfab",
+                        "inverse-on-surface": "#23323e",
+                        "on-secondary-fixed-variant": "#414751",
+                        "surface-container-highest": "#283643",
+                        "background": "#051520",
+                        "primary-container": "#00c896",
+                        "on-secondary-container": "#b6bcc8",
+                        "surface-bright": "#2c3b48",
+                        "on-surface": "#d5e4f5",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#3adfab",
+                        "on-tertiary-container": "#762b05",
+                        "surface": "#051520",
+                        "tertiary-fixed": "#ffdbce",
+                        "tertiary-container": "#ff9467",
+                        "surface-container-lowest": "#020f1b",
+                        "on-primary-container": "#004d38",
+                        "on-primary": "#003828",
+                        "inverse-surface": "#d5e4f5",
+                        "on-tertiary": "#591d00",
+                        "primary": "#42e5b0",
+                        "surface-variant": "#283643",
+                        "tertiary": "#ffbca2",
+                        "error": "#ffb4ab",
+                        "primary-fixed": "#60fcc6",
+                        "surface-container-high": "#1d2b38",
+                        "surface-dim": "#051520",
+                        "on-tertiary-fixed-variant": "#7b2f09",
+                        "outline-variant": "#3c4a43",
+                        "surface-container": "#12212d",
+                        "on-tertiary-fixed": "#370e00",
+                        "on-primary-fixed-variant": "#00513b",
+                        "on-error": "#690005",
+                        "on-secondary": "#2b313a",
+                        "inverse-primary": "#006c4f",
+                        "surface-container-low": "#0e1d29",
+                        "on-primary-fixed": "#002116",
+                        "secondary-container": "#464c56",
+                        "tertiary-fixed-dim": "#ffb598",
+                        "secondary": "#c1c7d3",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#161c25",
+                        "on-surface-variant": "#bbcac1",
+                        "secondary-fixed-dim": "#c1c7d3",
+                        "secondary-fixed": "#dde2ef",
+                        "on-background": "#d5e4f5",
+                        "outline": "#85948c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "sidebar_width": "240px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Geist"],
+                        "metric-md": ["JetBrains Mono"],
+                        "label-caps": ["JetBrains Mono"],
+                        "metric-lg": ["JetBrains Mono"],
+                        "body-md": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "metric-md": ["16px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+                        "metric-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.04em", "fontWeight": "500" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #051520; /* Tailwind background */
+            color: #d5e4f5; /* Tailwind on-surface */
+        }
+        /* Custom scrollbar for aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #283643; /* surface-variant */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3c4a43; /* outline-variant */
+        }
+    </style>
+</head>
+<body class="flex font-body-md text-body-md antialiased min-h-screen">
+<!-- Shared Component: SideNavBar -->
+<nav class="w-sidebar_width h-screen sticky left-0 top-0 bg-surface-container-high border-r border-outline-variant flex flex-col py-md px-sm z-50">
+<!-- Header -->
+<div class="mb-xl px-sm flex items-center gap-md">
+<img alt="Merchant Logo" class="w-8 h-8 rounded" data-alt="A minimalist, geometric institutional logo mark in stark white and glowing green against a pitch black background. Modern corporate fintech style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvbXPsSGo3HeCxbmev0rBjJIBk_vJONyoXAjg8KIqP_01TSbtzxE2DzajvqbBt5yW26Yr7HijK_4f4bDEBKPmUF7nyNT1I2ZHtxwYyPt_nT2GQ-bk9BVMVjQ5OIgxjVMVzZqAnVcJcUMLrYoDNtZSrgIGRjc3zT2sr_4mdGYSyUNN9ewhYf3wF1CwnkqTVwCEpqCVKY6Lr_BOD_bIDvXU6HHzL52XGU6QgQ1bt7CUHf0SYurygNCZO"/>
+<div>
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">Salvo AI</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-xs uppercase">Institutional Recovery</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 space-y-xs">
+<!-- Active Tab: Overview -->
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-primary font-bold border-r-2 border-primary bg-surface-container-highest opacity-90 transition-opacity" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-caps text-label-caps uppercase">Overview</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps uppercase">Diagnosis</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">model_training</span>
+<span class="font-label-caps text-label-caps uppercase">Simulator</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">timeline</span>
+<span class="font-label-caps text-label-caps uppercase">Execution</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-caps text-label-caps uppercase">Audit</span>
+</a>
+</div>
+<!-- Footer Actions -->
+<div class="mt-auto">
+<button class="w-full bg-primary-container text-background font-headline-sm text-headline-sm py-sm rounded-DEFAULT mb-md hover:opacity-90 transition-opacity font-semibold">
+                Run Recovery
+            </button>
+<div class="space-y-xs">
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant font-medium hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-label-caps text-label-caps uppercase">Support</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<div class="flex-1 flex flex-col min-w-0">
+<!-- Shared Component: TopAppBar -->
+<header class="w-full h-16 sticky top-0 z-40 bg-background dark:bg-background border-b border-outline-variant flex justify-between items-center px-lg">
+<div class="flex items-center gap-xl">
+<!-- Search (Implicit left styling as per JSON) -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-sm text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-high border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-DEFAULT py-1 pl-xl pr-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none w-64 transition-all" placeholder="Search..." type="text"/>
+</div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-150 uppercase tracking-widest" href="#">Merchant Portal</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-150 uppercase tracking-widest" href="#">API Docs</a>
+</nav>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-xs text-primary-container bg-primary-container/10 px-sm py-1 rounded-DEFAULT border border-primary-container/20">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></div>
+<span class="font-label-caps text-label-caps uppercase">System Active</span>
+</div>
+<button class="font-label-caps text-label-caps text-on-surface hover:bg-surface-container transition-colors duration-150 border border-outline-variant px-md py-1.5 rounded-DEFAULT uppercase">
+                    Support
+                </button>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<button class="p-xs hover:text-on-surface transition-colors rounded-DEFAULT hover:bg-surface-container">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-xs hover:text-on-surface transition-colors rounded-DEFAULT hover:bg-surface-container flex items-center gap-sm">
+<img alt="User Profile" class="w-6 h-6 rounded-full border border-outline-variant" data-alt="A small, subtle generic user avatar placeholder image in monochrome dark tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXifqJzfH8jzmtG4IR-4VDXveJ___W9P0TUcjcpHUaH0DQ7bSN1iKjQD7olh8L7KX9DEocj3dLdhRnjmsN2BLvDL94sK24A4RUXmff7i0LbmZ7IcWdnx3JnMY-yvf_aEy0sgBNQZAfFrMLTXq_sVgZLIRqbZyafpdCHFExj3u8fw4AhEtNBgqrYuHTnCRQDixefsCmQPBetKkzKYuVxPsToA93zvS9jV_XrgjQ1eMG4xLujG5h5CtH"/>
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<main class="flex-1 p-xl flex flex-col gap-xl overflow-y-auto">
+<!-- Page Header (Minimal) -->
+<div class="flex flex-col gap-xs mb-md">
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">Recovery Telemetry</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time analysis of systemic payment failures and autonomous recuperation vectors.</p>
+</div>
+<!-- High-Density Metrics Spine (No Cards, Direct Grid Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-0 border-y border-outline-variant">
+<!-- Total Failed Revenue -->
+<div class="py-lg pr-lg flex flex-col gap-sm">
+<div class="flex items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total Failed Revenue</span>
+</div>
+<span class="font-metric-lg text-metric-lg text-on-surface">$12,845,900.00</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Baseline failure volume over 30 days.</span>
+</div>
+<!-- Recoverable Revenue -->
+<div class="py-lg px-lg border-l border-outline-variant flex flex-col gap-sm relative overflow-hidden">
+<!-- Subtle background tint via absolute div -->
+<div class="absolute inset-0 bg-primary-container/5 pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-sm">
+<div class="flex items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Recoverable Revenue</span>
+</div>
+<span class="font-metric-lg text-metric-lg text-primary-container">$8,450,210.00</span>
+<!-- Recovery Chip -->
+<div class="inline-flex items-center gap-xs bg-primary-container/10 border border-primary-container/20 px-sm py-1 rounded-DEFAULT w-max mt-xs">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<span class="font-label-caps text-label-caps text-primary-container uppercase">Active Optimization</span>
+</div>
+</div>
+</div>
+<!-- Unrecoverable Revenue -->
+<div class="py-lg pl-lg border-l border-outline-variant flex flex-col gap-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-error/5 pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-sm">
+<div class="flex items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Unrecoverable Revenue</span>
+</div>
+<span class="font-metric-lg text-metric-lg text-error">$4,395,690.00</span>
+<!-- Failed Chip -->
+<div class="inline-flex items-center gap-xs bg-error/10 border border-error/20 px-sm py-1 rounded-DEFAULT w-max mt-xs">
+<div class="w-1.5 h-1.5 rounded-full bg-error"></div>
+<span class="font-label-caps text-label-caps text-error uppercase">Terminal State</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Trend Chart Section -->
+<div class="mt-lg">
+<div class="flex justify-between items-end mb-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">30-Day Recovery Performance</h2>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Cumulative Yield</span>
+</div>
+<div class="w-full h-[240px] border-y border-outline-variant relative flex items-end bg-surface-container-low/30">
+<!-- Technical Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between py-md pointer-events-none">
+<div class="w-full border-t border-outline-variant/30"></div>
+<div class="w-full border-t border-outline-variant/30"></div>
+<div class="w-full border-t border-outline-variant/30"></div>
+<div class="w-full border-t border-outline-variant/30"></div>
+</div>
+<!-- SVG Thin Line Chart (No Fill) -->
+<svg class="w-full h-full relative z-10 drop-shadow-md" preserveaspectratio="none" viewbox="0 0 1000 240">
+<!-- Subtle trendline behind -->
+<polyline fill="none" points="0,220 100,210 200,190 300,195 400,160 500,140 600,150 700,90 800,70 900,40 1000,20" stroke="#283643" stroke-dasharray="4 4" stroke-width="1" vector-effect="non-scaling-stroke"></polyline>
+<!-- Primary Recovery Line -->
+<polyline fill="none" points="0,230 100,215 200,180 300,160 400,165 500,120 600,105 700,60 800,80 900,30 1000,10" stroke="#00c896" stroke-width="1.5" vector-effect="non-scaling-stroke"></polyline>
+</svg>
+<!-- Axis Labels overlay -->
+<div class="absolute bottom-0 left-0 w-full flex justify-between px-xs py-xs text-[10px] font-metric-md text-on-surface-variant/50 pointer-events-none">
+<span>T-30</span>
+<span>T-15</span>
+<span>T-0 (LIVE)</span>
+</div>
+</div>
+</div>
+<!-- Ledger-style Data Table -->
+<div class="mt-lg mb-xl">
+<div class="flex justify-between items-end mb-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Recovery Strategy Breakdown</h2>
+<button class="font-label-caps text-label-caps text-primary hover:text-primary-fixed transition-colors flex items-center gap-xs uppercase">
+                        Export CSV <span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+<div class="w-full overflow-x-auto border border-outline-variant rounded-DEFAULT bg-surface-container-lowest">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high/50">
+<tr class="border-b border-outline-variant">
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold w-1/4">Strategy Vector</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold text-right w-1/4">Affected Volume</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold text-right w-1/4">Potential Recovery</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold text-right w-1/4">Success Rate</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/40">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container transition-colors duration-150 group">
+<td class="py-md px-md border-r border-outline-variant/20">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container text-sm">route</span>
+<span class="font-medium text-on-surface group-hover:text-primary-container transition-colors">Smart Retry Routing</span>
+</div>
+</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-on-surface-variant border-r border-outline-variant/20">452,100</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-primary border-r border-outline-variant/20">$3,400,250.00</td>
+<td class="py-md px-md text-right">
+<div class="flex items-center justify-end gap-md">
+<div class="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-[82%] h-full bg-primary-container"></div>
+</div>
+<span class="font-metric-md text-metric-md w-12 text-right">82.4%</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors duration-150 group">
+<td class="py-md px-md border-r border-outline-variant/20">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container text-sm">account_tree</span>
+<span class="font-medium text-on-surface group-hover:text-primary-container transition-colors">ML Fraud False-Positive Reversal</span>
+</div>
+</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-on-surface-variant border-r border-outline-variant/20">128,450</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-primary border-r border-outline-variant/20">$1,850,000.00</td>
+<td class="py-md px-md text-right">
+<div class="flex items-center justify-end gap-md">
+<div class="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-[64%] h-full bg-primary-container"></div>
+</div>
+<span class="font-metric-md text-metric-md w-12 text-right">64.1%</span>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container transition-colors duration-150 group">
+<td class="py-md px-md border-r border-outline-variant/20">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container text-sm">credit_card</span>
+<span class="font-medium text-on-surface group-hover:text-primary-container transition-colors">Issuer BIN Optimization</span>
+</div>
+</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-on-surface-variant border-r border-outline-variant/20">89,200</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-primary border-r border-outline-variant/20">$980,150.00</td>
+<td class="py-md px-md text-right">
+<div class="flex items-center justify-end gap-md">
+<div class="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-[45%] h-full bg-primary-container opacity-80"></div>
+</div>
+<span class="font-metric-md text-metric-md w-12 text-right">45.8%</span>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container transition-colors duration-150 group">
+<td class="py-md px-md border-r border-outline-variant/20">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container text-sm">link</span>
+<span class="font-medium text-on-surface group-hover:text-primary-container transition-colors">Dunning Link Injection</span>
+</div>
+</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-on-surface-variant border-r border-outline-variant/20">34,500</td>
+<td class="py-md px-md text-right font-metric-md text-metric-md text-primary border-r border-outline-variant/20">$420,000.00</td>
+<td class="py-md px-md text-right">
+<div class="flex items-center justify-end gap-md">
+<div class="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-[28%] h-full bg-primary-container opacity-60"></div>
+</div>
+<span class="font-metric-md text-metric-md w-12 text-right text-on-surface-variant">28.2%</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</body></html>

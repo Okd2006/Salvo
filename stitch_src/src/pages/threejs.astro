@@ -1,0 +1,106 @@
+---
+---
+
+<html lang="en"><head>
+<meta charset="utf-8" />
+<meta content="width=device-width,initial-scale=1.0" name="viewport" />
+<script src="/assets/03ba5d9f9e95fc3599acebcbe7e5fb9a.js" is:inline="" />
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_9 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="/assets/9e04a0e1f32089f0cb9cb2712b720ab8.js" is:inline="" />
+<div id="threejs-container-ANIMATION_9" style="width:100%;height:100%" />
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_9');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  
+const container = document.getElementById('salvo-scroll-story');
+if (container) {
+  // Intersection Observer for staggered reveals and count-up animations
+  const observerOptions = {
+    threshold: 0.2
+  };
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        
+        // Trigger count-up if it's a metric
+        const metric = entry.target.querySelector('[data-count-to]');
+        if (metric && !metric.dataset.counted) {
+          const targetValue = parseFloat(metric.dataset.countTo);
+          const duration = 2000;
+          const startTime = performance.now();
+          const startValue = 0;
+
+          const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out expo
+            const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            const currentValue = (easeProgress * targetValue).toFixed(metric.dataset.decimals || 0);
+            
+            metric.textContent = metric.dataset.prefix + currentValue.toLocaleString() + metric.dataset.suffix;
+
+            if (progress < 1) {
+              requestAnimationFrame(updateCounter);
+            } else {
+              metric.dataset.counted = "true";
+            }
+          };
+          requestAnimationFrame(updateCounter);
+        }
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+  // Scroll scrubbing for the Reveal section (Coral to Teal)
+  window.addEventListener('scroll', () => {
+    const revealSection = document.querySelector('#reveal-section');
+    if (revealSection) {
+      const rect = revealSection.getBoundingClientRect();
+      const sectionHeight = revealSection.offsetHeight;
+      const scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - window.innerHeight)));
+      
+      const coral = { r: 255, g: 107, b: 74 }; // #FF6B4A
+      const teal = { r: 0, g: 200, b: 150 };  // #00C896
+      
+      const r = Math.round(coral.r + (teal.r - coral.r) * scrollProgress);
+      const g = Math.round(coral.g + (teal.g - coral.g) * scrollProgress);
+      const b = Math.round(coral.b + (teal.b - coral.b) * scrollProgress);
+      
+      const colorMetrics = revealSection.querySelectorAll('.scrub-color');
+      colorMetrics.forEach(metric => {
+        metric.style.color = `rgb(${r}, ${g}, ${b})`;
+      });
+
+      // Opacity for subtext reveal
+      const subtext = revealSection.querySelector('.scrub-opacity');
+      if (subtext) {
+        subtext.style.opacity = Math.max(0, (scrollProgress - 0.5) * 2);
+      }
+    }
+  });
+}
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_9 -->
+
+
+</body></html>
