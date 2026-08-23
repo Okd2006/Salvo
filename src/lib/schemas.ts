@@ -7,6 +7,7 @@
  *  - ObservableTransaction boundary
  *  - Gemini Structured Output
  *  - Final RecoveryRecommendation object
+ *  - Deterministic Policy Gate inputs & outputs
  *  - Financial integer constraints
  */
 
@@ -107,3 +108,37 @@ export const RecoveryRecommendationSchema = z.object({
 });
 
 export type RawGeminiDiagnosis = z.infer<typeof GeminiRawDiagnosisSchema>;
+
+/**
+ * Deterministic Policy Gate Schemas (Phase 3)
+ */
+export const PolicyReasonCodeSchema = z.enum([
+  'ALLOWED',
+  'RISK_BLOCK',
+  'UNRECOVERABLE_BLOCK',
+  'CONFIDENCE_TOO_LOW',
+  'RETRY_LIMIT_EXCEEDED',
+  'CONTACT_LIMIT_EXCEEDED',
+  'AMOUNT_THRESHOLD_EXCEEDED',
+  'STRATEGY_NOT_PERMITTED',
+  'NEGATIVE_EXPECTED_VALUE',
+  'INVALID_RECOVERY_AMOUNT',
+]);
+
+export const PolicyCheckSchema = z.object({
+  name: z.string().min(1),
+  passed: z.boolean(),
+  reason: z.string().min(1),
+});
+
+export const PolicyResultSchema = z.object({
+  allowed: z.boolean(),
+  reasonCode: PolicyReasonCodeSchema,
+  reason: z.string().min(1),
+  checks: z.array(PolicyCheckSchema),
+  evaluatedAt: z.string().min(1),
+  transactionId: z.string().optional(),
+  verdict: z.enum(['approved', 'blocked', 'needs_review', 'pending']).optional(),
+  triggeredRules: z.array(z.string()).optional(),
+  explanation: z.string().optional(),
+});

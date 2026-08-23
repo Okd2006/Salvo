@@ -76,36 +76,74 @@ To ensure evaluation integrity, Gemini receives **only** observable transaction 
 * **FORBIDDEN (Never Sent):** `groundTruth.recoverable`, `groundTruth.optimalStrategy`, `groundTruth.expectedRecoveryPaise`, `groundTruth.shouldIntervene`, `groundTruth.riskScore`.
 * Ground truth is stripped via `toObservableTransaction()` and verified by `assertNoGroundTruthLeakage()`.
 
-### 3.4 Financial Arithmetic Invariant
-* Gemini is **never** trusted for raw financial calculations.
-* Predicted recovery amounts are deterministically derived and clamped:
-  $$0 \le \text{predictedRecoveryPaise} \le \text{transaction.amountPaise}$$
-* All monetary values are strictly maintained as **integer paise** (`1 INR = 100 paise`).
+---
 
-### 3.5 Bounded Retries & Error Handling
-* Transient Gemini API errors (rate limits, network timeouts) are retried with exponential backoff up to a **maximum of 2 attempts**.
-* Config errors and schema validation errors fail immediately without retries.
-* If Gemini fails, Salvo returns a typed `GeminiError` and **never** fabricates fake AI results or falls back to ground truth.
+## 4. Deterministic Policy Gate (Phase 3)
+
+The Policy Gate is the **mandatory safety boundary** between AI recommendations and any real execution.
+
+### 4.1 Policy Invariants
+* **Zero LLM Calls:** Evaluated entirely in deterministic TypeScript.
+* **Independent Authority:** Gemini proposes; the Policy Gate enforces rules and decides `ALLOW` or `BLOCK`.
+* **Zero Payment Mutations:** The Policy Gate evaluates permissions and produces an auditable `PolicyResult`.
+
+### 4.2 `PolicyResult` & `PolicyCheck` Schemas
+```ts
+export interface PolicyCheck {
+  name: string;
+  passed: boolean;
+  reason: string;
+}
+
+export interface PolicyResult {
+  allowed: boolean;
+  reasonCode: PolicyReasonCode;
+  reason: string;
+  checks: PolicyCheck[];
+  evaluatedAt: string;
+}
+```
+
+### 4.3 Deterministic Reason Codes & Rules
+
+| Reason Code | Trigger Condition | Safety Rule |
+| :--- | :--- | :--- |
+| **`ALLOWED`** | All checks pass | Recovery intervention is safe and authorized for execution |
+| **`RISK_BLOCK`** | `failureCategory === 'suspected_risk'` or fraud error code | Prohibits automated recovery on suspected compromised accounts |
+| **`UNRECOVERABLE_BLOCK`** | `failureType === 'unrecoverable'` or `no_action` | Blocks execution on terminal instrument declines |
+| **`RETRY_LIMIT_EXCEEDED`** | `retryCount >= 2` on `smart_retry` | Prevents retry storms and card brand throttling |
+| **`CONFIDENCE_TOO_LOW`** | `confidence < 0.60` | Requires high model certainty before automated action |
+| **`NEGATIVE_EXPECTED_VALUE`** | $\text{Predicted Yield} \le \text{Intervention Cost}$ | Prevents loss-making recovery interventions |
+| **`INVALID_RECOVERY_AMOUNT`** | $\text{Yield} \le 0 \lor \text{Yield} > \text{Amount}$ | Enforces financial boundary invariants |
+| **`AMOUNT_THRESHOLD_EXCEEDED`** | High-ticket volume ($> \text{₹50k}$ retry or $> \text{₹80k}$ with low confidence) | Caps automated risk exposure on high-ticket payments |
+| **`STRATEGY_NOT_PERMITTED`** | Incompatible strategy/failure mode (e.g. retry on expired card) | Enforces logical consistency |
+| **`CONTACT_LIMIT_EXCEEDED`** | `retryCount >= 3` on reminder/payment link | Prevents customer harassment and compliance violations |
 
 ---
 
-## 4. Database Collections & Persistence
+## 5. Database Collections & Persistence
 
 1. **`transactions`**: Complete ledger of payments, customer history, failure taxonomy, hidden ground truth, and simulation traces.
-2. **`recovery_actions`**: Generated after AI diagnosis with initial state:
-   * `policyStatus: "pending"` (Policy Gate has not run yet)
-   * `executionStatus: "not_executed"` (Razorpay has not run yet)
-3. **`audit_logs`**: Event trail logging `diagnosis_created` with model name, recommendation telemetry, and timestamp.
+2. **`recovery_actions`**: Generated after AI diagnosis with:
+   * `policyStatus`: `'pending'` (initial) $\rightarrow$ `'approved'` or `'blocked'` (after Policy Gate)
+   * `executionStatus`: `'not_executed'` (Razorpay has not run yet)
+3. **`audit_logs`**: Chronological event trail tracking `diagnosis_created`, `action_approved`, and `action_blocked`.
 
 ---
 
-## 5. API Endpoints
+## 6. API Endpoints
 
-### Diagnose Transaction
-```http
-POST /api/diagnose
-Content-Type: application/json
+### 6.1 Diagnose Transaction
+`POST /api/diagnose`
+```json
+{
+  "transactionId": "txn_salv_0001"
+}
+```
 
+### 6.2 Evaluate Policy Gate
+`POST /api/policy-gate`
+```json
 {
   "transactionId": "txn_salv_0001"
 }
@@ -115,31 +153,32 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "recommendation": {
-    "transactionId": "txn_salv_0001",
-    "failureType": "temporary",
-    "recoverability": 0.85,
-    "recommendedStrategy": "smart_retry",
-    "confidence": 0.92,
-    "evidence": [
-      "Acquiring switch timeout GATEWAY_TIMEOUT",
-      "Customer history shows 94% success rate over 16 payments"
+  "policyResult": {
+    "allowed": true,
+    "reasonCode": "ALLOWED",
+    "reason": "All deterministic policy gate safety checks passed successfully.",
+    "checks": [
+      { "name": "RISK_SAFETY_CHECK", "passed": true, "reason": "No fraud or risk anomalies detected." },
+      { "name": "UNRECOVERABLE_SAFETY_CHECK", "passed": true, "reason": "Failure is classified as potentially recoverable." },
+      { "name": "RETRY_LIMIT_CHECK", "passed": true, "reason": "Retry count is within permissible limits." },
+      { "name": "CONFIDENCE_THRESHOLD_CHECK", "passed": true, "reason": "Diagnosis confidence meets or exceeds safety threshold." },
+      { "name": "POSITIVE_EXPECTED_VALUE_CHECK", "passed": true, "reason": "Intervention maintains positive net expected financial value." },
+      { "name": "AMOUNT_VALIDITY_CHECK", "passed": true, "reason": "Predicted recovery amount is structurally valid." },
+      { "name": "AMOUNT_THRESHOLD_CHECK", "passed": true, "reason": "Transaction amount is within automated execution limits." },
+      { "name": "STRATEGY_PERMISSIBILITY_CHECK", "passed": true, "reason": "Strategy is compatible with failure mode." },
+      { "name": "CONTACT_LIMIT_CHECK", "passed": true, "reason": "Customer contact attempt limit respected." }
     ],
-    "reasoning": "Transient gateway latency observed during peak authorization window.",
-    "predictedRecoveryPaise": 482350,
-    "recommendedInterventionCostPaise": 150
-  },
-  "actionId": "act_txn_salv_0001_1724391200000",
-  "diagnosedAt": "2026-08-23T11:08:00.000Z"
+    "evaluatedAt": "2026-08-23T11:26:00.000Z"
+  }
 }
 ```
 
 ---
 
-## 6. Execution Commands
+## 7. Execution Commands
 
 ```bash
-# 1. Run Automated Unit Test Suite (28 unit tests)
+# 1. Run Automated Unit Test Suite (39 unit tests)
 npm run test
 
 # 2. Seed 1,350 Synthetic Transactions
@@ -160,20 +199,3 @@ npm run lint
 # 7. Production Bundle Build
 npm run build
 ```
-
----
-
-## 7. Synthetic Dataset & Ground Truth
-
-> **"The dataset is synthetic and deterministic."**
-
-Generated using a seeded Mulberry32 PRNG across 9 failure categories:
-* `temporary_network_failure` (`smart_retry`, 85% base yield)
-* `bank_decline` (`smart_retry`, 52% base yield)
-* `insufficient_funds` (`payment_link`, 58% base yield)
-* `authentication_failure` (`reminder`, 72% base yield)
-* `payment_method_issue` (`payment_method_switch`, 66% base yield)
-* `customer_abandonment` (`payment_link`, 42% base yield)
-* `expired_payment` (`payment_link`, 46% base yield)
-* `suspected_risk` (`no_action`, **0% yield — Policy Gate blocked**)
-* `unrecoverable` (`no_action`, **0% yield — Policy Gate blocked**)

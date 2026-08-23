@@ -5,12 +5,21 @@
  *
  * Endpoints:
  *  - POST /api/diagnose: Diagnoses a failed transaction with Gemini without ground truth leakage.
+ *  - POST /api/policy-gate: Evaluates a deterministic policy gate check on a transaction & recommendation.
  *  - GET /api/health: Returns system status.
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { getAllTransactions, saveRecoveryActions, saveAuditLogs } from '../db/repository.js';
+import {
+  getAllTransactions,
+  getAllRecoveryActions,
+  saveRecoveryActions,
+  saveAuditLogs,
+} from '../db/repository.js';
 import { diagnoseTransaction } from '../agents/diagnosePlan.js';
+import { evaluatePolicyGate } from '../agents/policyGate.js';
+import { toObservableTransaction } from '../agents/observation.js';
+import type { RecoveryRecommendation, AuditLogDocument } from '../types/index.js';
 
 export async function handleApiRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const url = req.url || '';
@@ -77,6 +86,94 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
       res.end(
         JSON.stringify({
           error: err instanceof Error ? err.message : 'Internal Server Error during diagnosis',
+        })
+      );
+    }
+    return;
+  }
+
+  // POST /api/policy-gate
+  if (url === '/api/policy-gate' && method === 'POST') {
+    try {
+      const body = await parseJsonBody<{
+        transactionId?: string;
+        recommendation?: RecoveryRecommendation;
+      }>(req);
+
+      if (!body.transactionId || typeof body.transactionId !== 'string') {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Missing or invalid transactionId in request body.' }));
+        return;
+      }
+
+      const allTxns = await getAllTransactions();
+      const txn = allTxns.find((t) => (t.transactionId || t.id) === body.transactionId);
+
+      if (!txn) {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: `Transaction "${body.transactionId}" not found.` }));
+        return;
+      }
+
+      const observable = toObservableTransaction(txn);
+
+      // If recommendation is not provided in body, build from latest action or default
+      let rec = body.recommendation;
+      if (!rec) {
+        const allActions = await getAllRecoveryActions();
+        const existingAction = allActions.find((a) => a.transactionId === body.transactionId);
+        if (existingAction && existingAction.diagnosis) {
+          rec = existingAction.diagnosis as RecoveryRecommendation;
+        } else {
+          // Heuristic default from transaction simulation state
+          rec = {
+            transactionId: observable.transactionId,
+            failureType: txn.failureCategory === 'suspected_risk' ? 'risk' : 'temporary',
+            recoverability: txn.groundTruth ? (txn.groundTruth.recoverable ? 0.85 : 0) : 0.8,
+            recommendedStrategy: txn.simulation.predictedStrategy,
+            confidence: txn.simulation.confidence,
+            evidence: ['Observable transaction metadata'],
+            reasoning: 'Policy gate evaluation from observable transaction data',
+            predictedRecoveryPaise: txn.simulation.predictedRecoveryPaise,
+            recommendedInterventionCostPaise: txn.simulation.interventionCostPaise,
+          };
+        }
+      }
+
+      // Evaluate Policy Gate deterministically (zero LLM calls)
+      const policyResult = evaluatePolicyGate(rec, observable);
+
+      // Create Policy Gate audit event
+      const auditLog: AuditLogDocument = {
+        eventId: `evt_${observable.transactionId}_pol_${Date.now()}`,
+        transactionId: observable.transactionId,
+        eventType: policyResult.allowed ? 'action_approved' : 'action_blocked',
+        actor: 'policy_gate',
+        details: {
+          allowed: policyResult.allowed,
+          reasonCode: policyResult.reasonCode,
+          reason: policyResult.reason,
+          checksCount: policyResult.checks.length,
+          triggeredRules: policyResult.triggeredRules,
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      await saveAuditLogs([auditLog]);
+
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          success: true,
+          policyResult,
+          evaluatedAt: policyResult.evaluatedAt,
+        })
+      );
+    } catch (err) {
+      res.statusCode = 500;
+      res.end(
+        JSON.stringify({
+          error: err instanceof Error ? err.message : 'Internal Server Error during policy check',
         })
       );
     }

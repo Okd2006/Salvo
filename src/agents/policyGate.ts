@@ -1,234 +1,272 @@
 /**
- * Agent 2: Policy Gate  (DETERMINISTIC — ZERO LLM CALLS)
+ * src/agents/policyGate.ts
  *
- * The Policy Gate is the mandatory safety layer between Gemini-proposed
- * recovery actions and any real Razorpay execution.
+ * Deterministic Policy Gate for Salvo
  *
- * Architecture guarantee:
- *   Gemini → diagnosePlan → [ Policy Gate ] → execute
+ * ZERO LLM CALLS. ZERO PROSE PARSING. ZERO NON-DETERMINISM.
  *
- * The gate evaluates a validated GeminiDiagnosisPayload + RecoveryAction
- * against a set of named, deterministic rules. No randomness, no LLM calls.
+ * The Policy Gate is the non-negotiable deterministic safety boundary between
+ * Gemini recommendations and real payment infrastructure.
  *
- * Rules:
- *  1. NO_ACTION_ON_UNRECOVERABLE — Block all automated actions on unrecoverable failures
- *  2. NO_RETRY_ON_PAYMENT_METHOD — Never raw-retry a payment_method failure without switching
- *  3. MAX_RETRY_AMOUNT           — Block retries above ₹50,000
- *  4. MIN_CONFIDENCE             — Flag for review if diagnosis confidence < 0.5
- *  5. MANUAL_REVIEW_HIGH_VALUE   — Route to manual review if > ₹25,000
- *  6. MAX_ATTEMPTS_PER_ORDER     — Block if order already has ≥ 3 recovery attempts
- *  7. LOW_RECOVERABILITY         — Block if recoverability score < 0.2
- *
- * Adding new rules: implement a named PolicyRule function, add to POLICY_RULES.
+ * Architectural Invariant:
+ *   "Gemini recommends. Deterministic policy code decides. Execution code acts."
  */
 
 import type {
-  Transaction,
-  DiagnosisResult,
-  RecoveryAction,
+  ObservableTransaction,
+  RecoveryRecommendation,
   PolicyResult,
-  PolicyVerdict,
+  PolicyCheck,
+  PolicyReasonCode,
+  TransactionDocument,
 } from '../types/index.js';
+import { toObservableTransaction } from './observation.js';
+import { PolicyResultSchema } from '../lib/schemas.js';
 
-// ─── Rule Engine Types ────────────────────────────────────────────────────────
+// ─── Safety Threshold Constants ───────────────────────────────────────────────
 
-interface RuleContext {
-  transaction: Transaction;
-  diagnosis: DiagnosisResult;
-  action: RecoveryAction;
-  /** Number of prior recovery attempts on this order */
-  priorAttempts: number;
-}
+export const POLICY_CONSTANTS = {
+  MIN_CONFIDENCE_THRESHOLD: 0.60,
+  HIGH_TICKET_CONFIDENCE_THRESHOLD: 0.85,
+  MAX_RETRY_COUNT: 2,
+  MAX_CONTACT_COUNT: 3,
+  MAX_AUTO_RETRY_AMOUNT_PAISE: 5_000_000,    // ₹50,000
+  HIGH_TICKET_THRESHOLD_PAISE: 8_000_000,    // ₹80,000
+} as const;
 
-interface RuleOutcome {
-  triggered: boolean;
-  verdict: PolicyVerdict;
-  ruleName: string;
-  explanation: string;
-}
-
-type PolicyRule = (ctx: RuleContext) => RuleOutcome;
-
-// ─── Policy Constants ─────────────────────────────────────────────────────────
-
-const MAX_RETRY_AMOUNT_PAISE = 5_000_00;       // ₹50,000
-const MANUAL_REVIEW_THRESHOLD_PAISE = 2_500_00; // ₹25,000
-const MIN_DIAGNOSIS_CONFIDENCE = 0.5;
-const MAX_ATTEMPTS_PER_ORDER = 3;
-const MIN_RECOVERABILITY = 0.2;
-
-// ─── Individual Rules ─────────────────────────────────────────────────────────
-
-/** Block ALL automated actions on unrecoverable failures (fraud, permanent declines) */
-const ruleNoActionOnUnrecoverable: PolicyRule = ({ diagnosis, action }) => {
-  const isUnrecoverable = diagnosis.geminiPayload.failureType === 'unrecoverable';
-  const isAutomatedAction =
-    action.type !== 'flag_for_manual_review' && action.type !== 'notify_customer';
-  const triggered = isUnrecoverable && isAutomatedAction;
-  return {
-    triggered,
-    verdict: 'blocked',
-    ruleName: 'NO_ACTION_ON_UNRECOVERABLE',
-    explanation:
-      'Unrecoverable failure (fraud or permanent decline). No automated recovery action is permitted.',
-  };
-};
-
-/** Never raw-retry a payment_method failure — the same method will fail again */
-const ruleNoRetryOnPaymentMethodFailure: PolicyRule = ({ diagnosis, action }) => {
-  const triggered =
-    diagnosis.geminiPayload.failureType === 'payment_method' &&
-    action.type === 'retry_payment';
-  return {
-    triggered,
-    verdict: 'blocked',
-    ruleName: 'NO_RETRY_ON_PAYMENT_METHOD',
-    explanation:
-      'Payment method failure cannot be resolved by retrying the same method. Switch method or use a payment link.',
-  };
-};
-
-/** Hard cap on automated retry amount */
-const ruleMaxRetryAmount: PolicyRule = ({ transaction, action }) => {
-  const triggered =
-    transaction.amountPaise > MAX_RETRY_AMOUNT_PAISE &&
-    action.type === 'retry_payment';
-  return {
-    triggered,
-    verdict: 'blocked',
-    ruleName: 'MAX_RETRY_AMOUNT',
-    explanation: `Automatic retry blocked: ₹${(transaction.amountPaise / 100).toFixed(2)} exceeds the ₹50,000 automated retry limit.`,
-  };
-};
-
-/** Low confidence → flag for human review */
-const ruleMinConfidence: PolicyRule = ({ diagnosis }) => {
-  const triggered = diagnosis.geminiPayload.confidence < MIN_DIAGNOSIS_CONFIDENCE;
-  return {
-    triggered,
-    verdict: 'needs_review',
-    ruleName: 'MIN_CONFIDENCE',
-    explanation: `Diagnosis confidence ${(diagnosis.geminiPayload.confidence * 100).toFixed(0)}% is below the 50% threshold. Flagging for manual review.`,
-  };
-};
-
-/** High-value transactions require human sign-off */
-const ruleManualReviewHighValue: PolicyRule = ({ transaction }) => {
-  const triggered = transaction.amountPaise > MANUAL_REVIEW_THRESHOLD_PAISE;
-  return {
-    triggered,
-    verdict: 'needs_review',
-    ruleName: 'MANUAL_REVIEW_HIGH_VALUE',
-    explanation: `Transaction ₹${(transaction.amountPaise / 100).toFixed(2)} exceeds ₹25,000. Routing to manual review for high-value safety.`,
-  };
-};
-
-/** Prevent retry storms on a single order */
-const ruleMaxAttemptsPerOrder: PolicyRule = ({ priorAttempts }) => {
-  const triggered = priorAttempts >= MAX_ATTEMPTS_PER_ORDER;
-  return {
-    triggered,
-    verdict: 'blocked',
-    ruleName: 'MAX_ATTEMPTS_PER_ORDER',
-    explanation: `Order has ${priorAttempts} prior recovery attempt(s). Maximum of ${MAX_ATTEMPTS_PER_ORDER} enforced to prevent retry storms.`,
-  };
-};
-
-/** Don't waste resources on transactions Gemini deems unlikely to recover */
-const ruleLowRecoverability: PolicyRule = ({ diagnosis, action }) => {
-  const triggered =
-    diagnosis.geminiPayload.recoverability < MIN_RECOVERABILITY &&
-    action.type !== 'flag_for_manual_review';
-  return {
-    triggered,
-    verdict: 'blocked',
-    ruleName: 'LOW_RECOVERABILITY',
-    explanation: `Recoverability score ${(diagnosis.geminiPayload.recoverability * 100).toFixed(0)}% is below the 20% minimum. No automated action warranted.`,
-  };
-};
-
-// ─── Rule Registry ────────────────────────────────────────────────────────────
-// Evaluated in order. First BLOCKED verdict short-circuits evaluation.
-// NEEDS_REVIEW verdicts accumulate without stopping.
-
-const POLICY_RULES: PolicyRule[] = [
-  ruleNoActionOnUnrecoverable,      // Hard blocks first (highest safety priority)
-  ruleNoRetryOnPaymentMethodFailure,
-  ruleMaxRetryAmount,
-  ruleMaxAttemptsPerOrder,
-  ruleLowRecoverability,
-  ruleManualReviewHighValue,        // Soft escalations after hard blocks
-  ruleMinConfidence,
-];
-
-// ─── Gate Function ────────────────────────────────────────────────────────────
+// ─── Deterministic Policy Gate Evaluator ──────────────────────────────────────
 
 /**
- * Evaluate a proposed RecoveryAction against all policy rules.
- * This function is deterministic — same inputs always produce the same verdict.
- *
- * @param transaction   The original failed transaction
- * @param diagnosis     The validated DiagnosisResult from Agent 1
- * @param action        The specific RecoveryAction to evaluate
- * @param priorAttempts Number of prior recovery attempts on this order (default 0)
+ * Evaluates a Gemini RecoveryRecommendation against deterministic safety policies.
+ * Returns a typed, validated PolicyResult containing all individual checks.
  */
-export function evaluatePolicy(
-  transaction: Transaction,
-  diagnosis: DiagnosisResult,
-  action: RecoveryAction,
-  priorAttempts = 0,
+export function evaluatePolicyGate(
+  recommendation: RecoveryRecommendation,
+  observable: ObservableTransaction
 ): PolicyResult {
-  const ctx: RuleContext = { transaction, diagnosis, action, priorAttempts };
+  const checks: PolicyCheck[] = [];
+  const evaluatedAt = new Date().toISOString();
 
-  const triggeredRules: string[] = [];
-  const explanations: string[] = [];
-  let finalVerdict: PolicyVerdict = 'approved';
+  // 1. RISK_SAFETY_CHECK
+  const isRisk =
+    recommendation.failureType === 'risk' ||
+    observable.failureCategory === 'suspected_risk' ||
+    observable.failureCode === 'HIGH_RISK_SUSPICIOUS_VELOCITY' ||
+    observable.failureCode === 'GEOLOCATION_FRAUD_FLAG' ||
+    observable.failureCode === 'BLACKLISTED_DEVICE_FINGERPRINT';
 
-  for (const rule of POLICY_RULES) {
-    const outcome = rule(ctx);
-    if (outcome.triggered) {
-      triggeredRules.push(outcome.ruleName);
-      explanations.push(outcome.explanation);
+  checks.push({
+    name: 'RISK_SAFETY_CHECK',
+    passed: !isRisk,
+    reason: isRisk
+      ? 'Suspected fraud or high-risk velocity anomaly detected. Automated recovery prohibited.'
+      : 'No fraud or risk anomalies detected.',
+  });
 
-      if (outcome.verdict === 'blocked') {
-        finalVerdict = 'blocked';
-        break; // Hard block — no further evaluation
-      }
-      if (outcome.verdict === 'needs_review' && finalVerdict === 'approved') {
-        finalVerdict = 'needs_review';
-      }
-    }
+  // 2. UNRECOVERABLE_SAFETY_CHECK
+  const isUnrecoverable =
+    recommendation.failureType === 'unrecoverable' ||
+    observable.failureCategory === 'unrecoverable' ||
+    recommendation.recommendedStrategy === 'no_action' ||
+    recommendation.recoverability === 0;
+
+  checks.push({
+    name: 'UNRECOVERABLE_SAFETY_CHECK',
+    passed: !isUnrecoverable,
+    reason: isUnrecoverable
+      ? 'Terminal decline or unrecoverable instrument. No automated intervention permitted.'
+      : 'Failure is classified as potentially recoverable.',
+  });
+
+  // 3. RETRY_LIMIT_CHECK
+  const isRetryLimitExceeded =
+    recommendation.recommendedStrategy === 'smart_retry' &&
+    observable.retryCount >= POLICY_CONSTANTS.MAX_RETRY_COUNT;
+
+  checks.push({
+    name: 'RETRY_LIMIT_CHECK',
+    passed: !isRetryLimitExceeded,
+    reason: isRetryLimitExceeded
+      ? `Maximum automated retry attempts (${POLICY_CONSTANTS.MAX_RETRY_COUNT}) reached for this transaction.`
+      : 'Retry count is within permissible limits.',
+  });
+
+  // 4. CONFIDENCE_THRESHOLD_CHECK
+  const isConfidenceTooLow = recommendation.confidence < POLICY_CONSTANTS.MIN_CONFIDENCE_THRESHOLD;
+
+  checks.push({
+    name: 'CONFIDENCE_THRESHOLD_CHECK',
+    passed: !isConfidenceTooLow,
+    reason: isConfidenceTooLow
+      ? `Diagnosis confidence (${(recommendation.confidence * 100).toFixed(1)}%) is below required minimum threshold (${(POLICY_CONSTANTS.MIN_CONFIDENCE_THRESHOLD * 100).toFixed(0)}%).`
+      : 'Diagnosis confidence meets or exceeds safety threshold.',
+  });
+
+  // 5. POSITIVE_EXPECTED_VALUE_CHECK
+  const netExpectedYield =
+    recommendation.predictedRecoveryPaise - recommendation.recommendedInterventionCostPaise;
+  const isNegativeExpectedValue =
+    recommendation.recommendedStrategy !== 'no_action' &&
+    (netExpectedYield <= 0 || recommendation.predictedRecoveryPaise <= recommendation.recommendedInterventionCostPaise);
+
+  checks.push({
+    name: 'POSITIVE_EXPECTED_VALUE_CHECK',
+    passed: !isNegativeExpectedValue,
+    reason: isNegativeExpectedValue
+      ? `Intervention cost (${recommendation.recommendedInterventionCostPaise} paise) equals or exceeds projected recovery (${recommendation.predictedRecoveryPaise} paise).`
+      : 'Intervention maintains positive net expected financial value.',
+  });
+
+  // 6. AMOUNT_VALIDITY_CHECK
+  const isInvalidRecoveryAmount =
+    recommendation.recommendedStrategy !== 'no_action' &&
+    (recommendation.predictedRecoveryPaise <= 0 ||
+      recommendation.predictedRecoveryPaise > observable.amountPaise);
+
+  checks.push({
+    name: 'AMOUNT_VALIDITY_CHECK',
+    passed: !isInvalidRecoveryAmount,
+    reason: isInvalidRecoveryAmount
+      ? `Predicted recovery (${recommendation.predictedRecoveryPaise} paise) is invalid for transaction volume (${observable.amountPaise} paise).`
+      : 'Predicted recovery amount is structurally valid.',
+  });
+
+  // 7. AMOUNT_THRESHOLD_CHECK
+  const isHighTicketRetry =
+    recommendation.recommendedStrategy === 'smart_retry' &&
+    observable.amountPaise > POLICY_CONSTANTS.MAX_AUTO_RETRY_AMOUNT_PAISE;
+
+  const isHighTicketLowConfidence =
+    observable.amountPaise > POLICY_CONSTANTS.HIGH_TICKET_THRESHOLD_PAISE &&
+    recommendation.confidence < POLICY_CONSTANTS.HIGH_TICKET_CONFIDENCE_THRESHOLD;
+
+  const isAmountThresholdExceeded = isHighTicketRetry || isHighTicketLowConfidence;
+
+  checks.push({
+    name: 'AMOUNT_THRESHOLD_CHECK',
+    passed: !isAmountThresholdExceeded,
+    reason: isHighTicketRetry
+      ? `Automated retry exceeds ₹50,000 limit (${(observable.amountPaise / 100).toFixed(0)} INR). Requires customer-present payment link.`
+      : isHighTicketLowConfidence
+      ? `High-ticket volume (> ₹80,000) requires >= 85% confidence for automated execution.`
+      : 'Transaction amount is within automated execution limits.',
+  });
+
+  // 8. STRATEGY_PERMISSIBILITY_CHECK
+  const isBadStrategyCombination =
+    (recommendation.recommendedStrategy === 'smart_retry' &&
+      (observable.failureCategory === 'payment_method_issue' ||
+        observable.failureCategory === 'customer_abandonment' ||
+        observable.failureCategory === 'expired_payment')) ||
+    (recommendation.recommendedStrategy === 'payment_method_switch' &&
+      observable.failureCategory === 'temporary_network_failure');
+
+  checks.push({
+    name: 'STRATEGY_PERMISSIBILITY_CHECK',
+    passed: !isBadStrategyCombination,
+    reason: isBadStrategyCombination
+      ? `Strategy "${recommendation.recommendedStrategy}" is incompatible with failure category "${observable.failureCategory}".`
+      : 'Strategy is compatible with failure mode.',
+  });
+
+  // 9. CONTACT_LIMIT_CHECK
+  const isContactLimitExceeded =
+    (recommendation.recommendedStrategy === 'reminder' ||
+      recommendation.recommendedStrategy === 'payment_link') &&
+    observable.retryCount >= POLICY_CONSTANTS.MAX_CONTACT_COUNT;
+
+  checks.push({
+    name: 'CONTACT_LIMIT_CHECK',
+    passed: !isContactLimitExceeded,
+    reason: isContactLimitExceeded
+      ? `Maximum customer contact attempts (${POLICY_CONSTANTS.MAX_CONTACT_COUNT}) exceeded.`
+      : 'Customer contact attempt limit respected.',
+  });
+
+  // ─── Determine Final Verdict & ReasonCode ────────────────────────────────────
+  let allowed = true;
+  let reasonCode: PolicyReasonCode = 'ALLOWED';
+  let primaryReason = 'All deterministic policy gate safety checks passed successfully.';
+
+  // Priority order for failure reason codes
+  if (isRisk) {
+    allowed = false;
+    reasonCode = 'RISK_BLOCK';
+    primaryReason = 'Anti-fraud policy gate blocked recovery on suspected risk transaction.';
+  } else if (isUnrecoverable) {
+    allowed = false;
+    reasonCode = 'UNRECOVERABLE_BLOCK';
+    primaryReason = 'Terminal failure mode. Automated intervention blocked.';
+  } else if (isRetryLimitExceeded) {
+    allowed = false;
+    reasonCode = 'RETRY_LIMIT_EXCEEDED';
+    primaryReason = 'Automated retry limit reached for this payment attempt.';
+  } else if (isConfidenceTooLow) {
+    allowed = false;
+    reasonCode = 'CONFIDENCE_TOO_LOW';
+    primaryReason = 'Diagnosis confidence is below deterministic minimum threshold.';
+  } else if (isNegativeExpectedValue) {
+    allowed = false;
+    reasonCode = 'NEGATIVE_EXPECTED_VALUE';
+    primaryReason = 'Negative or zero net expected recovery value.';
+  } else if (isInvalidRecoveryAmount) {
+    allowed = false;
+    reasonCode = 'INVALID_RECOVERY_AMOUNT';
+    primaryReason = 'Predicted recovery amount violates financial invariants.';
+  } else if (isAmountThresholdExceeded) {
+    allowed = false;
+    reasonCode = 'AMOUNT_THRESHOLD_EXCEEDED';
+    primaryReason = 'High-value transaction exceeds automated threshold.';
+  } else if (isBadStrategyCombination) {
+    allowed = false;
+    reasonCode = 'STRATEGY_NOT_PERMITTED';
+    primaryReason = 'Recommended strategy is incompatible with observable failure mode.';
+  } else if (isContactLimitExceeded) {
+    allowed = false;
+    reasonCode = 'CONTACT_LIMIT_EXCEEDED';
+    primaryReason = 'Maximum customer contact attempts reached.';
   }
 
-  const txnId = transaction.transactionId || transaction.id || '';
+  const triggeredRules = checks.filter((c) => !c.passed).map((c) => c.name);
+
+  const result: PolicyResult = {
+    allowed,
+    reasonCode,
+    reason: primaryReason,
+    checks,
+    evaluatedAt,
+    transactionId: recommendation.transactionId || observable.transactionId,
+    verdict: allowed ? 'approved' : 'blocked',
+    triggeredRules,
+    explanation: primaryReason,
+  };
+
+  // Validate with Zod
+  const parsed = PolicyResultSchema.parse(result);
 
   return {
-    transactionId: txnId,
-    action,
-    verdict: finalVerdict,
-    triggeredRules,
-    explanation:
-      explanations.length > 0
-        ? explanations.join(' | ')
-        : 'All policy rules passed. Action approved for execution.',
-    evaluatedAt: new Date().toISOString(),
+    allowed: parsed.allowed,
+    reasonCode: parsed.reasonCode,
+    reason: parsed.reason,
+    checks: parsed.checks,
+    evaluatedAt: parsed.evaluatedAt,
+    ...(parsed.transactionId ? { transactionId: parsed.transactionId } : {}),
+    ...(parsed.verdict ? { verdict: parsed.verdict } : {}),
+    ...(parsed.triggeredRules ? { triggeredRules: parsed.triggeredRules } : {}),
+    ...(parsed.explanation ? { explanation: parsed.explanation } : {}),
   };
 }
 
 /**
- * Evaluate all proposed actions from a DiagnosisResult and return the first
- * approved action (or null if all are blocked or need review).
+ * Convenience wrapper evaluating a full database TransactionDocument.
  */
-export function selectBestApprovedAction(
-  transaction: Transaction,
-  diagnosis: DiagnosisResult,
-  priorAttempts = 0,
-): { action: RecoveryAction; policyResult: PolicyResult } | null {
-  for (const action of diagnosis.proposedActions) {
-    const policyResult = evaluatePolicy(transaction, diagnosis, action, priorAttempts);
-    if (policyResult.verdict === 'approved') {
-      return { action, policyResult };
-    }
-  }
-  return null;
+export function evaluateTransactionPolicyGate(
+  recommendation: RecoveryRecommendation,
+  txn: TransactionDocument
+): PolicyResult {
+  const observable = toObservableTransaction(txn);
+  return evaluatePolicyGate(recommendation, observable);
 }
+
+// ─── Legacy compatibility alias for existing modules ──────────────────────────
+export const evaluatePolicy = evaluatePolicyGate;

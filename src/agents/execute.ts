@@ -154,7 +154,7 @@ export async function executeAction(
   const txnId = transaction.transactionId || transaction.id || '';
 
   // Guard: never execute an unapproved action
-  if (policyResult.verdict !== 'approved') {
+  if (!policyResult.allowed || policyResult.verdict !== 'approved') {
     const auditEvent = makeAuditEvent(txnId, 'action_blocked', {
       action,
       policyResult,
@@ -163,7 +163,7 @@ export async function executeAction(
     return {
       success: false,
       auditEvent,
-      error: `Cannot execute action with verdict "${policyResult.verdict}". Only "approved" actions may be executed.`,
+      error: `Cannot execute action with verdict "${policyResult.verdict || 'blocked'}". Only "approved" actions may be executed.`,
     };
   }
 

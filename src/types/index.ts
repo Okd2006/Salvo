@@ -6,8 +6,9 @@
  *   2. Recovery Strategies & Ground Truth (Evaluation only)
  *   3. Observable Transaction DTO (Ground-Truth Protection Boundary)
  *   4. RecoveryRecommendation & Gemini AI Contracts
- *   5. MongoDB Collections: transactions, recovery_actions, audit_logs
- *   6. Deterministic Evaluation Engine Contracts
+ *   5. Deterministic Policy Gate & PolicyResult Schemas
+ *   6. MongoDB Collections: transactions, recovery_actions, audit_logs
+ *   7. Evaluation Engine Contracts
  *
  * RULES:
  *  - Financial calculations are ALWAYS in integer paise (1 INR = 100 paise)
@@ -166,7 +167,44 @@ export interface RecoveryRecommendation {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 6. Simulation / Execution Trace
+// 6. Deterministic Policy Gate Schemas (Phase 3)
+// ─────────────────────────────────────────────────────────────
+
+export type PolicyReasonCode =
+  | 'ALLOWED'
+  | 'RISK_BLOCK'
+  | 'UNRECOVERABLE_BLOCK'
+  | 'CONFIDENCE_TOO_LOW'
+  | 'RETRY_LIMIT_EXCEEDED'
+  | 'CONTACT_LIMIT_EXCEEDED'
+  | 'AMOUNT_THRESHOLD_EXCEEDED'
+  | 'STRATEGY_NOT_PERMITTED'
+  | 'NEGATIVE_EXPECTED_VALUE'
+  | 'INVALID_RECOVERY_AMOUNT';
+
+export interface PolicyCheck {
+  name: string;
+  passed: boolean;
+  reason: string;
+}
+
+export interface PolicyResult {
+  allowed: boolean;
+  reasonCode: PolicyReasonCode;
+  reason: string;
+  checks: PolicyCheck[];
+  evaluatedAt: string; // ISO-8601
+
+  // Compatibility aliases for execution and legacy agent compatibility
+  transactionId?: string;
+  action?: RecoveryAction;
+  verdict?: PolicyVerdict;
+  triggeredRules?: string[];
+  explanation?: string;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 7. Simulation / Execution Trace
 // ─────────────────────────────────────────────────────────────
 
 export type PolicyVerdict = 'approved' | 'blocked' | 'needs_review' | 'pending';
@@ -184,7 +222,7 @@ export interface SimulationTrace {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 7. MongoDB Collections & Documents
+// 8. MongoDB Collections & Documents
 // ─────────────────────────────────────────────────────────────
 
 /**
@@ -247,6 +285,7 @@ export interface RecoveryActionDocument {
   evidence?: string[];
   reasoning?: string;
   diagnosis?: Partial<RecoveryRecommendation>;
+  policyResult?: PolicyResult;
   createdAt: string;
   executedAt: string | null;
 }
@@ -264,15 +303,6 @@ export interface RecoveryAction {
   rationale: string;
   params: Record<string, unknown>;
   estimatedSuccessProbability: number;
-}
-
-export interface PolicyResult {
-  transactionId: string;
-  action: RecoveryAction;
-  verdict: PolicyVerdict;
-  triggeredRules: string[];
-  explanation: string;
-  evaluatedAt: string;
 }
 
 /**
@@ -313,7 +343,7 @@ export interface AuditLogDocument {
 export type AuditEvent = AuditLogDocument;
 
 // ─────────────────────────────────────────────────────────────
-// 8. Legacy Gemini Integration Contracts (Maintained for compatibility)
+// 9. Legacy Gemini Integration Contracts (Maintained for compatibility)
 // ─────────────────────────────────────────────────────────────
 
 export interface GeminiDiagnosisPayload {
@@ -335,7 +365,7 @@ export interface DiagnosisResult {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 9. Evaluation Engine Contracts
+// 10. Evaluation Engine Contracts
 // ─────────────────────────────────────────────────────────────
 
 export interface StrategyPerformanceMetrics {
@@ -382,7 +412,7 @@ export interface EvaluationReport {
 export type EvaluationResult = EvaluationReport;
 
 // ─────────────────────────────────────────────────────────────
-// 10. AI Diagnosis Metrics (Phase 2 Diagnostic Evaluation)
+// 11. AI Diagnosis Metrics (Phase 2 & 3 Evaluation)
 // ─────────────────────────────────────────────────────────────
 
 export interface AIDiagnosisMetrics {
