@@ -1,263 +1,240 @@
+/**
+ * AuditScreen — Comprehensive ledger of transaction compliance and policy outcomes.
+ *
+ * Matches Stitch screen: "Audit Trail | Salvo AI"
+ * Shows audit stats header, search bar, and compliance data table.
+ *
+ * Demo data from demo.ts. Wire to real MongoDB queries in later phases.
+ */
 import React, { useState } from 'react';
-import { formatPaise } from '../../lib/currency.js';
+import { CurrencyValue } from '../components/CurrencyValue.js';
+import { DEMO_AUDIT_RECORDS } from '../data/demo.js';
 
 interface AuditScreenProps {
   onNavigate?: (tab: string) => void;
 }
 
-export const AuditScreen: React.FC<AuditScreenProps> = () => {
-  const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+const FAILURE_COLOR: Record<string, string> = {
+  BAD_REQUEST_HEADER: 'bg-error/20 text-error',
+  INVALID_CURRENCY_CODE: 'bg-error/20 text-error',
+  RATE_LIMIT_EXCEEDED: 'bg-surface-container-highest text-on-surface-variant',
+  SUSPICIOUS_VELOCITY: 'bg-error/20 text-error',
+};
 
-  const auditRecords = [
-    {
-      txnId: 'pay_NpX8172k',
-      timestamp: '14:22:11.094 UTC',
-      failureCode: 'GATEWAY_TIMEOUT',
-      confidence: '0.94',
-      policyResult: 'Smart Retry Approved',
-      status: 'success',
-      expectedPaise: 4823500,
-      actualPaise: 4823500,
-      hash: 'sha256:8f91b42c99a01e3b',
-      payload: {
-        diagnosis: { failureType: 'temporary', recoverability: 0.82 },
-        policyVerdict: { passed: true, rule: 'RULE_MIN_RECOVERABILITY' },
-        razorpayApi: { method: 'paymentLink.create', status: 'created' },
-      },
-    },
-    {
-      txnId: 'pay_MpK9921b',
-      timestamp: '14:21:54.810 UTC',
-      failureCode: 'INSUFFICIENT_FUNDS',
-      confidence: '0.88',
-      policyResult: 'Payment Link Created',
-      status: 'queued',
-      expectedPaise: 1450000,
-      actualPaise: 0,
-      hash: 'sha256:7a42c11b88e12d4a',
-      payload: {
-        diagnosis: { failureType: 'payment_method', recoverability: 0.64 },
-        policyVerdict: { passed: true, rule: 'RULE_PAYMENT_LINK_ALLOW' },
-        razorpayApi: { method: 'paymentLink.create', shortUrl: 'https://rzp.io/i/Xk91a' },
-      },
-    },
-    {
-      txnId: 'pay_LpQ4412z',
-      timestamp: '14:20:12.340 UTC',
-      failureCode: 'EXPIRED_MANDATE',
-      confidence: '0.76',
-      policyResult: 'Reminder Scheduled',
-      status: 'success',
-      expectedPaise: 320000,
-      actualPaise: 320000,
-      hash: 'sha256:3b19f04c22a101ee',
-      payload: {
-        diagnosis: { failureType: 'customer', recoverability: 0.41 },
-        policyVerdict: { passed: true, rule: 'RULE_REENGAGEMENT_ALLOW' },
-        razorpayApi: { notificationSent: true },
-      },
-    },
-    {
-      txnId: 'pay_JpA1109m',
-      timestamp: '14:18:05.112 UTC',
-      failureCode: 'SUSPICIOUS_VELOCITY',
-      confidence: '0.99',
-      policyResult: 'Blocked by Safety Gate',
-      status: 'blocked',
-      expectedPaise: 4500000,
-      actualPaise: 0,
-      hash: 'sha256:91c002ff11a88c2b',
-      payload: {
-        diagnosis: { failureType: 'unrecoverable', recoverability: 0.05 },
-        policyVerdict: { passed: false, rule: 'RULE_UNRECOVERABLE_BLOCK' },
-      },
-    },
-  ];
+const POLICY_DOT: Record<string, string> = {
+  'Override Applied': 'bg-primary-container',
+  'Queued for Retry': 'bg-tertiary-container',
+  'Blocked by Safety Gate': 'bg-error',
+  'Hard Reject': 'bg-error',
+  'Recovered Route B': 'bg-primary-container',
+  'Pass-through': 'bg-on-surface-variant',
+};
 
-  const filteredRecords = auditRecords.filter(
+export const AuditScreen: React.FC<AuditScreenProps> = ({ onNavigate: _onNavigate }) => {
+  const [query, setQuery] = useState('');
+  const [expandedTxn, setExpandedTxn] = useState<string | null>(null);
+
+  const filtered = DEMO_AUDIT_RECORDS.filter(
     (r) =>
-      r.txnId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.failureCode.toLowerCase().includes(searchQuery.toLowerCase())
+      query === '' ||
+      r.txnId.toLowerCase().includes(query.toLowerCase()) ||
+      r.failureCode.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
-    <main className="flex-1 p-xl flex flex-col gap-lg overflow-y-auto min-w-0 bg-background text-on-surface">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xs">
-        <div>
-          <h1 className="font-display-lg text-display-lg text-on-surface tracking-tight">
-            Immutable Audit Trail
-          </h1>
-          <p className="font-body-md text-on-surface-variant">
-            Cryptographically verifiable audit log of diagnoses, policy verdicts, and API receipts.
-          </p>
+    <main className="flex-1 flex flex-col min-w-0 bg-background text-on-surface overflow-hidden">
+      <div className="flex-1 overflow-y-auto p-lg flex flex-col gap-lg">
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-md mb-md">
+          <div>
+            <h1 className="font-display-lg text-display-lg text-on-surface mb-xs">Audit Trail</h1>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Comprehensive ledger of transaction compliance and policy execution outcomes.
+            </p>
+          </div>
+          <div className="flex items-center gap-sm">
+            {/* Search */}
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">
+                search
+              </span>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search ID or Code..."
+                className="bg-surface-container border border-outline-variant rounded pl-xl pr-sm py-xs text-on-surface font-metric-md text-sm w-64 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+              />
+            </div>
+            <button className="bg-surface-container border border-outline-variant text-on-surface font-label-caps text-label-caps px-md py-xs rounded hover:bg-surface-container-high transition-colors flex items-center gap-xs">
+              <span className="material-symbols-outlined text-sm">filter_list</span>
+              Filter
+            </button>
+            <button className="bg-surface-container border border-outline-variant text-on-surface font-label-caps text-label-caps px-md py-xs rounded hover:bg-surface-container-high transition-colors flex items-center gap-xs">
+              <span className="material-symbols-outlined text-sm">download</span>
+              Export
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-sm">
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">
-              search
+        {/* Stats bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-sm mb-sm">
+          <div className="bg-surface border border-outline-variant rounded p-sm flex flex-col justify-between">
+            <span className="font-label-caps text-label-caps text-on-surface-variant mb-xs">
+              Total Records Analyzed
             </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search TXN ID or Code..."
-              className="bg-surface-container border border-outline-variant rounded pl-[32px] pr-sm py-xs text-on-surface font-mono text-sm w-64 outline-none focus:border-primary"
-            />
+            <span className="font-metric-lg text-metric-lg text-on-surface">1.2M</span>
           </div>
-          <button className="bg-surface-container border border-outline-variant text-on-surface font-label-caps text-label-caps px-md py-xs rounded hover:bg-surface-container-high transition-colors flex items-center gap-xs">
-            <span className="material-symbols-outlined text-sm">filter_list</span>
-            <span>Filter</span>
-          </button>
+          <div className="bg-surface border border-outline-variant rounded p-sm flex flex-col justify-between">
+            <span className="font-label-caps text-label-caps text-on-surface-variant mb-xs">
+              Compliance Exceptions
+            </span>
+            <span className="font-metric-lg text-metric-lg text-error">3,492</span>
+          </div>
+          <div className="bg-surface border border-outline-variant rounded p-sm flex flex-col justify-between">
+            <span className="font-label-caps text-label-caps text-on-surface-variant mb-xs">
+              Auto-Remediated
+            </span>
+            <span className="font-metric-lg text-metric-lg text-primary-container">2,810</span>
+          </div>
+          <div className="bg-surface border border-outline-variant rounded p-sm flex flex-col justify-between">
+            <span className="font-label-caps text-label-caps text-on-surface-variant mb-xs">
+              Pending Review
+            </span>
+            <span className="font-metric-lg text-metric-lg text-tertiary-container">682</span>
+          </div>
         </div>
-      </div>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-sm">
-        <div className="bg-surface-container border border-outline-variant rounded p-sm flex flex-col justify-between">
-          <span className="font-label-caps text-xs text-on-surface-variant mb-xs">Total Records</span>
-          <span className="font-mono text-xl font-bold text-on-surface">12,842</span>
-        </div>
-        <div className="bg-surface-container border border-outline-variant rounded p-sm flex flex-col justify-between">
-          <span className="font-label-caps text-xs text-on-surface-variant mb-xs">Safety Blocks</span>
-          <span className="font-mono text-xl font-bold text-risk">1,492</span>
-        </div>
-        <div className="bg-surface-container border border-outline-variant rounded p-sm flex flex-col justify-between">
-          <span className="font-label-caps text-xs text-on-surface-variant mb-xs">Auto-Remediated</span>
-          <span className="font-mono text-xl font-bold text-primary">8,410</span>
-        </div>
-        <div className="bg-surface-container border border-outline-variant rounded p-sm flex flex-col justify-between">
-          <span className="font-label-caps text-xs text-on-surface-variant mb-xs">Pending Retries</span>
-          <span className="font-mono text-xl font-bold text-tertiary-container">682</span>
-        </div>
-      </div>
-
-      {/* Data Table */}
-      <div className="bg-surface-container border border-outline-variant rounded overflow-hidden flex-1 flex flex-col">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[900px]">
-            <thead>
-              <tr className="border-b border-outline-variant bg-surface-container-high">
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold">
-                  Transaction ID
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold">
-                  Timestamp (UTC)
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold">
-                  Failure Code
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold text-right">
-                  Confidence
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold">
-                  Policy Result
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold text-right">
-                  Expected (INR)
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold text-right">
-                  Actual (INR)
-                </th>
-                <th className="py-sm px-md font-label-caps text-xs text-on-surface-variant font-semibold text-center">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="font-mono text-sm text-on-surface">
-              {filteredRecords.map((r, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b border-outline-variant/30 hover:bg-surface-container-highest transition-colors group"
-                >
-                  <td className="py-sm px-md text-primary font-bold">{r.txnId}</td>
-                  <td className="py-sm px-md text-on-surface-variant text-xs">{r.timestamp}</td>
-                  <td className="py-sm px-md">
-                    <span className="bg-surface-container-high border border-outline-variant text-on-surface px-xs py-0.5 rounded text-xs">
-                      {r.failureCode}
-                    </span>
-                  </td>
-                  <td className="py-sm px-md text-right text-primary">{r.confidence}</td>
-                  <td className="py-sm px-md">
-                    <div className="flex items-center gap-xs">
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          r.status === 'success'
-                            ? 'bg-primary'
-                            : r.status === 'blocked'
-                            ? 'bg-risk'
-                            : 'bg-tertiary-container'
-                        }`}
-                      />
-                      <span className="font-body-sm text-sm">{r.policyResult}</span>
-                    </div>
-                  </td>
-                  <td className="py-sm px-md text-right">{formatPaise(r.expectedPaise)}</td>
-                  <td
-                    className={`py-sm px-md text-right ${
-                      r.actualPaise > 0 ? 'text-primary' : 'text-risk'
-                    }`}
-                  >
-                    {formatPaise(r.actualPaise)}
-                  </td>
-                  <td className="py-sm px-md text-center">
-                    <button
-                      onClick={() => setSelectedRecord(r)}
-                      className="text-on-surface-variant hover:text-primary transition-colors"
+        {/* Data Table */}
+        <div className="bg-surface border border-outline-variant rounded overflow-hidden flex-1 flex flex-col">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[960px]">
+              <thead>
+                <tr className="border-b border-outline-variant bg-surface-container-low">
+                  {[
+                    'Transaction ID',
+                    'Timestamp (UTC)',
+                    'Failure Code',
+                    'Confidence',
+                    'Policy Result',
+                    'Expected (INR)',
+                    'Actual (INR)',
+                    'Action',
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold sticky top-0 bg-surface-container-low z-10"
                     >
-                      <span className="material-symbols-outlined text-lg">open_in_new</span>
-                    </button>
-                  </td>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              </thead>
+              <tbody className="font-metric-md text-metric-md text-on-surface">
+                {filtered.map((r) => {
+                  const isExpanded = expandedTxn === r.txnId;
+                  const failureColor = FAILURE_COLOR[r.failureCode] ?? 'bg-surface-container-highest text-on-surface-variant';
+                  const policyDot = POLICY_DOT[r.policyResult] ?? 'bg-on-surface-variant';
 
-      {/* Inspection Modal */}
-      {selectedRecord && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-md">
-          <div className="bg-surface-container border border-outline-variant rounded-xl p-lg max-w-2xl w-full flex flex-col gap-md shadow-2xl">
-            <div className="flex justify-between items-center pb-sm border-b border-outline-variant">
-              <div>
-                <div className="font-mono text-lg font-bold text-primary">
-                  {selectedRecord.txnId} Audit Record
-                </div>
-                <div className="font-mono text-xs text-on-surface-variant">
-                  Hash: {selectedRecord.hash}
-                </div>
-              </div>
+                  return (
+                    <React.Fragment key={r.txnId}>
+                      <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest transition-colors group">
+                        <td className="py-sm px-md text-on-surface-variant text-sm">{r.txnId}</td>
+                        <td className="py-sm px-md text-on-surface-variant text-sm">{r.timestamp}</td>
+                        <td className="py-sm px-md">
+                          <span className={`${failureColor} px-xs py-1 rounded text-xs`}>
+                            {r.failureCode}
+                          </span>
+                        </td>
+                        <td className={`py-sm px-md text-right ${r.confidence >= 0.95 ? 'text-primary-container' : 'text-tertiary-container'}`}>
+                          {r.confidence.toFixed(2)}
+                        </td>
+                        <td className="py-sm px-md">
+                          <div className="flex items-center gap-xs">
+                            <div className={`w-2 h-2 rounded-full ${policyDot}`} />
+                            <span className="font-body-sm text-body-sm">{r.policyResult}</span>
+                          </div>
+                        </td>
+                        <td className="py-sm px-md text-right">
+                          <CurrencyValue paise={r.expectedPaise} variant="neutral" size="sm" />
+                        </td>
+                        <td className="py-sm px-md text-right">
+                          <CurrencyValue
+                            paise={r.actualPaise}
+                            variant={r.actualPaise > 0 ? 'recovered' : 'risk'}
+                            size="sm"
+                          />
+                        </td>
+                        <td className="py-sm px-md text-center">
+                          <button
+                            onClick={() => setExpandedTxn(isExpanded ? null : r.txnId)}
+                            className="text-on-surface-variant hover:text-primary transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-lg">
+                              {isExpanded ? 'expand_less' : 'open_in_new'}
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr className="border-b border-outline-variant/30 bg-surface-container-low">
+                          <td colSpan={8} className="px-lg py-md">
+                            <div className="font-body-sm text-body-sm text-on-surface-variant space-y-xs">
+                              <div>
+                                <span className="text-on-surface-variant/60 uppercase font-label-caps text-label-caps">
+                                  Audit Hash:{' '}
+                                </span>
+                                <span className="font-mono text-primary">{r.hash}</span>
+                              </div>
+                              <div>
+                                <span className="text-on-surface-variant/60 uppercase font-label-caps text-label-caps">
+                                  Policy Passed:{' '}
+                                </span>
+                                <span className={r.policyPassed ? 'text-primary-container' : 'text-error'}>
+                                  {r.policyPassed ? 'YES' : 'NO — Safety Gate Enforced'}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination footer */}
+          <div className="mt-auto border-t border-outline-variant bg-surface-container-low p-sm flex items-center justify-between">
+            <span className="font-body-sm text-body-sm text-on-surface-variant">
+              Showing 1–{filtered.length} of 3,492 exceptions
+            </span>
+            <div className="flex items-center gap-xs">
               <button
-                onClick={() => setSelectedRecord(null)}
-                className="text-on-surface-variant hover:text-on-surface"
+                disabled
+                className="p-xs rounded hover:bg-surface-container-highest text-on-surface-variant disabled:opacity-50"
               >
-                <span className="material-symbols-outlined">close</span>
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
               </button>
-            </div>
-
-            <div className="bg-surface-container-low p-md rounded border border-outline-variant overflow-x-auto">
-              <div className="font-label-caps text-xs text-on-surface-variant uppercase mb-xs font-semibold">
-                Payload Proof
-              </div>
-              <pre className="font-mono text-xs text-on-surface leading-relaxed">
-                {JSON.stringify(selectedRecord.payload, null, 2)}
-              </pre>
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={() => setSelectedRecord(null)}
-                className="px-md py-sm bg-surface-container-high border border-outline-variant text-on-surface rounded text-sm hover:bg-surface-container-highest"
-              >
-                Close Inspection
+              {[1, 2, 3].map((p) => (
+                <span
+                  key={p}
+                  className={`font-metric-md text-metric-md text-sm px-sm ${p === 1 ? 'text-on-surface' : 'text-on-surface-variant'}`}
+                >
+                  {p}
+                </span>
+              ))}
+              <span className="font-metric-md text-metric-md text-on-surface-variant text-sm px-sm">
+                ...
+              </span>
+              <button className="p-xs rounded hover:bg-surface-container-highest text-on-surface-variant">
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
               </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </main>
   );
 };

@@ -1,198 +1,210 @@
+/**
+ * DiagnosisScreen — AI Analyst chat interface.
+ *
+ * Matches Stitch screen: "AI Diagnosis | Salvo AI"
+ * Shows the "Financial Analyst Note" card format from the Stitch source.
+ *
+ * No Gemini calls are made here. The demo response is sourced from demo.ts.
+ * Replace the demo message with a real API call in a later phase.
+ */
 import React, { useState } from 'react';
-import { formatPaise } from '../../lib/currency.js';
+import { CurrencyValue } from '../components/CurrencyValue.js';
+import { DEMO_DIAGNOSIS } from '../data/demo.js';
+import { formatPercent } from '../../lib/currency.js';
 
 interface DiagnosisScreenProps {
   onNavigate?: (tab: string) => void;
 }
 
-export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ onNavigate }) => {
-  const [messages, setMessages] = useState<
-    { role: 'user' | 'assistant'; text: string; diagnosis?: any }[]
-  >([
-    {
-      role: 'user',
-      text: 'Why did my revenue drop yesterday for order_992182?',
-    },
-    {
-      role: 'assistant',
-      text: 'Analysis complete for transaction pay_NpX8172k (order_992182). Gemini AI Diagnosis Engine identified a transient bank gateway timeout on HDFC UPI.',
-      diagnosis: {
-        transactionId: 'pay_NpX8172k',
-        orderId: 'order_992182',
-        amountPaise: 4823500, // ₹48,235.00
-        failureType: 'temporary',
-        recoverability: 0.82,
-        recommendedStrategy: 'smart_retry',
-        confidence: 0.94,
-        evidence: [
-          'HDFC UPI gateway latency spiked to >4500ms at 14:22 UTC.',
-          'Customer account has 94% successful historical payment record.',
-          'No fraud flags or velocity limit breaches detected.',
-        ],
-        expectedRecoveryPaise: 3955270,
-        merchantNarrative:
-          'Transaction failed due to temporary issuer bank timeout rather than insufficient funds or customer intent. A delayed smart retry at 14:45 UTC has an 82% probability of successful recovery.',
-      },
-    },
-  ]);
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  text?: string;
+  isDiagnosis?: boolean;
+}
 
-  const [inputPrompt, setInputPrompt] = useState('');
+const INITIAL_MESSAGES: ChatMessage[] = [
+  {
+    role: 'user',
+    text: 'Why did my revenue drop yesterday?',
+  },
+  {
+    role: 'assistant',
+    isDiagnosis: true,
+  },
+];
+
+export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ onNavigate }) => {
+  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+  const [inputValue, setInputValue] = useState('');
 
   const handleSend = () => {
-    if (!inputPrompt.trim()) return;
+    const text = inputValue.trim();
+    if (!text) return;
     setMessages((prev) => [
       ...prev,
-      { role: 'user', text: inputPrompt },
+      { role: 'user', text },
       {
         role: 'assistant',
-        text: `Executing diagnosis scan for prompt: "${inputPrompt}". Diagnosing transaction patterns and verifying policy rules...`,
+        text: 'Diagnosis request received. Connect Gemini API in Phase 2 to process this query.',
       },
     ]);
-    setInputPrompt('');
+    setInputValue('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSend();
   };
 
   return (
-    <main className="flex-1 flex flex-col min-w-0 bg-background relative overflow-hidden text-on-surface">
-      {/* Page Header */}
-      <div className="p-lg lg:px-xl border-b border-outline-variant flex items-center justify-between">
-        <div>
-          <h1 className="font-display-lg text-2xl font-semibold text-on-surface">AI Diagnosis Engine</h1>
-          <p className="font-body-sm text-on-surface-variant">
-            Structured Gemini analysis & diagnostic evidence ledger for payment failures.
-          </p>
-        </div>
-        <div className="flex items-center gap-sm">
-          <span className="font-label-caps text-xs text-on-surface-variant uppercase">Model:</span>
-          <span className="font-mono text-xs text-primary px-sm py-0.5 rounded bg-primary/10 border border-primary/20">
-            gemini-1.5-flash
-          </span>
+    <main className="flex-1 flex flex-col min-w-0 bg-background text-on-surface relative overflow-hidden">
+      {/* Chat Canvas */}
+      <div className="flex-1 overflow-y-auto p-lg lg:p-xl flex flex-col gap-lg items-center relative z-10">
+        <div className="w-full max-w-[800px] flex flex-col gap-xl pb-24">
+          {messages.map((msg, idx) => {
+            if (msg.role === 'user') {
+              return (
+                <div key={idx} className="flex justify-end w-full">
+                  <div className="bg-surface-container border border-outline-variant rounded-lg rounded-tr-none p-md max-w-[80%]">
+                    <p className="font-body-md text-body-md text-on-surface">{msg.text}</p>
+                  </div>
+                </div>
+              );
+            }
+
+            // Assistant message
+            return (
+              <div key={idx} className="flex flex-col gap-md w-full">
+                {/* Avatar / label */}
+                <div className="flex items-center gap-sm text-primary">
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    smart_toy
+                  </span>
+                  <span className="font-label-caps text-label-caps uppercase tracking-widest">
+                    Salvo Analyst Engine
+                  </span>
+                </div>
+
+                {msg.isDiagnosis ? (
+                  /* Financial Analyst Note card — Stitch pattern */
+                  <div className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                    {/* Note header */}
+                    <div className="border-b border-outline-variant px-lg py-md bg-surface-container-low flex justify-between items-center">
+                      <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                        Financial Analyst Note
+                      </h2>
+                      <span className="font-metric-md text-metric-md text-on-surface-variant text-sm">
+                        ID:{' '}
+                        <span className="text-on-surface">{DEMO_DIAGNOSIS.id}</span>
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-lg flex flex-col gap-lg">
+                      {/* Root Cause */}
+                      <div className="flex flex-col gap-sm">
+                        <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase">
+                          Primary Root Cause
+                        </h3>
+                        <div className="bg-surface-container-high border-l-2 border-error p-md rounded-r-md">
+                          <p className="font-body-md text-body-md text-on-surface">
+                            {DEMO_DIAGNOSIS.rootCause}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Metrics row */}
+                      <div className="grid grid-cols-2 gap-md border-y border-outline-variant py-md my-sm">
+                        <div className="flex flex-col gap-xs">
+                          <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
+                            Affected Transactions
+                          </span>
+                          <span className="font-metric-lg text-metric-lg text-on-surface">
+                            {DEMO_DIAGNOSIS.affectedTransactions.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-xs items-end">
+                          <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
+                            Gross Value Impact
+                          </span>
+                          <CurrencyValue
+                            paise={Math.abs(DEMO_DIAGNOSIS.grossValueImpactPaise)}
+                            variant="risk"
+                            size="lg"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Recovery Projection */}
+                      <div className="flex flex-col gap-sm bg-primary/5 rounded-lg border border-primary/20 p-md relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50 pointer-events-none" />
+                        <div className="flex justify-between items-end relative z-10">
+                          <div className="flex flex-col gap-xs">
+                            <span className="font-label-caps text-label-caps text-primary uppercase">
+                              Estimated Recoverable
+                            </span>
+                            <CurrencyValue
+                              paise={DEMO_DIAGNOSIS.estimatedRecoverablePaise}
+                              variant="recovered"
+                              size="lg"
+                            />
+                          </div>
+                          <div className="text-right">
+                            <span className="font-metric-md text-metric-md text-primary bg-primary/10 px-2 py-1 rounded text-sm">
+                              {formatPercent(DEMO_DIAGNOSIS.successRatePercent / 100)} Success Rate
+                            </span>
+                          </div>
+                        </div>
+                        <p className="font-body-sm text-body-sm text-on-surface-variant mt-sm relative z-10">
+                          {DEMO_DIAGNOSIS.rationale}
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex justify-end gap-md pt-sm">
+                        <button className="px-md py-2 border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-DEFAULT hover:bg-surface-container-high transition-colors">
+                          View Logs
+                        </button>
+                        <button
+                          onClick={() => onNavigate?.('execution')}
+                          className="px-md py-2 bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-semibold rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center gap-xs"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">bolt</span>
+                          Initialize Recovery Protocol
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Plain assistant text response */
+                  <div className="bg-surface-container border border-outline-variant rounded-lg p-md">
+                    <p className="font-body-md text-body-md text-on-surface">{msg.text}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Chat Canvas & Thread */}
-      <div className="flex-1 overflow-y-auto p-lg lg:p-xl flex flex-col items-center">
-        <div className="w-full max-w-[840px] flex flex-col gap-xl pb-24">
-          {messages.map((msg, idx) => (
-            <div key={idx} className="w-full">
-              {msg.role === 'user' ? (
-                <div className="flex justify-end w-full">
-                  <div className="bg-surface-container-high border border-outline-variant rounded-lg rounded-tr-none p-md max-w-[80%] shadow-sm">
-                    <p className="font-body-md text-on-surface">{msg.text}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-md w-full">
-                  {/* Avatar / Label */}
-                  <div className="flex items-center gap-sm text-primary">
-                    <span className="material-symbols-outlined text-[20px]" data-weight="fill">
-                      psychology
-                    </span>
-                    <span className="font-label-caps text-label-caps uppercase tracking-widest font-semibold">
-                      Salvo Gemini Analyst Engine
-                    </span>
-                  </div>
-
-                  {/* Diagnosis Card */}
-                  <div className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden shadow-lg">
-                    <div className="p-md border-b border-outline-variant bg-surface-container-high flex flex-wrap items-center justify-between gap-sm">
-                      <div className="flex items-center gap-md">
-                        <span className="font-mono text-sm font-bold text-on-surface">
-                          {msg.diagnosis?.transactionId || 'pay_NpX8172k'}
-                        </span>
-                        <span className="px-sm py-0.5 rounded bg-primary/10 border border-primary/20 text-primary font-mono text-xs uppercase font-semibold">
-                          {msg.diagnosis?.failureType || 'temporary'}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-label-caps text-xs text-on-surface-variant uppercase mr-xs">
-                          Recoverability:
-                        </span>
-                        <span className="font-mono text-sm font-bold text-primary">
-                          {((msg.diagnosis?.recoverability || 0.82) * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="p-lg flex flex-col gap-md">
-                      <p className="font-body-md text-on-surface leading-relaxed">
-                        {msg.text}
-                      </p>
-
-                      {msg.diagnosis && (
-                        <>
-                          <div className="p-md bg-surface-container-low rounded-lg border border-outline-variant">
-                            <div className="font-label-caps text-xs text-on-surface-variant uppercase mb-xs font-semibold">
-                              Merchant Narrative Rationale
-                            </div>
-                            <p className="font-body-sm text-on-surface text-sm">
-                              {msg.diagnosis.merchantNarrative}
-                            </p>
-                          </div>
-
-                          {/* Evidence Ledger */}
-                          <div>
-                            <div className="font-label-caps text-xs text-on-surface-variant uppercase mb-sm font-semibold">
-                              Diagnostic Evidence Ledger
-                            </div>
-                            <ul className="space-y-xs">
-                              {msg.diagnosis.evidence.map((ev: string, eIdx: number) => (
-                                <li key={eIdx} className="flex items-start gap-sm text-sm text-on-surface-variant">
-                                  <span className="material-symbols-outlined text-primary text-[16px] mt-0.5">
-                                    check_circle
-                                  </span>
-                                  <span>{ev}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          {/* Financial Impact Bar */}
-                          <div className="flex flex-wrap items-center justify-between pt-md border-t border-outline-variant gap-md">
-                            <div>
-                              <div className="font-label-caps text-xs text-on-surface-variant uppercase">
-                                Expected Recovery Value
-                              </div>
-                              <div className="font-mono text-xl font-bold text-primary">
-                                {formatPaise(msg.diagnosis.expectedRecoveryPaise)}
-                              </div>
-                            </div>
-
-                            <button
-                              onClick={() => onNavigate?.('simulator')}
-                              className="px-lg py-sm bg-primary-container text-background font-semibold rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center gap-xs text-sm"
-                            >
-                              <span className="material-symbols-outlined text-[18px]">play_arrow</span>
-                              <span>Simulate Strategy</span>
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Fixed Prompt Bar */}
-      <div className="absolute bottom-0 left-0 right-0 p-md bg-background/95 backdrop-blur border-t border-outline-variant flex items-center justify-center z-20">
-        <div className="w-full max-w-[800px] flex items-center gap-sm bg-surface-container-high border border-outline-variant rounded-lg p-sm">
+      {/* Fixed chat input bar */}
+      <div className="sticky bottom-0 bg-background/90 backdrop-blur-md border-t border-outline-variant p-md flex justify-center z-20">
+        <div className="w-full max-w-[800px] relative">
           <input
             type="text"
-            value={inputPrompt}
-            onChange={(e) => setInputPrompt(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask Gemini to diagnose a payment failure or order ID..."
-            className="flex-1 bg-transparent text-on-surface placeholder:text-on-surface-variant outline-none font-body-md px-sm"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask another question or type a command..."
+            className="w-full bg-surface-container border border-outline-variant rounded-lg py-md pl-md pr-xl text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors placeholder:text-on-surface-variant/50"
           />
           <button
             onClick={handleSend}
-            className="px-md py-sm bg-primary-container text-background rounded-DEFAULT font-semibold flex items-center gap-xs hover:opacity-90 transition-opacity text-sm"
+            className="absolute right-sm top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary-container text-on-primary-container rounded-DEFAULT hover:opacity-90 transition-opacity"
           >
-            <span>Diagnose</span>
-            <span className="material-symbols-outlined text-[16px]">send</span>
+            <span className="material-symbols-outlined text-[18px]">arrow_upward</span>
           </button>
         </div>
       </div>

@@ -1,5 +1,18 @@
+/**
+ * OverviewScreen — Recovery Telemetry dashboard.
+ *
+ * Matches Stitch screen: "Overview | Salvo AI"
+ * Demo values sourced from src/ui/data/demo.ts — replace with API data in later phases.
+ */
 import React from 'react';
-import { formatPaise } from '../../lib/currency.js';
+import { CurrencyValue } from '../components/CurrencyValue.js';
+import {
+  DEMO_TOTAL_FAILED_PAISE,
+  DEMO_RECOVERABLE_PAISE,
+  DEMO_UNRECOVERABLE_PAISE,
+  DEMO_STRATEGIES,
+} from '../data/demo.js';
+import { formatPercent } from '../../lib/currency.js';
 
 interface OverviewScreenProps {
   onNavigate?: (tab: string) => void;
@@ -9,34 +22,23 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
   return (
     <main className="flex-1 p-xl flex flex-col gap-xl overflow-y-auto min-w-0 bg-background text-on-surface">
       {/* Page Header */}
-      <div className="flex flex-col gap-xs mb-sm">
-        <div className="flex items-center justify-between">
-          <h1 className="font-display-lg text-display-lg text-on-surface tracking-tight">Recovery Telemetry</h1>
-          <button
-            onClick={() => onNavigate?.('launch')}
-            className="flex items-center gap-xs px-md py-sm bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface rounded-DEFAULT text-body-sm font-medium transition-colors"
-          >
-            <span className="material-symbols-outlined text-[16px] text-primary">rocket_launch</span>
-            <span>View Launch Story</span>
-          </button>
-        </div>
+      <div className="flex flex-col gap-xs mb-md">
+        <h1 className="font-display-lg text-display-lg text-on-surface tracking-tight">
+          Recovery Telemetry
+        </h1>
         <p className="font-body-md text-body-md text-on-surface-variant">
           Real-time analysis of systemic payment failures and autonomous recuperation vectors.
         </p>
       </div>
 
-      {/* High-Density Metrics Spine */}
+      {/* High-Density Metrics Spine — no cards, direct grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-y border-outline-variant">
         {/* Total Failed Revenue */}
         <div className="py-lg pr-lg flex flex-col gap-sm">
-          <div className="flex items-center gap-sm">
-            <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-              Total Failed Revenue
-            </span>
-          </div>
-          <span className="font-metric-lg text-metric-lg text-on-surface">
-            {formatPaise(1284590000)}
+          <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
+            Total Failed Revenue
           </span>
+          <CurrencyValue paise={DEMO_TOTAL_FAILED_PAISE} size="lg" variant="neutral" />
           <span className="font-body-sm text-body-sm text-on-surface-variant">
             Baseline failure volume over 30 days.
           </span>
@@ -44,195 +46,160 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
 
         {/* Recoverable Revenue */}
         <div className="py-lg px-lg border-l border-outline-variant flex flex-col gap-sm relative overflow-hidden">
-          <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-primary-container/5 pointer-events-none" />
           <div className="relative z-10 flex flex-col gap-sm">
-            <div className="flex items-center gap-sm">
-              <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-                Recoverable Revenue
-              </span>
-            </div>
-            <span className="font-metric-lg text-metric-lg text-primary">
-              {formatPaise(845021000)}
+            <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
+              Recoverable Revenue
             </span>
-            <div className="inline-flex items-center gap-xs bg-primary/10 border border-primary/20 px-sm py-1 rounded-DEFAULT w-max mt-xs">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="font-label-caps text-label-caps text-primary uppercase">
+            <CurrencyValue paise={DEMO_RECOVERABLE_PAISE} size="lg" variant="recovered" />
+            <div className="inline-flex items-center gap-xs bg-primary-container/10 border border-primary-container/20 px-sm py-1 rounded-DEFAULT w-max mt-xs">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary-container" />
+              <span className="font-label-caps text-label-caps text-primary-container uppercase">
                 Active Optimization
               </span>
             </div>
           </div>
         </div>
 
-        {/* Realized Recovery Rate */}
-        <div className="py-lg pl-lg border-l border-outline-variant flex flex-col gap-sm">
-          <div className="flex items-center gap-sm">
+        {/* Unrecoverable Revenue */}
+        <div className="py-lg pl-lg border-l border-outline-variant flex flex-col gap-sm relative overflow-hidden">
+          <div className="absolute inset-0 bg-error/5 pointer-events-none" />
+          <div className="relative z-10 flex flex-col gap-sm">
             <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-              Realized Recovery Rate
+              Unrecoverable Revenue
             </span>
+            <CurrencyValue paise={DEMO_UNRECOVERABLE_PAISE} size="lg" variant="risk" />
+            <div className="inline-flex items-center gap-xs bg-error/10 border border-error/20 px-sm py-1 rounded-DEFAULT w-max mt-xs">
+              <div className="w-1.5 h-1.5 rounded-full bg-error" />
+              <span className="font-label-caps text-label-caps text-error uppercase">
+                Terminal State
+              </span>
+            </div>
           </div>
-          <span className="font-metric-lg text-metric-lg text-on-surface">65.7%</span>
-          <span className="font-body-sm text-body-sm text-on-surface-variant">
-            +12.4% vs baseline retries.
-          </span>
         </div>
       </div>
 
-      {/* Grid Layout: Diagnostic Strategies & Real-time Live Stream */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-xl">
-        {/* Diagnostic Vectors (2 cols) */}
-        <div className="lg:col-span-2 flex flex-col gap-md">
-          <div className="flex items-center justify-between">
-            <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-              Diagnostic Strategy Matrix
-            </h2>
-            <button
-              onClick={() => onNavigate?.('diagnosis')}
-              className="font-label-caps text-label-caps text-primary hover:underline uppercase"
-            >
-              Analyze in Deep Chat →
-            </button>
+      {/* 30-Day Recovery Trend Chart */}
+      <div className="mt-lg">
+        <div className="flex justify-between items-end mb-md">
+          <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
+            30-Day Recovery Performance
+          </h2>
+          <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
+            Cumulative Yield
+          </span>
+        </div>
+        <div className="w-full h-[240px] border-y border-outline-variant relative flex items-end bg-surface-container-low/30">
+          {/* Grid lines */}
+          <div className="absolute inset-0 flex flex-col justify-between py-md pointer-events-none">
+            <div className="w-full border-t border-outline-variant/30" />
+            <div className="w-full border-t border-outline-variant/30" />
+            <div className="w-full border-t border-outline-variant/30" />
+            <div className="w-full border-t border-outline-variant/30" />
           </div>
-
-          <div className="space-y-md">
-            {/* Strategy Row 1 */}
-            <div
-              onClick={() => onNavigate?.('diagnosis')}
-              className="bg-surface-container border border-outline-variant rounded-lg p-md hover:border-primary/50 cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-md"
-            >
-              <div className="flex items-center gap-md">
-                <div className="w-10 h-10 rounded bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                  <span className="material-symbols-outlined">refresh</span>
-                </div>
-                <div>
-                  <div className="font-headline-sm text-base font-semibold text-on-surface">Smart Retry Engine</div>
-                  <div className="font-body-sm text-on-surface-variant">
-                    Transient network drops & bank gateway timeouts
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-lg">
-                <div className="text-right">
-                  <div className="font-mono text-sm font-semibold text-primary">{formatPaise(48235000)}</div>
-                  <div className="font-label-caps text-xs text-on-surface-variant uppercase">82% Recoverability</div>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-              </div>
-            </div>
-
-            {/* Strategy Row 2 */}
-            <div
-              onClick={() => onNavigate?.('simulator')}
-              className="bg-surface-container border border-outline-variant rounded-lg p-md hover:border-primary/50 cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-md"
-            >
-              <div className="flex items-center gap-md">
-                <div className="w-10 h-10 rounded bg-tertiary-container/10 border border-tertiary-container/20 flex items-center justify-center text-tertiary-container shrink-0">
-                  <span className="material-symbols-outlined">link</span>
-                </div>
-                <div>
-                  <div className="font-headline-sm text-base font-semibold text-on-surface">Payment Link Switch</div>
-                  <div className="font-body-sm text-on-surface-variant">
-                    Issuer card limits & insufficient balance redirects
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-lg">
-                <div className="text-right">
-                  <div className="font-mono text-sm font-semibold text-on-surface">{formatPaise(24110000)}</div>
-                  <div className="font-label-caps text-xs text-on-surface-variant uppercase">64% Recoverability</div>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-              </div>
-            </div>
-
-            {/* Strategy Row 3 */}
-            <div
-              onClick={() => onNavigate?.('execution')}
-              className="bg-surface-container border border-outline-variant rounded-lg p-md hover:border-primary/50 cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-md"
-            >
-              <div className="flex items-center gap-md">
-                <div className="w-10 h-10 rounded bg-surface-container-highest border border-outline-variant flex items-center justify-center text-on-surface-variant shrink-0">
-                  <span className="material-symbols-outlined">notifications_active</span>
-                </div>
-                <div>
-                  <div className="font-headline-sm text-base font-semibold text-on-surface">Customer Re-engagement</div>
-                  <div className="font-body-sm text-on-surface-variant">
-                    Expired mandate reminders & 2FA retry prompts
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-lg">
-                <div className="text-right">
-                  <div className="font-mono text-sm font-semibold text-on-surface">{formatPaise(12157000)}</div>
-                  <div className="font-label-caps text-xs text-on-surface-variant uppercase">41% Recoverability</div>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-              </div>
-            </div>
+          {/* SVG trend line */}
+          <svg
+            className="w-full h-full relative z-10 drop-shadow-md"
+            preserveAspectRatio="none"
+            viewBox="0 0 1000 240"
+          >
+            {/* Background dashed trendline */}
+            <polyline
+              fill="none"
+              points="0,220 100,210 200,190 300,195 400,160 500,140 600,150 700,90 800,70 900,40 1000,20"
+              stroke="#283643"
+              strokeDasharray="4 4"
+              strokeWidth="1"
+              vectorEffect="non-scaling-stroke"
+            />
+            {/* Primary recovery line */}
+            <polyline
+              fill="none"
+              points="0,230 100,215 200,180 300,160 400,165 500,120 600,105 700,60 800,80 900,30 1000,10"
+              stroke="#00c896"
+              strokeWidth="1.5"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          {/* Axis labels */}
+          <div className="absolute bottom-0 left-0 w-full flex justify-between px-xs py-xs text-[10px] font-metric-md text-on-surface-variant/50 pointer-events-none">
+            <span>T-30</span>
+            <span>T-15</span>
+            <span>T-0 (LIVE)</span>
           </div>
         </div>
+      </div>
 
-        {/* Live Recovery Telemetry Panel (1 col) */}
-        <div className="bg-surface-container border border-outline-variant rounded-xl p-md flex flex-col gap-md">
-          <div className="flex items-center justify-between pb-sm border-b border-outline-variant">
-            <div className="flex items-center gap-xs">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <h3 className="font-label-caps text-label-caps uppercase text-on-surface font-semibold">
-                Live Execution Stream
-              </h3>
-            </div>
-            <button
-              onClick={() => onNavigate?.('execution')}
-              className="font-label-caps text-xs text-primary hover:underline uppercase"
-            >
-              View All →
-            </button>
-          </div>
+      {/* Recovery Strategy Breakdown Table */}
+      <div className="mt-lg mb-xl">
+        <div className="flex justify-between items-end mb-md">
+          <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
+            Recovery Strategy Breakdown
+          </h2>
+          <button className="font-label-caps text-label-caps text-primary hover:text-primary-fixed transition-colors flex items-center gap-xs uppercase">
+            Export CSV{' '}
+            <span className="material-symbols-outlined text-sm">download</span>
+          </button>
+        </div>
 
-          <div className="space-y-sm flex-1">
-            <div className="p-sm bg-surface-container-high rounded border border-outline-variant flex items-center justify-between">
-              <div>
-                <div className="font-mono text-xs text-primary font-semibold">pay_NpX8172k</div>
-                <div className="font-body-sm text-xs text-on-surface-variant">Smart Retry executed</div>
-              </div>
-              <div className="text-right">
-                <div className="font-mono text-xs text-primary">{formatPaise(840000)}</div>
-                <div className="font-label-caps text-[10px] text-primary uppercase">SUCCESS</div>
-              </div>
-            </div>
-
-            <div className="p-sm bg-surface-container-high rounded border border-outline-variant flex items-center justify-between">
-              <div>
-                <div className="font-mono text-xs text-on-surface font-semibold">pay_MpK9921b</div>
-                <div className="font-body-sm text-xs text-on-surface-variant">Payment link created</div>
-              </div>
-              <div className="text-right">
-                <div className="font-mono text-xs text-on-surface">{formatPaise(1450000)}</div>
-                <div className="font-label-caps text-[10px] text-tertiary-container uppercase">QUEUED</div>
-              </div>
-            </div>
-
-            <div className="p-sm bg-surface-container-high rounded border border-outline-variant flex items-center justify-between">
-              <div>
-                <div className="font-mono text-xs text-on-surface font-semibold">pay_LpQ4412z</div>
-                <div className="font-body-sm text-xs text-on-surface-variant">Policy gate check</div>
-              </div>
-              <div className="text-right">
-                <div className="font-mono text-xs text-on-surface">{formatPaise(320000)}</div>
-                <div className="font-label-caps text-[10px] text-primary uppercase">APPROVED</div>
-              </div>
-            </div>
-
-            <div className="p-sm bg-surface-container-high rounded border border-outline-variant flex items-center justify-between opacity-75">
-              <div>
-                <div className="font-mono text-xs text-on-surface-variant font-semibold">pay_JpA1109m</div>
-                <div className="font-body-sm text-xs text-on-surface-variant">Unrecoverable fraud block</div>
-              </div>
-              <div className="text-right">
-                <div className="font-mono text-xs text-risk">{formatPaise(4500000)}</div>
-                <div className="font-label-caps text-[10px] text-risk uppercase">BLOCKED</div>
-              </div>
-            </div>
-          </div>
+        <div className="w-full overflow-x-auto border border-outline-variant rounded-DEFAULT bg-surface-container-lowest">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-surface-container-high/50">
+              <tr className="border-b border-outline-variant">
+                <th className="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold w-1/4">
+                  Strategy Vector
+                </th>
+                <th className="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold text-right w-1/4">
+                  Affected Volume
+                </th>
+                <th className="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold text-right w-1/4">
+                  Potential Recovery
+                </th>
+                <th className="py-sm px-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold text-right w-1/4">
+                  Success Rate
+                </th>
+              </tr>
+            </thead>
+            <tbody className="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/40">
+              {DEMO_STRATEGIES.map((s) => (
+                <tr
+                  key={s.id}
+                  className="hover:bg-surface-container transition-colors duration-150 group cursor-pointer"
+                  onClick={() => onNavigate?.('diagnosis')}
+                >
+                  <td className="py-md px-md border-r border-outline-variant/20">
+                    <div className="flex items-center gap-sm">
+                      <span className="material-symbols-outlined text-primary-container text-sm">
+                        {s.icon}
+                      </span>
+                      <span className="font-medium text-on-surface group-hover:text-primary-container transition-colors">
+                        {s.label}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-md px-md text-right font-metric-md text-metric-md text-on-surface-variant border-r border-outline-variant/20">
+                    {s.affectedVolume.toLocaleString('en-IN')}
+                  </td>
+                  <td className="py-md px-md text-right border-r border-outline-variant/20">
+                    <CurrencyValue paise={s.potentialRecoveryPaise} variant="recovered" size="sm" />
+                  </td>
+                  <td className="py-md px-md text-right">
+                    <div className="flex items-center justify-end gap-md">
+                      <div className="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary-container"
+                          style={{ width: `${s.successRate}%` }}
+                        />
+                      </div>
+                      <span className="font-metric-md text-metric-md w-12 text-right">
+                        {formatPercent(s.successRate / 100)}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </main>

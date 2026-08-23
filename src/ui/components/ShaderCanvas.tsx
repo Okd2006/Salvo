@@ -40,10 +40,11 @@ void main() {
 `;
 
     function createShader(type: number, src: string) {
-      const shader = gl.createShader(type);
+      const _gl = gl as WebGLRenderingContext;
+      const shader = _gl.createShader(type);
       if (!shader) return null;
-      gl.shaderSource(shader, src);
-      gl.compileShader(shader);
+      _gl.shaderSource(shader, src);
+      _gl.compileShader(shader);
       return shader;
     }
 
@@ -83,11 +84,13 @@ void main() {
     syncSize();
 
     function render(t: number) {
+      const _gl = gl as WebGLRenderingContext;
+      const _canvas = canvas as HTMLCanvasElement;
       syncSize();
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      if (uTime) gl.uniform1f(uTime, t * 0.001);
-      if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      _gl.viewport(0, 0, _canvas.width, _canvas.height);
+      if (uTime) _gl.uniform1f(uTime, t * 0.001);
+      if (uRes) _gl.uniform2f(uRes, _canvas.width, _canvas.height);
+      _gl.drawArrays(_gl.TRIANGLE_STRIP, 0, 4);
       animId = requestAnimationFrame(render);
     }
 
