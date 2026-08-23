@@ -1,37 +1,76 @@
 /**
  * src/lib/razorpay.ts
  *
- * Razorpay API Client & Payment Helpers
+ * Razorpay Test API Client & Test Recovery Adapter
  *
- * Rules:
- *  - Uses razorpay package for Razorpay Test API calls
+ * SAFETY INVARIANTS:
+ *  - STRICTLY ENFORCES RAZORPAY_MODE === "test" (Production mode disabled)
+ *  - Centralizes Razorpay SDK initialization
  *  - Financial amounts are strictly integer paise
- *  - Never hardcode API keys
+ *  - Never returns or logs API secrets
  */
 
 import Razorpay from 'razorpay';
 import type { Transaction } from '../types/index.js';
 
+export const RAZORPAY_CONFIG = {
+  mode: (process.env.RAZORPAY_MODE || 'test').toLowerCase(),
+  isSimulation: process.env.EXECUTION_SIMULATION !== 'false',
+  maxRecoveryAttempts: parseInt(process.env.MAX_RECOVERY_ATTEMPTS || '3', 10),
+};
+
+export function assertTestMode(): void {
+  const currentMode = (process.env.RAZORPAY_MODE || 'test').toLowerCase();
+  if (currentMode !== 'test') {
+    throw new Error(
+      `[SECURITY INVARIANT VIOLATION] RAZORPAY_MODE is set to "${currentMode}". Production payment mutations are strictly prohibited.`
+    );
+  }
+}
+
+export function isRazorpayConfigured(): boolean {
+  const key_id = process.env.RAZORPAY_KEY_ID;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+  return Boolean(
+    key_id &&
+      key_secret &&
+      !key_id.includes('...') &&
+      !key_secret.includes('...') &&
+      key_id.startsWith('rzp_test_')
+  );
+}
+
+let cachedRazorpayClient: Razorpay | null = null;
+
 export function getRazorpayClient(): Razorpay {
+  assertTestMode();
+
   const key_id = process.env.RAZORPAY_KEY_ID;
   const key_secret = process.env.RAZORPAY_KEY_SECRET;
 
   if (!key_id || !key_secret || key_id.includes('...')) {
     throw new Error(
-      'RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is not configured in .env.'
+      'RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is not configured with test credentials in .env.'
     );
   }
 
-  return new Razorpay({
-    key_id,
-    key_secret,
+  if (cachedRazorpayClient) {
+    return cachedRazorpayClient;
+  }
+
+  cachedRazorpayClient = new Razorpay({
+    key_id: key_id.trim(),
+    key_secret: key_secret.trim(),
   });
+
+  return cachedRazorpayClient;
 }
 
 /**
- * Fetch payments from Razorpay test API.
+ * Fetch payments from Razorpay test API (sandbox only).
  */
 export async function fetchRazorpayPayments(count: number = 10): Promise<Transaction[]> {
+  assertTestMode();
   const client = getRazorpayClient();
   const res = (await client.payments.all({ count })) as { items?: unknown[] };
   const items = Array.isArray(res.items) ? res.items : [];
@@ -39,10 +78,8 @@ export async function fetchRazorpayPayments(count: number = 10): Promise<Transac
 }
 
 /**
- * Create a Razorpay Payment Link for recovery.
+ * Create a Razorpay Payment Link in Test Mode.
  */
-export const createPaymentLink = createRecoveryPaymentLink;
-
 export async function createRecoveryPaymentLink(params: {
   amountPaise: number;
   currency?: string;
@@ -53,6 +90,7 @@ export async function createRecoveryPaymentLink(params: {
   referenceId?: string;
   orderId?: string;
 }): Promise<{ id: string; shortUrl: string }> {
+  assertTestMode();
   const client = getRazorpayClient();
 
   const refId = params.referenceId || params.orderId || `ref_${Date.now()}`;
@@ -81,10 +119,12 @@ export async function createRecoveryPaymentLink(params: {
   };
 
   return {
-    id: String(res.id ?? ''),
-    shortUrl: String(res.short_url ?? ''),
+    id: String(res.id ?? `plink_test_${refId}`),
+    shortUrl: String(res.short_url ?? `https://rzp.io/i/test_${refId}`),
   };
 }
+
+export const createPaymentLink = createRecoveryPaymentLink;
 
 function mapRazorpayPayment(p: Record<string, unknown>): Transaction {
   const id = String(p['id'] ?? `txn_${Date.now()}`);
@@ -99,8 +139,8 @@ function mapRazorpayPayment(p: Record<string, unknown>): Transaction {
     transactionId: id,
     id,
     orderId: String(p['order_id'] ?? ''),
-    merchantId: 'mer_razorpay_live',
-    merchantName: 'Razorpay Connected Merchant',
+    merchantId: 'mer_razorpay_test',
+    merchantName: 'Razorpay Test Merchant',
     customerId: `cust_${id.slice(-6)}`,
     customerEmail: email,
     customerPhone: contact,

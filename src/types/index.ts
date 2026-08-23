@@ -7,8 +7,9 @@
  *   3. Observable Transaction DTO (Ground-Truth Protection Boundary)
  *   4. RecoveryRecommendation & Gemini AI Contracts
  *   5. Deterministic Policy Gate & PolicyResult Schemas
- *   6. MongoDB Collections: transactions, recovery_actions, audit_logs
- *   7. Evaluation Engine Contracts
+ *   6. Razorpay Test Execution, RecoveryExecutor, & Session Results (Phase 4)
+ *   7. MongoDB Collections: transactions, recovery_actions, audit_logs
+ *   8. Evaluation Engine Contracts
  *
  * RULES:
  *  - Financial calculations are ALWAYS in integer paise (1 INR = 100 paise)
@@ -204,11 +205,55 @@ export interface PolicyResult {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 7. Simulation / Execution Trace
+// 7. Razorpay Test Execution & Recovery Orchestrator (Phase 4)
+// ─────────────────────────────────────────────────────────────
+
+export type ExecutionStatus =
+  | 'not_executed'
+  | 'queued'
+  | 'executing'
+  | 'succeeded'
+  | 'failed'
+  | 'blocked'
+  | 'recovered'
+  | 'not_attempted';
+
+export interface ExecutionResult {
+  success: boolean;
+  actionId: string;
+  transactionId: string;
+  strategy: RecoveryStrategy;
+  provider: 'razorpay_test';
+  providerReference?: string;
+  status: 'succeeded' | 'failed' | 'blocked' | 'already_executed';
+  recoveredAmountPaise: number;
+  errorCode?: string;
+  errorMessage?: string;
+  executedAt: string;
+
+  // Compatibility fields
+  auditEvent?: AuditEvent;
+  razorpayPayload?: Record<string, unknown>;
+  error?: string;
+}
+
+export interface RecoverySessionResult {
+  transactionId: string;
+  success: boolean;
+  attempts: number;
+  totalRecoveredPaise: number;
+  finalStrategy: RecoveryStrategy;
+  finalStatus: 'succeeded' | 'failed' | 'blocked' | 'max_attempts_exceeded';
+  actions: ExecutionResult[];
+  policyDecisions: PolicyResult[];
+  completedAt: string;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 8. Simulation / Execution Trace
 // ─────────────────────────────────────────────────────────────
 
 export type PolicyVerdict = 'approved' | 'blocked' | 'needs_review' | 'pending';
-export type ExecutionStatus = 'recovered' | 'failed' | 'blocked' | 'queued' | 'not_attempted' | 'not_executed';
 
 export interface SimulationTrace {
   predictedStrategy: RecoveryStrategy;
@@ -222,7 +267,7 @@ export interface SimulationTrace {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 8. MongoDB Collections & Documents
+// 9. MongoDB Collections & Documents
 // ─────────────────────────────────────────────────────────────
 
 /**
@@ -286,6 +331,10 @@ export interface RecoveryActionDocument {
   reasoning?: string;
   diagnosis?: Partial<RecoveryRecommendation>;
   policyResult?: PolicyResult;
+  executionResult?: ExecutionResult;
+  errorCode?: string;
+  errorMessage?: string;
+  idempotencyKey?: string;
   createdAt: string;
   executedAt: string | null;
 }
@@ -316,6 +365,7 @@ export type AuditEventType =
   | 'policy_checked'
   | 'policy_evaluated'
   | 'action_approved'
+  | 'action_execution_started'
   | 'action_executed'
   | 'action_blocked'
   | 'action_failed'
@@ -343,7 +393,7 @@ export interface AuditLogDocument {
 export type AuditEvent = AuditLogDocument;
 
 // ─────────────────────────────────────────────────────────────
-// 9. Legacy Gemini Integration Contracts (Maintained for compatibility)
+// 10. Legacy Gemini Integration Contracts (Maintained for compatibility)
 // ─────────────────────────────────────────────────────────────
 
 export interface GeminiDiagnosisPayload {
@@ -365,7 +415,7 @@ export interface DiagnosisResult {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 10. Evaluation Engine Contracts
+// 11. Evaluation Engine Contracts
 // ─────────────────────────────────────────────────────────────
 
 export interface StrategyPerformanceMetrics {
@@ -412,7 +462,7 @@ export interface EvaluationReport {
 export type EvaluationResult = EvaluationReport;
 
 // ─────────────────────────────────────────────────────────────
-// 11. AI Diagnosis Metrics (Phase 2 & 3 Evaluation)
+// 12. AI Diagnosis Metrics (Phase 2 & 3 Evaluation)
 // ─────────────────────────────────────────────────────────────
 
 export interface AIDiagnosisMetrics {

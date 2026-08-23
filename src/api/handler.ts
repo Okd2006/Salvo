@@ -6,6 +6,8 @@
  * Endpoints:
  *  - POST /api/diagnose: Diagnoses a failed transaction with Gemini without ground truth leakage.
  *  - POST /api/policy-gate: Evaluates a deterministic policy gate check on a transaction & recommendation.
+ *  - POST /api/execute: Executes a policy-approved recovery action via Razorpay test adapter.
+ *  - POST /api/recover: Runs the complete autonomous agent recovery loop (Diagnose -> Gate -> Exec -> Fallback).
  *  - GET /api/health: Returns system status.
  */
 
@@ -18,6 +20,8 @@ import {
 } from '../db/repository.js';
 import { diagnoseTransaction } from '../agents/diagnosePlan.js';
 import { evaluatePolicyGate } from '../agents/policyGate.js';
+import { executeRecoveryAction } from '../agents/executor.js';
+import { runAutonomousRecovery } from '../agents/orchestrator.js';
 import { toObservableTransaction } from '../agents/observation.js';
 import type { RecoveryRecommendation, AuditLogDocument } from '../types/index.js';
 
@@ -125,7 +129,6 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
         if (existingAction && existingAction.diagnosis) {
           rec = existingAction.diagnosis as RecoveryRecommendation;
         } else {
-          // Heuristic default from transaction simulation state
           rec = {
             transactionId: observable.transactionId,
             failureType: txn.failureCategory === 'suspected_risk' ? 'risk' : 'temporary',
@@ -174,6 +177,97 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
       res.end(
         JSON.stringify({
           error: err instanceof Error ? err.message : 'Internal Server Error during policy check',
+        })
+      );
+    }
+    return;
+  }
+
+  // POST /api/execute
+  if (url === '/api/execute' && method === 'POST') {
+    try {
+      const body = await parseJsonBody<{ actionId?: string }>(req);
+
+      if (!body.actionId || typeof body.actionId !== 'string') {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Missing or invalid actionId in request body.' }));
+        return;
+      }
+
+      const allActions = await getAllRecoveryActions();
+      const action = allActions.find((a) => a.actionId === body.actionId);
+
+      if (!action) {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: `Recovery action "${body.actionId}" not found.` }));
+        return;
+      }
+
+      const allTxns = await getAllTransactions();
+      const txn = allTxns.find((t) => (t.transactionId || t.id) === action.transactionId);
+
+      if (!txn) {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: `Transaction "${action.transactionId}" not found.` }));
+        return;
+      }
+
+      // Execute through RecoveryExecutor
+      const executionResult = await executeRecoveryAction(action, txn, 1);
+
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          success: executionResult.success,
+          executionResult,
+        })
+      );
+    } catch (err) {
+      res.statusCode = 500;
+      res.end(
+        JSON.stringify({
+          error: err instanceof Error ? err.message : 'Internal Server Error during execution',
+        })
+      );
+    }
+    return;
+  }
+
+  // POST /api/recover
+  if (url === '/api/recover' && method === 'POST') {
+    try {
+      const body = await parseJsonBody<{ transactionId?: string }>(req);
+
+      if (!body.transactionId || typeof body.transactionId !== 'string') {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Missing or invalid transactionId in request body.' }));
+        return;
+      }
+
+      const allTxns = await getAllTransactions();
+      const txn = allTxns.find((t) => (t.transactionId || t.id) === body.transactionId);
+
+      if (!txn) {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: `Transaction "${body.transactionId}" not found.` }));
+        return;
+      }
+
+      // Run full autonomous recovery loop
+      const recoverySession = await runAutonomousRecovery(txn);
+
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          success: recoverySession.success,
+          recoverySession,
+        })
+      );
+    } catch (err) {
+      res.statusCode = 500;
+      res.end(
+        JSON.stringify({
+          error: err instanceof Error ? err.message : 'Internal Server Error during recovery session',
         })
       );
     }

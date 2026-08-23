@@ -8,6 +8,7 @@
  *  - Gemini Structured Output
  *  - Final RecoveryRecommendation object
  *  - Deterministic Policy Gate inputs & outputs
+ *  - Razorpay Execution & Autonomous Recovery Session results
  *  - Financial integer constraints
  */
 
@@ -141,4 +142,40 @@ export const PolicyResultSchema = z.object({
   verdict: z.enum(['approved', 'blocked', 'needs_review', 'pending']).optional(),
   triggeredRules: z.array(z.string()).optional(),
   explanation: z.string().optional(),
+});
+
+/**
+ * Razorpay Test Execution & Autonomous Recovery Schemas (Phase 4)
+ */
+export const ExecutionStatusSchema = z.enum([
+  'succeeded',
+  'failed',
+  'blocked',
+  'already_executed',
+]);
+
+export const ExecutionResultSchema = z.object({
+  success: z.boolean(),
+  actionId: z.string().min(1),
+  transactionId: z.string().min(1),
+  strategy: RecoveryStrategySchema,
+  provider: z.literal('razorpay_test'),
+  providerReference: z.string().optional(),
+  status: ExecutionStatusSchema,
+  recoveredAmountPaise: z.number().int().nonnegative(),
+  errorCode: z.string().optional(),
+  errorMessage: z.string().optional(),
+  executedAt: z.string().min(1),
+});
+
+export const RecoverySessionResultSchema = z.object({
+  transactionId: z.string().min(1),
+  success: z.boolean(),
+  attempts: z.number().int().nonnegative(),
+  totalRecoveredPaise: z.number().int().nonnegative(),
+  finalStrategy: RecoveryStrategySchema,
+  finalStatus: z.enum(['succeeded', 'failed', 'blocked', 'max_attempts_exceeded']),
+  actions: z.array(ExecutionResultSchema),
+  policyDecisions: z.array(PolicyResultSchema),
+  completedAt: z.string().min(1),
 });

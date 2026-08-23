@@ -23,7 +23,24 @@ React Frontend (Stitch-Generated UI)
 
 ---
 
-## 2. Environment Configuration
+## 2. Safety Invariants & Rules
+
+> [!IMPORTANT]
+> **No production payment execution is enabled in Phase 4.**
+> All payment interactions are strictly restricted to Razorpay Test Mode (`RAZORPAY_MODE=test`) or deterministic test simulations. Production mode is hard-blocked at the application layer.
+
+1. **Autonomous Separation of Powers:**
+   * **Gemini recommends:** Diagnoses failure root causes and predicts recovery vectors.
+   * **Policy Gate decides:** Pure deterministic TypeScript safety checks (`ALLOW` or `BLOCK`).
+   * **Executor acts:** Executes only approved actions via Razorpay Test APIs or test simulation.
+2. **Policy Enforcement Gate:** Blocked actions **NEVER** reach the execution layer.
+3. **Idempotency & Anti-Replay:** Guaranteed via unique idempotency keys (`salvo:{actionId}:{attemptNumber}`).
+4. **Strict Integer Paise:** All monetary calculations are performed in strictly non-negative integer paise ($1\text{ INR} = 100\text{ paise}$).
+5. **Observation Boundary:** Hidden ground-truth evaluation metrics are never passed into AI prompt contexts.
+
+---
+
+## 3. Environment Configuration
 
 Copy `.env.example` to `.env` and configure your credentials:
 
@@ -39,101 +56,90 @@ cp .env.example .env
 | `MONGODB_DB_NAME` | Database name | `salvo` |
 | `RAZORPAY_KEY_ID` | Razorpay Test Key ID | `rzp_test_...` |
 | `RAZORPAY_KEY_SECRET` | Razorpay Test Key Secret | `...` |
+| `RAZORPAY_MODE` | Razorpay environment mode (**must be test**) | `test` |
+| `EXECUTION_SIMULATION` | Deterministic failure injection & simulation toggle | `true` |
+| `MAX_RECOVERY_ATTEMPTS` | Maximum recovery action attempts per session | `3` |
 | `DATASET_SEED` | Seed key for reproducible synthetic dataset | `salvo-buildathon-v1` |
 | `DATASET_SIZE` | Total number of transactions generated | `1350` |
 | `DIAGNOSIS_LIMIT` | Optional limit for batch diagnosis during development | `10` |
 
 ---
 
-## 3. Gemini AI Intelligence Layer (Phase 2)
+## 4. System Components
 
-Salvo uses Google Gemini (`@google/genai` SDK) to perform structured root-cause diagnosis and recommend safe recovery vectors.
+### 4.1 Gemini AI Intelligence Layer (Phase 2)
+* **Model:** `gemini-2.5-flash` via `@google/genai` SDK (`v2.18.0`).
+* **Structured Output:** Enforced via native JSON `responseSchema` (`RecoveryRecommendation`).
+* **Observation Boundary:** `toObservableTransaction()` strictly strips ground truth; prompt payloads verified by `assertNoGroundTruthLeakage()`.
 
-### 3.1 Model Selection (`AI_CONFIG`)
-* **Diagnosis & Classification Model:** `gemini-2.5-flash` (low latency, high-accuracy structured reasoning, native JSON schema support).
-* **Narrative Explanation Model:** `gemini-2.5-flash` (merchant-facing contextual notes).
+### 4.2 Deterministic Policy Gate (Phase 3)
+* **Zero LLM Calls:** Pure TypeScript rule evaluation engine.
+* **9 Deterministic Checks:** `RISK_SAFETY_CHECK`, `UNRECOVERABLE_SAFETY_CHECK`, `RETRY_LIMIT_CHECK`, `CONFIDENCE_THRESHOLD_CHECK`, `POSITIVE_EXPECTED_VALUE_CHECK`, `AMOUNT_VALIDITY_CHECK`, `AMOUNT_THRESHOLD_CHECK`, `STRATEGY_PERMISSIBILITY_CHECK`, `CONTACT_LIMIT_CHECK`.
+* **Reason Codes:** `ALLOWED`, `RISK_BLOCK`, `UNRECOVERABLE_BLOCK`, `CONFIDENCE_TOO_LOW`, `RETRY_LIMIT_EXCEEDED`, `CONTACT_LIMIT_EXCEEDED`, `AMOUNT_THRESHOLD_EXCEEDED`, `STRATEGY_NOT_PERMITTED`, `NEGATIVE_EXPECTED_VALUE`, `INVALID_RECOVERY_AMOUNT`.
 
-### 3.2 Native Structured Output Architecture
-Salvo uses Gemini's native `responseSchema` to guarantee strict JSON output without parsing markdown fences or free-form prose.
+### 4.3 Razorpay Test Execution & Fallback Engine (Phase 4)
+* **Execution State Machine:** `not_executed` $\rightarrow$ `queued` $\rightarrow$ `executing` $\rightarrow$ `succeeded` / `failed` / `blocked`.
+* **Deterministic Failure Injection:** Seeded hashing (`transactionId + strategy + attempt`) produces reproducible demo execution traces without uncontrolled randomness.
+* **Fallback Progression:** When an approved attempt fails, the engine deterministically transitions (`smart_retry` $\rightarrow$ `payment_method_switch` $\rightarrow$ `payment_link` $\rightarrow$ `reminder` $\rightarrow$ `no_action`) and evaluates the Policy Gate on every fallback action.
 
-```ts
-export interface RecoveryRecommendation {
-  transactionId: string;
-  failureType: 'temporary' | 'customer' | 'payment_method' | 'risk' | 'unrecoverable';
-  recoverability: number; // 0.0 to 1.0
-  recommendedStrategy: 'smart_retry' | 'payment_method_switch' | 'payment_link' | 'reminder' | 'no_action';
-  confidence: number; // 0.0 to 1.0
-  evidence: string[]; // Minimum 1 item
-  reasoning: string;
-  predictedRecoveryPaise: number; // Integer paise, 0 <= predicted <= amountPaise
-  recommendedInterventionCostPaise: number; // Integer paise >= 0
+---
+
+## 5. API Endpoints
+
+### 5.1 Autonomous Recovery Orchestrator
+`POST /api/recover`
+```json
+{
+  "transactionId": "txn_salv_0001"
+}
+```
+**Response (`RecoverySessionResult`):**
+```json
+{
+  "success": true,
+  "recoverySession": {
+    "transactionId": "txn_salv_0001",
+    "success": true,
+    "attempts": 1,
+    "totalRecoveredPaise": 482350,
+    "finalStrategy": "smart_retry",
+    "finalStatus": "succeeded",
+    "actions": [
+      {
+        "success": true,
+        "actionId": "act_txn_salv_0001_1724391200000",
+        "transactionId": "txn_salv_0001",
+        "strategy": "smart_retry",
+        "provider": "razorpay_test",
+        "providerReference": "rzp_test_sim_000001_smar_1",
+        "status": "succeeded",
+        "recoveredAmountPaise": 482350,
+        "executedAt": "2026-08-23T11:38:00.000Z"
+      }
+    ],
+    "policyDecisions": [
+      {
+        "allowed": true,
+        "reasonCode": "ALLOWED",
+        "reason": "All deterministic policy gate safety checks passed successfully.",
+        "checks": [ ... ],
+        "evaluatedAt": "2026-08-23T11:38:00.000Z"
+      }
+    ],
+    "completedAt": "2026-08-23T11:38:01.000Z"
+  }
 }
 ```
 
-### 3.3 Observation Boundary & Ground Truth Protection
-To ensure evaluation integrity, Gemini receives **only** observable transaction metadata:
-* **Allowed:** `transactionId`, `amountPaise`, `paymentMethod`, `status`, `failureCode`, `failureCategory`, `failureDescription`, `customerHistory` (past success/failure counts, retry success rate, preferred method), `retryCount`, `merchantName`.
-* **FORBIDDEN (Never Sent):** `groundTruth.recoverable`, `groundTruth.optimalStrategy`, `groundTruth.expectedRecoveryPaise`, `groundTruth.shouldIntervene`, `groundTruth.riskScore`.
-* Ground truth is stripped via `toObservableTransaction()` and verified by `assertNoGroundTruthLeakage()`.
-
----
-
-## 4. Deterministic Policy Gate (Phase 3)
-
-The Policy Gate is the **mandatory safety boundary** between AI recommendations and any real execution.
-
-### 4.1 Policy Invariants
-* **Zero LLM Calls:** Evaluated entirely in deterministic TypeScript.
-* **Independent Authority:** Gemini proposes; the Policy Gate enforces rules and decides `ALLOW` or `BLOCK`.
-* **Zero Payment Mutations:** The Policy Gate evaluates permissions and produces an auditable `PolicyResult`.
-
-### 4.2 `PolicyResult` & `PolicyCheck` Schemas
-```ts
-export interface PolicyCheck {
-  name: string;
-  passed: boolean;
-  reason: string;
-}
-
-export interface PolicyResult {
-  allowed: boolean;
-  reasonCode: PolicyReasonCode;
-  reason: string;
-  checks: PolicyCheck[];
-  evaluatedAt: string;
+### 5.2 Direct Execution Endpoint
+`POST /api/execute`
+```json
+{
+  "actionId": "act_txn_salv_0001_1724391200000"
 }
 ```
 
-### 4.3 Deterministic Reason Codes & Rules
-
-| Reason Code | Trigger Condition | Safety Rule |
-| :--- | :--- | :--- |
-| **`ALLOWED`** | All checks pass | Recovery intervention is safe and authorized for execution |
-| **`RISK_BLOCK`** | `failureCategory === 'suspected_risk'` or fraud error code | Prohibits automated recovery on suspected compromised accounts |
-| **`UNRECOVERABLE_BLOCK`** | `failureType === 'unrecoverable'` or `no_action` | Blocks execution on terminal instrument declines |
-| **`RETRY_LIMIT_EXCEEDED`** | `retryCount >= 2` on `smart_retry` | Prevents retry storms and card brand throttling |
-| **`CONFIDENCE_TOO_LOW`** | `confidence < 0.60` | Requires high model certainty before automated action |
-| **`NEGATIVE_EXPECTED_VALUE`** | $\text{Predicted Yield} \le \text{Intervention Cost}$ | Prevents loss-making recovery interventions |
-| **`INVALID_RECOVERY_AMOUNT`** | $\text{Yield} \le 0 \lor \text{Yield} > \text{Amount}$ | Enforces financial boundary invariants |
-| **`AMOUNT_THRESHOLD_EXCEEDED`** | High-ticket volume ($> \text{₹50k}$ retry or $> \text{₹80k}$ with low confidence) | Caps automated risk exposure on high-ticket payments |
-| **`STRATEGY_NOT_PERMITTED`** | Incompatible strategy/failure mode (e.g. retry on expired card) | Enforces logical consistency |
-| **`CONTACT_LIMIT_EXCEEDED`** | `retryCount >= 3` on reminder/payment link | Prevents customer harassment and compliance violations |
-
----
-
-## 5. Database Collections & Persistence
-
-1. **`transactions`**: Complete ledger of payments, customer history, failure taxonomy, hidden ground truth, and simulation traces.
-2. **`recovery_actions`**: Generated after AI diagnosis with:
-   * `policyStatus`: `'pending'` (initial) $\rightarrow$ `'approved'` or `'blocked'` (after Policy Gate)
-   * `executionStatus`: `'not_executed'` (Razorpay has not run yet)
-3. **`audit_logs`**: Chronological event trail tracking `diagnosis_created`, `action_approved`, and `action_blocked`.
-
----
-
-## 6. API Endpoints
-
-### 6.1 Diagnose Transaction
+### 5.3 Diagnostic Endpoint
 `POST /api/diagnose`
 ```json
 {
@@ -141,7 +147,7 @@ export interface PolicyResult {
 }
 ```
 
-### 6.2 Evaluate Policy Gate
+### 5.4 Policy Gate Endpoint
 `POST /api/policy-gate`
 ```json
 {
@@ -149,36 +155,12 @@ export interface PolicyResult {
 }
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "policyResult": {
-    "allowed": true,
-    "reasonCode": "ALLOWED",
-    "reason": "All deterministic policy gate safety checks passed successfully.",
-    "checks": [
-      { "name": "RISK_SAFETY_CHECK", "passed": true, "reason": "No fraud or risk anomalies detected." },
-      { "name": "UNRECOVERABLE_SAFETY_CHECK", "passed": true, "reason": "Failure is classified as potentially recoverable." },
-      { "name": "RETRY_LIMIT_CHECK", "passed": true, "reason": "Retry count is within permissible limits." },
-      { "name": "CONFIDENCE_THRESHOLD_CHECK", "passed": true, "reason": "Diagnosis confidence meets or exceeds safety threshold." },
-      { "name": "POSITIVE_EXPECTED_VALUE_CHECK", "passed": true, "reason": "Intervention maintains positive net expected financial value." },
-      { "name": "AMOUNT_VALIDITY_CHECK", "passed": true, "reason": "Predicted recovery amount is structurally valid." },
-      { "name": "AMOUNT_THRESHOLD_CHECK", "passed": true, "reason": "Transaction amount is within automated execution limits." },
-      { "name": "STRATEGY_PERMISSIBILITY_CHECK", "passed": true, "reason": "Strategy is compatible with failure mode." },
-      { "name": "CONTACT_LIMIT_CHECK", "passed": true, "reason": "Customer contact attempt limit respected." }
-    ],
-    "evaluatedAt": "2026-08-23T11:26:00.000Z"
-  }
-}
-```
-
 ---
 
-## 7. Execution Commands
+## 6. Execution Commands
 
 ```bash
-# 1. Run Automated Unit Test Suite (39 unit tests)
+# 1. Run Automated Unit Test Suite (51 unit tests)
 npm run test
 
 # 2. Seed 1,350 Synthetic Transactions
