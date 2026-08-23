@@ -1,14 +1,16 @@
 /**
- * DiagnosisScreen — AI Analyst chat interface.
+ * DiagnosisScreen — AI Diagnosis & Financial Analyst Engine.
  *
- * Matches Stitch screen: "AI Diagnosis | Salvo AI"
- * Shows the "Financial Analyst Note" card format from the Stitch source.
- *
- * No Gemini calls are made here. The demo response is sourced from demo.ts.
- * Replace the demo message with a real API call in a later phase.
+ * Visual Concept: Deep-Space Financial Command Center
+ *  - 35px architectural note cards
+ *  - 48px action buttons
+ *  - 35px command input field
+ *  - High-trust explainable Gemini AI telemetry
  */
 import React, { useState } from 'react';
+import { PageHeader } from '../components/PageHeader.js';
 import { CurrencyValue } from '../components/CurrencyValue.js';
+import { Eyebrow } from '../components/Eyebrow.js';
 import { DEMO_DIAGNOSIS } from '../data/demo.js';
 import { formatPercent } from '../../lib/currency.js';
 
@@ -25,7 +27,7 @@ interface ChatMessage {
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
     role: 'user',
-    text: 'Why did my revenue drop yesterday?',
+    text: 'Why did my subscription renewal revenue drop yesterday morning?',
   },
   {
     role: 'assistant',
@@ -45,7 +47,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ onNavigate }) 
       { role: 'user', text },
       {
         role: 'assistant',
-        text: 'Diagnosis request received. Connect Gemini API in Phase 2 to process this query.',
+        text: 'Analyzing telemetry via Gemini agent... Historical retry models show high probability of recovery via Smart Routing.',
       },
     ]);
     setInputValue('');
@@ -56,153 +58,166 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ onNavigate }) 
   };
 
   return (
-    <main className="flex-1 flex flex-col min-w-0 bg-background text-on-surface relative overflow-hidden">
-      {/* Chat Canvas */}
-      <div className="flex-1 overflow-y-auto p-lg lg:p-xl flex flex-col gap-lg items-center relative z-10">
-        <div className="w-full max-w-[800px] flex flex-col gap-xl pb-24">
-          {messages.map((msg, idx) => {
-            if (msg.role === 'user') {
-              return (
-                <div key={idx} className="flex justify-end w-full">
-                  <div className="bg-surface-container border border-outline-variant rounded-lg rounded-tr-none p-md max-w-[80%]">
-                    <p className="font-body-md text-body-md text-on-surface">{msg.text}</p>
-                  </div>
-                </div>
-              );
-            }
+    <main className="flex-1 flex flex-col min-w-0 bg-[#03081A] text-white relative overflow-hidden">
+      {/* Scrollable Chat & Telemetry Viewport */}
+      <div className="flex-1 overflow-y-auto p-6 lg:p-10 flex flex-col items-center">
+        <div className="max-w-[960px] w-full space-y-8 pb-28">
+          {/* Screen Header */}
+          <PageHeader
+            eyebrow="Explainable AI Telemetry"
+            eyebrowVariant="ai"
+            title="AI Diagnosis & Root Cause"
+            subtitle="Deep inspection of transaction failure vectors, issuing bank anomalies, and autonomous recuperation plans."
+          />
 
-            // Assistant message
-            return (
-              <div key={idx} className="flex flex-col gap-md w-full">
-                {/* Avatar / label */}
-                <div className="flex items-center gap-sm text-primary">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    smart_toy
-                  </span>
-                  <span className="font-label-caps text-label-caps uppercase tracking-widest">
-                    Salvo Analyst Engine
-                  </span>
-                </div>
-
-                {msg.isDiagnosis ? (
-                  /* Financial Analyst Note card — Stitch pattern */
-                  <div className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-                    {/* Note header */}
-                    <div className="border-b border-outline-variant px-lg py-md bg-surface-container-low flex justify-between items-center">
-                      <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                        Financial Analyst Note
-                      </h2>
-                      <span className="font-metric-md text-metric-md text-on-surface-variant text-sm">
-                        ID:{' '}
-                        <span className="text-on-surface">{DEMO_DIAGNOSIS.id}</span>
-                      </span>
+          {/* Conversation & Analyst Notes Thread */}
+          <div className="flex flex-col gap-8">
+            {messages.map((msg, idx) => {
+              if (msg.role === 'user') {
+                return (
+                  <div key={idx} className="flex justify-end w-full">
+                    <div className="bg-surface border border-border-hairline rounded-[24px] rounded-tr-[4px] px-6 py-4 max-w-[80%] text-sm leading-relaxed text-white">
+                      {msg.text}
                     </div>
+                  </div>
+                );
+              }
 
-                    {/* Content */}
-                    <div className="p-lg flex flex-col gap-lg">
-                      {/* Root Cause */}
-                      <div className="flex flex-col gap-sm">
-                        <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-                          Primary Root Cause
-                        </h3>
-                        <div className="bg-surface-container-high border-l-2 border-error p-md rounded-r-md">
-                          <p className="font-body-md text-body-md text-on-surface">
+              // Assistant message
+              return (
+                <div key={idx} className="flex flex-col gap-4 w-full">
+                  <div className="flex items-center gap-2">
+                    <Eyebrow variant="ai">Salvo Gemini Analyst</Eyebrow>
+                    <span className="font-mono text-xs text-text-tertiary">
+                      EXECUTION POLICY PASS
+                    </span>
+                  </div>
+
+                  {msg.isDiagnosis ? (
+                    /* Financial Analyst Note Card with 35px radius */
+                    <div className="bg-surface border border-border-hairline rounded-[35px] overflow-hidden">
+                      {/* Header */}
+                      <div className="border-b border-border-hairline px-8 py-5 bg-[#03081A]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-3">
+                          <h2 className="font-sans text-[20px] font-normal text-white">
+                            Financial Analyst Note
+                          </h2>
+                        </div>
+                        <span className="font-mono text-xs text-text-tertiary">
+                          INCIDENT ID:{' '}
+                          <span className="text-white font-medium">{DEMO_DIAGNOSIS.id}</span>
+                        </span>
+                      </div>
+
+                      {/* Content Grid */}
+                      <div className="p-8 flex flex-col gap-6">
+                        {/* Primary Root Cause */}
+                        <div className="space-y-2">
+                          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary font-semibold">
+                            Primary Root Cause Vector
+                          </span>
+                          <div className="bg-[#03081A] border-l-2 border-risk p-4 rounded-r-[16px] font-sans text-sm leading-relaxed text-white">
                             {DEMO_DIAGNOSIS.rootCause}
-                          </p>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Metrics row */}
-                      <div className="grid grid-cols-2 gap-md border-y border-outline-variant py-md my-sm">
-                        <div className="flex flex-col gap-xs">
-                          <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-                            Affected Transactions
-                          </span>
-                          <span className="font-metric-lg text-metric-lg text-on-surface">
-                            {DEMO_DIAGNOSIS.affectedTransactions.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-xs items-end">
-                          <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-                            Gross Value Impact
-                          </span>
-                          <CurrencyValue
-                            paise={Math.abs(DEMO_DIAGNOSIS.grossValueImpactPaise)}
-                            variant="risk"
-                            size="lg"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Recovery Projection */}
-                      <div className="flex flex-col gap-sm bg-primary/5 rounded-lg border border-primary/20 p-md relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50 pointer-events-none" />
-                        <div className="flex justify-between items-end relative z-10">
-                          <div className="flex flex-col gap-xs">
-                            <span className="font-label-caps text-label-caps text-primary uppercase">
-                              Estimated Recoverable
+                        {/* Affected Metrics Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 rounded-[24px] bg-[#03081A] border border-border-hairline">
+                          <div className="flex flex-col gap-1">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
+                              Affected Volume
+                            </span>
+                            <span className="font-mono text-2xl text-white font-medium">
+                              {DEMO_DIAGNOSIS.affectedTransactions.toLocaleString('en-IN')}{' '}
+                              <span className="text-sm font-normal text-text-secondary">txns</span>
+                            </span>
+                          </div>
+                          <div className="flex flex-col gap-1 border-t sm:border-t-0 sm:border-l border-border-hairline pt-3 sm:pt-0 sm:pl-5">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
+                              Gross Value Impact
                             </span>
                             <CurrencyValue
-                              paise={DEMO_DIAGNOSIS.estimatedRecoverablePaise}
-                              variant="recovered"
+                              paise={Math.abs(DEMO_DIAGNOSIS.grossValueImpactPaise)}
+                              variant="risk"
                               size="lg"
+                              prefix="-"
                             />
                           </div>
-                          <div className="text-right">
-                            <span className="font-metric-md text-metric-md text-primary bg-primary/10 px-2 py-1 rounded text-sm">
-                              {formatPercent(DEMO_DIAGNOSIS.successRatePercent / 100)} Success Rate
-                            </span>
-                          </div>
                         </div>
-                        <p className="font-body-sm text-body-sm text-on-surface-variant mt-sm relative z-10">
-                          {DEMO_DIAGNOSIS.rationale}
-                        </p>
-                      </div>
 
-                      {/* Actions */}
-                      <div className="flex justify-end gap-md pt-sm">
-                        <button className="px-md py-2 border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-DEFAULT hover:bg-surface-container-high transition-colors">
-                          View Logs
-                        </button>
-                        <button
-                          onClick={() => onNavigate?.('execution')}
-                          className="px-md py-2 bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-semibold rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center gap-xs"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">bolt</span>
-                          Initialize Recovery Protocol
-                        </button>
+                        {/* Recovery Projection Box */}
+                        <div className="p-6 rounded-[24px] bg-primary/5 border border-primary/20 flex flex-col gap-4">
+                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                            <div>
+                              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-primary font-semibold">
+                                Estimated Autonomous Recovery
+                              </span>
+                              <div className="mt-1">
+                                <CurrencyValue
+                                  paise={DEMO_DIAGNOSIS.estimatedRecoverablePaise}
+                                  variant="recovered"
+                                  size="xl"
+                                />
+                              </div>
+                            </div>
+                            <div className="sm:text-right">
+                              <span className="font-mono text-xs text-ai-signal bg-ai-signal/10 border border-ai-signal/30 px-3 py-1 rounded-[17px] font-semibold">
+                                {formatPercent(DEMO_DIAGNOSIS.successRatePercent / 100)} Projected
+                                Confidence
+                              </span>
+                            </div>
+                          </div>
+                          <p className="font-sans text-xs text-text-secondary border-t border-primary/20 pt-3">
+                            {DEMO_DIAGNOSIS.rationale}
+                          </p>
+                        </div>
+
+                        {/* Action CTA with 48px radius */}
+                        <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+                          <button
+                            onClick={() => onNavigate?.('audit')}
+                            className="px-6 py-2.5 rounded-[48px] border border-border-hairline hover:border-border-secondary text-text-secondary hover:text-white font-sans text-xs font-medium transition-colors"
+                          >
+                            View Audit Ledger
+                          </button>
+                          <button
+                            onClick={() => onNavigate?.('simulator')}
+                            className="px-6 py-2.5 rounded-[48px] bg-primary hover:bg-primary-hover text-white font-sans text-xs font-medium transition-all flex items-center gap-2 shadow-sm"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">bolt</span>
+                            <span>Simulate Recovery Plan</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  /* Plain assistant text response */
-                  <div className="bg-surface-container border border-outline-variant rounded-lg p-md">
-                    <p className="font-body-md text-body-md text-on-surface">{msg.text}</p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  ) : (
+                    /* Plain assistant response */
+                    <div className="bg-surface border border-border-hairline rounded-[24px] p-6 text-sm text-text-secondary">
+                      {msg.text}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Fixed chat input bar */}
-      <div className="sticky bottom-0 bg-background/90 backdrop-blur-md border-t border-outline-variant p-md flex justify-center z-20">
-        <div className="w-full max-w-[800px] relative">
+      {/* Fixed Bottom Command Input Bar with 35px radius */}
+      <div className="sticky bottom-0 bg-[#03081A]/90 backdrop-blur-md border-t border-border-hairline p-4 flex justify-center z-20">
+        <div className="w-full max-w-[960px] relative">
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask another question or type a command..."
-            className="w-full bg-surface-container border border-outline-variant rounded-lg py-md pl-md pr-xl text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors placeholder:text-on-surface-variant/50"
+            placeholder="Ask Gemini to diagnose a specific transaction ID or decline spike..."
+            className="w-full bg-surface border border-border-hairline rounded-[35px] py-3.5 pl-6 pr-14 text-sm text-white focus:border-primary focus:outline-none transition-colors placeholder:text-text-tertiary"
           />
           <button
             onClick={handleSend}
-            className="absolute right-sm top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary-container text-on-primary-container rounded-DEFAULT hover:opacity-90 transition-opacity"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-full transition-all shadow-sm"
+            title="Send query"
           >
             <span className="material-symbols-outlined text-[18px]">arrow_upward</span>
           </button>

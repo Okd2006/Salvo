@@ -15,6 +15,23 @@ const nodeGlobals = {
   __filename: 'readonly',
 };
 
+/** Browser DOM globals */
+const browserGlobals = {
+  window: 'readonly',
+  document: 'readonly',
+  HTMLElement: 'readonly',
+  HTMLDivElement: 'readonly',
+  HTMLInputElement: 'readonly',
+  HTMLCanvasElement: 'readonly',
+  WebGLRenderingContext: 'readonly',
+  IntersectionObserver: 'readonly',
+  ResizeObserver: 'readonly',
+  performance: 'readonly',
+  requestAnimationFrame: 'readonly',
+  cancelAnimationFrame: 'readonly',
+  fetch: 'readonly',
+};
+
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   // Global ignores MUST be the first item in flat config
@@ -71,18 +88,10 @@ export default [
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: 'module',
-        // No `project` — src/ui is excluded from tsconfig intentionally
       },
       globals: {
         ...nodeGlobals,
-        window: 'readonly',
-        document: 'readonly',
-        HTMLDivElement: 'readonly',
-        HTMLCanvasElement: 'readonly',
-        WebGLRenderingContext: 'readonly',
-        requestAnimationFrame: 'readonly',
-        cancelAnimationFrame: 'readonly',
-        fetch: 'readonly',
+        ...browserGlobals,
       },
     },
     plugins: {
@@ -91,6 +100,7 @@ export default [
     rules: {
       ...tsPlugin.configs['recommended'].rules,
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': 'warn',
       'prefer-const': 'error',
     },

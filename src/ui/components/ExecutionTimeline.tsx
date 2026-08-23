@@ -1,42 +1,43 @@
 /**
  * ExecutionTimeline — signature component for the Live Execution screen.
  *
- * Renders a ledger-style grid table of recovery operations showing the
- * QUEUED → POLICY_CHECK → EXECUTING → RECOVERED / FAILED flow.
+ * Renders a high-density financial execution ledger showing the autonomous pipeline:
+ * QUEUED → POLICY CHECK → EXECUTING → RECOVERED / FAILED.
  *
- * This component is intentionally visual-only. It accepts rows as props
- * and has no internal API calls. Wire it to real data in a later phase.
+ * Rules:
+ *  - 35px border radius on container
+ *  - 17px status badges
+ *  - Tabular JetBrains Mono numerical alignment
+ *  - Restrained animation on active executing threads
  */
 import React from 'react';
 import type { ExecutionRow } from '../data/demo.js';
 import { StatusBadge } from './StatusBadge.js';
 import { CurrencyValue } from './CurrencyValue.js';
 
-interface ExecutionTimelineProps {
+export interface ExecutionTimelineProps {
   rows: ExecutionRow[];
+  className?: string;
 }
 
-export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({ rows }) => {
+export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({
+  rows,
+  className = '',
+}) => {
   return (
-    <div className="bg-surface rounded-lg border border-outline-variant overflow-hidden flex flex-col">
-      {/* Table Header */}
-      <div className="grid grid-cols-[130px_1fr_130px_56px] gap-sm px-md py-sm bg-surface-container-low border-b border-outline-variant items-center">
-        <div className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-          Timestamp
-        </div>
-        <div className="font-label-caps text-label-caps text-on-surface-variant uppercase">
-          Transaction ID
-        </div>
-        <div className="font-label-caps text-label-caps text-on-surface-variant uppercase text-right">
-          Amount
-        </div>
-        <div className="font-label-caps text-label-caps text-on-surface-variant uppercase text-center">
-          Status
-        </div>
+    <div
+      className={`bg-surface rounded-[35px] border border-border-hairline overflow-hidden flex flex-col ${className}`}
+    >
+      {/* Ledger Header */}
+      <div className="grid grid-cols-[140px_1fr_140px_130px] gap-4 px-6 py-4 bg-[#03081A] border-b border-border-hairline items-center font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary font-semibold">
+        <div>Timestamp</div>
+        <div>Transaction ID</div>
+        <div className="text-right">Amount</div>
+        <div className="text-center">Pipeline State</div>
       </div>
 
-      {/* Timeline Rows */}
-      <div className="flex flex-col">
+      {/* Ledger Rows */}
+      <div className="divide-y divide-border-hairline/40 flex flex-col">
         {rows.map((row, idx) => {
           const isRecovered = row.status === 'RECOVERED';
           const isFailed = row.status === 'FAILED';
@@ -45,20 +46,20 @@ export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({ rows }) =>
           return (
             <div
               key={idx}
-              className={`grid grid-cols-[130px_1fr_130px_56px] gap-sm px-md py-sm border-b border-outline-variant/50 hover:bg-surface-container-highest transition-colors items-center ${
-                isFailed ? 'opacity-70' : ''
-              } ${isExecuting ? 'bg-surface-container-low/30' : ''}`}
+              className={`grid grid-cols-[140px_1fr_140px_130px] gap-4 px-6 py-3.5 hover:bg-surface-elevated transition-colors duration-150 items-center font-mono text-[13px] ${
+                isExecuting ? 'bg-ai-signal/5 border-l-2 border-l-ai-signal' : ''
+              } ${isFailed ? 'opacity-75' : ''}`}
             >
-              <div className="font-metric-md text-metric-md text-on-surface-variant text-sm">
-                {row.timestamp}
+              {/* Timestamp */}
+              <div className="text-text-tertiary text-xs">{row.timestamp}</div>
+
+              {/* Transaction ID */}
+              <div className="text-white font-medium truncate flex items-center gap-2">
+                <span className="text-text-tertiary">#</span>
+                <span>{row.txnId}</span>
               </div>
-              <div
-                className={`font-metric-md text-metric-md text-sm truncate ${
-                  isFailed ? 'text-on-surface opacity-70' : 'text-on-surface'
-                }`}
-              >
-                {row.txnId}
-              </div>
+
+              {/* Amount */}
               <div className="text-right">
                 <CurrencyValue
                   paise={row.amountPaise}
@@ -66,8 +67,10 @@ export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({ rows }) =>
                   size="sm"
                 />
               </div>
+
+              {/* Status Badge */}
               <div className="flex justify-center">
-                <StatusBadge status={row.status} mode="icon" />
+                <StatusBadge status={row.status} />
               </div>
             </div>
           );

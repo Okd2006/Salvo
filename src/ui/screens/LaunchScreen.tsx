@@ -1,13 +1,14 @@
 /**
- * LaunchScreen — "Salvo Launch | Autonomous Recovery" marketing/intro page.
+ * LaunchScreen — Salvo Launch | Autonomous Recovery.
  *
- * Matches Stitch screen: "Salvo Launch | Autonomous Recovery"
- * Implements: shader-like CSS background, hero section, scroll-reveal sections,
- * metric count-up animation, closing CTA.
- *
- * No Three.js or WebGL dependency — uses pure CSS + IntersectionObserver.
+ * Visual Concept: Deep-Space Financial Command Center
+ *  - Hero Typography: 76px–92px Thin (300 weight)
+ *  - Generous negative whitespace and architectural spatial flow
+ *  - High-precision count-up metric telemetry
+ *  - 48px action controls
  */
 import React, { useEffect, useRef } from 'react';
+import { Eyebrow } from '../components/Eyebrow.js';
 
 interface LaunchScreenProps {
   onNavigate?: (tab: string) => void;
@@ -16,7 +17,7 @@ interface LaunchScreenProps {
 export const LaunchScreen: React.FC<LaunchScreenProps> = ({ onNavigate }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll-reveal IntersectionObserver (matches launch.html embedded script)
+  // Scroll reveal observer
   useEffect(() => {
     const elements = containerRef.current?.querySelectorAll<HTMLElement>('.scroll-reveal');
     if (!elements) return;
@@ -29,14 +30,14 @@ export const LaunchScreen: React.FC<LaunchScreenProps> = ({ onNavigate }) => {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.15 }
     );
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  // Metric count-up on scroll (matches launch.html metric-counter pattern)
+  // Metric count-up observer
   useEffect(() => {
     const metrics = containerRef.current?.querySelectorAll<HTMLElement>('.metric-counter');
     if (!metrics) return;
@@ -53,7 +54,7 @@ export const LaunchScreen: React.FC<LaunchScreenProps> = ({ onNavigate }) => {
           const prefix = el.dataset['prefix'] ?? '';
           const suffix = el.dataset['suffix'] ?? '';
           const decimals = parseInt(el.dataset['decimals'] ?? '1', 10);
-          const duration = 2000;
+          const duration = 1800;
           const start = performance.now();
 
           const tick = (now: number) => {
@@ -76,136 +77,164 @@ export const LaunchScreen: React.FC<LaunchScreenProps> = ({ onNavigate }) => {
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto min-w-0 bg-background text-on-surface relative"
+      className="flex-1 overflow-y-auto min-w-0 bg-[#03081A] text-white relative selection:bg-primary/40"
     >
-      {/* Inline scroll-reveal styles */}
       <style>{`
         .scroll-reveal {
           opacity: 0;
-          transform: translateY(24px);
-          transition: opacity 0.7s ease, transform 0.7s ease;
+          transform: translateY(28px);
+          transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .scroll-reveal.is-visible {
           opacity: 1;
           transform: translateY(0);
         }
-        @keyframes slide {
+        @keyframes pulseLine {
           0% { left: -25%; opacity: 0; }
           50% { opacity: 1; }
           100% { left: 100%; opacity: 0; }
         }
       `}</style>
 
-      {/* Section 1 — Hero */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 pt-[200px] pb-[200px]">
-        <div className="max-w-4xl mx-auto scroll-reveal">
-          <h1 className="font-display-lg text-[clamp(40px,6vw,80px)] leading-[1.1] font-semibold mb-6 tracking-tight">
+      {/* Hero Section */}
+      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative z-10 pt-24 pb-28">
+        <div className="max-w-4xl mx-auto space-y-6 scroll-reveal">
+          <Eyebrow variant="ai">Autonomous Revenue Recovery Infrastructure</Eyebrow>
+          <h1 className="font-sans text-[52px] sm:text-[72px] md:text-[88px] leading-[1.05] font-light tracking-[-0.03em] text-white">
             Step into the world of recovered revenue.
           </h1>
-          <p className="text-on-surface-variant font-body-md text-xl max-w-2xl mx-auto font-light">
-            Every failed payment, diagnosed and recovered in milliseconds.
+          <p className="text-text-secondary font-sans text-lg sm:text-2xl max-w-2xl mx-auto font-light leading-relaxed">
+            Every failed transaction, diagnosed by Gemini and autonomously resolved in milliseconds.
           </p>
+          <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={() => onNavigate?.('overview')}
+              className="px-8 py-3.5 bg-primary hover:bg-primary-hover text-white rounded-[48px] text-base font-medium transition-all shadow-md flex items-center gap-2"
+            >
+              <span>Enter Command Center</span>
+              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+            <button
+              onClick={() => onNavigate?.('diagnosis')}
+              className="px-8 py-3.5 bg-surface border border-border-hairline hover:border-border-secondary text-text-secondary hover:text-white rounded-[48px] text-base font-medium transition-all"
+            >
+              Explore AI Diagnosis
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Section 2 — The Problem */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 border-t border-outline-variant/30">
-        <div className="w-full max-w-6xl mx-auto scroll-reveal">
-          <h2 className="font-headline-md text-3xl md:text-4xl mb-12 text-on-surface-variant">
+      {/* The Problem Narrative Section */}
+      <section className="min-h-[70vh] flex flex-col justify-center items-center text-center px-6 relative z-10 border-t border-border-hairline/40 py-24">
+        <div className="w-full max-w-5xl mx-auto space-y-8 scroll-reveal">
+          <Eyebrow variant="risk">The Problem</Eyebrow>
+          <h2 className="font-sans text-[34px] sm:text-[46px] font-light text-white tracking-[-0.02em]">
             Payments fail in a hundred different ways.
           </h2>
-          {/* Animated pulse line */}
-          <div className="w-full h-32 relative flex items-center justify-center opacity-70">
-            <div className="w-full h-px bg-outline-variant relative overflow-hidden">
+          <p className="font-sans text-base sm:text-lg text-text-secondary max-w-2xl mx-auto">
+            Network latency, issuing bank throttles, expired cards, and transient 2FA drops silently drain merchant EBITDA every second.
+          </p>
+
+          {/* Precision Pulse Vector Visualization */}
+          <div className="w-full h-24 relative flex items-center justify-center pt-8">
+            <div className="w-full max-w-2xl h-[1px] bg-border-hairline relative overflow-hidden">
               <div
-                className="absolute top-0 left-0 h-full w-1/4 bg-on-surface-variant"
-                style={{ animation: 'slide 3s ease-in-out infinite' }}
+                className="absolute top-0 left-0 h-full w-1/3 bg-ai-signal"
+                style={{ animation: 'pulseLine 3s ease-in-out infinite' }}
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 3 — The Reveal (pinned scroll scrub) */}
-      <section
-        className="relative z-10 border-t border-outline-variant/30 bg-background/80 backdrop-blur-sm"
-        style={{ height: '200vh' }}
-      >
-        <div
-          className="flex flex-col items-center justify-center"
-          style={{ position: 'sticky', top: 0, height: '100vh' }}
-        >
-          <div className="text-center w-full max-w-5xl px-4 scroll-reveal">
-            <h2 className="font-headline-sm text-on-surface-variant mb-8 uppercase tracking-[0.2em] text-sm">
-              Introducing Salvo
-            </h2>
-            {/* Colour-scrubbing number — static in React; colour could animate via scroll events */}
-            <div
-              className="font-metric-lg leading-none mb-8 transition-colors duration-500"
-              style={{ fontSize: 'clamp(48px, 10vw, 120px)', color: '#00C896' }}
-            >
-              ₹42,850
-            </div>
-            <p className="font-body-md text-lg text-on-surface-variant">
-              The first autonomous recovery agent built for Razorpay merchants
-            </p>
+      {/* Pinned Scrub Reveal Section */}
+      <section className="min-h-screen flex flex-col justify-center items-center px-6 relative z-10 border-t border-border-hairline/40 bg-[#020626] py-32">
+        <div className="max-w-4xl mx-auto text-center space-y-6 scroll-reveal">
+          <Eyebrow variant="primary">The Solution</Eyebrow>
+          <div className="font-mono text-[56px] sm:text-[84px] md:text-[110px] leading-none text-recovered font-light tracking-tight">
+            ₹42,850
           </div>
+          <p className="font-sans text-lg sm:text-2xl text-text-secondary font-light max-w-xl mx-auto">
+            The first autonomous AI revenue recovery agent purpose-built for Razorpay merchants.
+          </p>
         </div>
       </section>
 
-      {/* Section 4 — Compounding Results */}
-      <section className="min-h-screen flex flex-col justify-center px-4 md:px-24 relative z-10 bg-background border-t border-outline-variant/30 py-24">
-        <div className="max-w-7xl mx-auto w-full">
-          <h2 className="font-headline-md text-3xl md:text-5xl mb-24 text-on-surface-variant scroll-reveal">
-            Compounding Results
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-24 gap-x-12">
+      {/* Compounding Results Section */}
+      <section className="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 relative z-10 bg-[#03081A] border-t border-border-hairline/40 py-32">
+        <div className="max-w-[1280px] mx-auto w-full space-y-16">
+          <div className="space-y-3 scroll-reveal">
+            <Eyebrow variant="ai">Performance Metrics</Eyebrow>
+            <h2 className="font-sans text-[36px] sm:text-[50px] font-light text-white tracking-[-0.02em]">
+              Compounding Autonomous Results
+            </h2>
+            <p className="font-sans text-base text-text-secondary max-w-2xl">
+              Proven algorithmic performance benchmarks running across live high-velocity transactions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Metric 1 */}
-            <div className="scroll-reveal border-l-2 border-outline-variant/50 pl-6">
+            <div className="bg-surface border border-border-hairline rounded-[35px] p-8 lg:p-10 flex flex-col justify-between gap-6 scroll-reveal">
+              <span className="font-mono text-xs text-text-tertiary uppercase tracking-wider">
+                Telemetry Yield
+              </span>
               <div
-                className="font-metric-lg text-primary-container text-5xl md:text-6xl mb-4 metric-counter"
+                className="font-mono text-5xl lg:text-6xl text-recovered font-medium metric-counter tracking-tight"
                 data-target="94.2"
                 data-suffix="%"
                 data-decimals="1"
               >
                 0.0%
               </div>
-              <div className="font-body-sm text-on-surface-variant text-lg">
-                Recovery Rate Improvement
+              <div className="font-sans text-sm text-text-secondary border-t border-border-hairline pt-4">
+                Recovery Rate Improvement on transient gateway timeouts
               </div>
             </div>
+
             {/* Metric 2 */}
-            <div className="scroll-reveal border-l-2 border-outline-variant/50 pl-6">
+            <div className="bg-surface border border-border-hairline rounded-[35px] p-8 lg:p-10 flex flex-col justify-between gap-6 scroll-reveal">
+              <span className="font-mono text-xs text-text-tertiary uppercase tracking-wider">
+                Processing Throughput
+              </span>
               <div
-                className="font-metric-lg text-primary-container text-5xl md:text-6xl mb-4 metric-counter"
+                className="font-mono text-5xl lg:text-6xl text-white font-medium metric-counter tracking-tight"
                 data-target="1204"
                 data-suffix=" / Sec"
                 data-decimals="0"
               >
                 0
               </div>
-              <div className="font-body-sm text-on-surface-variant text-lg">
-                Transactions Diagnosed
+              <div className="font-sans text-sm text-text-secondary border-t border-border-hairline pt-4">
+                Autonomous transaction failure classifications per second
               </div>
             </div>
+
             {/* Metric 3 */}
-            <div className="scroll-reveal border-l-2 border-outline-variant/50 pl-6">
+            <div className="bg-surface border border-border-hairline rounded-[35px] p-8 lg:p-10 flex flex-col justify-between gap-6 scroll-reveal">
+              <span className="font-mono text-xs text-text-tertiary uppercase tracking-wider">
+                Safety Verification
+              </span>
               <div
-                className="font-metric-lg text-primary-container text-5xl md:text-6xl mb-4 metric-counter"
+                className="font-mono text-5xl lg:text-6xl text-ai-signal font-medium metric-counter tracking-tight"
                 data-target="42"
-                data-suffix="% reduction"
+                data-suffix="% Drop"
                 data-decimals="0"
               >
                 0%
               </div>
-              <div className="font-body-sm text-on-surface-variant text-lg">
-                False-Positive Reduction
+              <div className="font-sans text-sm text-text-secondary border-t border-border-hairline pt-4">
+                False-positive decline reduction through deterministic policy gating
               </div>
             </div>
+
             {/* Metric 4 */}
-            <div className="scroll-reveal border-l-2 border-outline-variant/50 pl-6">
+            <div className="bg-surface border border-border-hairline rounded-[35px] p-8 lg:p-10 flex flex-col justify-between gap-6 scroll-reveal">
+              <span className="font-mono text-xs text-text-tertiary uppercase tracking-wider">
+                Net Cumulative Yield
+              </span>
               <div
-                className="font-metric-lg text-primary-container text-5xl md:text-6xl mb-4 metric-counter"
+                className="font-mono text-5xl lg:text-6xl text-recovered font-medium metric-counter tracking-tight"
                 data-prefix="₹"
                 data-target="84.5"
                 data-suffix="L"
@@ -213,25 +242,26 @@ export const LaunchScreen: React.FC<LaunchScreenProps> = ({ onNavigate }) => {
               >
                 ₹0.0L
               </div>
-              <div className="font-body-sm text-on-surface-variant text-lg">
-                Net Revenue Recovered
+              <div className="font-sans text-sm text-text-secondary border-t border-border-hairline pt-4">
+                Net recovered revenue directly deposited into merchant accounts
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 5 — Close */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-20 bg-black border-t border-outline-variant/30">
-        <div className="max-w-3xl mx-auto scroll-reveal">
-          <h2 className="font-display-lg text-5xl md:text-7xl font-bold mb-12 tracking-tight">
+      {/* Closing CTA */}
+      <section className="min-h-[60vh] flex flex-col justify-center items-center text-center px-6 relative z-20 bg-[#020626] border-t border-border-hairline py-28">
+        <div className="max-w-3xl mx-auto space-y-8 scroll-reveal">
+          <h2 className="font-sans text-[44px] sm:text-[64px] font-light text-white tracking-[-0.03em] leading-tight">
             Recover what&apos;s already yours.
           </h2>
           <button
             onClick={() => onNavigate?.('overview')}
-            className="inline-block bg-primary-container text-background text-lg px-8 py-4 rounded-DEFAULT font-semibold hover:opacity-90 transition-opacity"
+            className="px-10 py-4 bg-primary hover:bg-primary-hover text-white text-base font-medium rounded-[48px] transition-all shadow-lg inline-flex items-center gap-2"
           >
-            Start Recovery Protocol
+            <span className="material-symbols-outlined text-[20px]">bolt</span>
+            <span>Launch Salvo Telemetry</span>
           </button>
         </div>
       </section>

@@ -1,65 +1,71 @@
 /**
- * TopAppBar — persistent header matching the Stitch design across all screens.
+ * TopAppBar — persistent header matching Salvo's deep space command center.
  */
 import React from 'react';
 
-interface TopAppBarProps {
+export interface TopAppBarProps {
   onSearch?: (query: string) => void;
 }
 
 export const TopAppBar: React.FC<TopAppBarProps> = ({ onSearch }) => {
   return (
-    <header className="w-full h-16 sticky top-0 z-40 bg-background border-b border-outline-variant flex justify-between items-center px-lg shrink-0">
-      <div className="flex items-center gap-xl">
-        {/* Search */}
+    <header className="w-full h-16 sticky top-0 z-40 bg-[#03081A]/95 backdrop-blur-md border-b border-border-hairline flex justify-between items-center px-8 shrink-0">
+      <div className="flex items-center gap-8">
+        {/* Search Input with 35px radius */}
         <div className="relative flex items-center">
-          <span className="material-symbols-outlined absolute left-sm text-on-surface-variant text-sm">
+          <span className="material-symbols-outlined absolute left-4 text-text-tertiary text-sm pointer-events-none">
             search
           </span>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search transactions, codes, hashes..."
             onChange={(e) => onSearch?.(e.target.value)}
-            className="bg-surface-container-high border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-DEFAULT py-1 pl-xl pr-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none w-64 transition-all"
+            className="bg-surface border border-border-hairline text-white font-sans text-sm rounded-[35px] py-1.5 pl-11 pr-4 focus:border-primary focus:outline-none w-72 transition-all placeholder:text-text-tertiary"
           />
         </div>
 
-        {/* Nav links */}
-        <nav className="hidden md:flex items-center gap-lg">
+        {/* Technical Nav Links */}
+        <nav className="hidden lg:flex items-center gap-6">
           <a
             href="#"
-            className="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-150 uppercase tracking-widest"
+            className="font-mono text-xs text-text-secondary hover:text-white transition-colors uppercase tracking-wider"
           >
-            Merchant Portal
+            Razorpay Merchant Portal
           </a>
           <a
             href="#"
-            className="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-150 uppercase tracking-widest"
+            className="font-mono text-xs text-text-secondary hover:text-white transition-colors uppercase tracking-wider"
           >
-            API Docs
+            Policy Engine v2.1
           </a>
         </nav>
       </div>
 
-      <div className="flex items-center gap-lg">
-        {/* System Active chip */}
-        <div className="flex items-center gap-xs text-primary-container bg-primary-container/10 px-sm py-1 rounded-DEFAULT border border-primary-container/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse" />
-          <span className="font-label-caps text-label-caps uppercase">System Active</span>
+      <div className="flex items-center gap-4">
+        {/* AI Telemetry Active Chip with 17px radius */}
+        <div className="flex items-center gap-2 text-ai-signal bg-ai-signal/10 px-3 py-1 rounded-[17px] border border-ai-signal/30 font-mono text-[11px] uppercase tracking-wider font-semibold">
+          <div className="w-1.5 h-1.5 rounded-full bg-ai-signal animate-pulse" />
+          <span>AUTONOMOUS ENGINE ACTIVE</span>
         </div>
 
-        {/* Support */}
-        <button className="font-label-caps text-label-caps text-on-surface hover:bg-surface-container transition-colors duration-150 border border-outline-variant px-md py-1.5 rounded-DEFAULT uppercase">
+        {/* Secondary Action */}
+        <button className="hidden sm:block font-mono text-xs text-text-secondary hover:text-white border border-border-hairline hover:border-border-secondary px-4 py-1.5 rounded-[48px] transition-colors uppercase">
           Support
         </button>
 
-        {/* Icon buttons */}
-        <div className="flex items-center gap-sm text-on-surface-variant">
-          <button className="p-xs hover:text-on-surface transition-colors rounded-DEFAULT hover:bg-surface-container">
-            <span className="material-symbols-outlined">notifications</span>
+        {/* Quick Action Buttons */}
+        <div className="flex items-center gap-2 text-text-secondary">
+          <button
+            className="w-8 h-8 flex items-center justify-center hover:text-white transition-colors rounded-full hover:bg-surface border border-transparent hover:border-border-hairline"
+            title="Notifications"
+          >
+            <span className="material-symbols-outlined text-[18px]">notifications</span>
           </button>
-          <button className="p-xs hover:text-on-surface transition-colors rounded-DEFAULT hover:bg-surface-container">
-            <span className="material-symbols-outlined">account_circle</span>
+          <button
+            className="w-8 h-8 flex items-center justify-center hover:text-white transition-colors rounded-full hover:bg-surface border border-transparent hover:border-border-hairline"
+            title="Merchant Account"
+          >
+            <span className="material-symbols-outlined text-[18px]">account_circle</span>
           </button>
         </div>
       </div>

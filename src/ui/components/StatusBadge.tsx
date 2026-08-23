@@ -1,89 +1,116 @@
 /**
- * StatusBadge — displays execution/policy status with semantic color.
+ * StatusBadge — displays execution/policy/transaction status.
  *
- * Usage:
- *   <StatusBadge status="RECOVERED" />
- *   <StatusBadge status="EXECUTING" />
- *   <StatusBadge status="QUEUED" />
- *   <StatusBadge status="FAILED" />
- *   <StatusBadge status="POLICY_CHECK" />
- *   <StatusBadge status="BLOCKED" />
+ * Rules:
+ *  - 17px border radius (`rounded-[17px]`)
+ *  - Semantic color mappings:
+ *      - RECOVERED / APPROVED: #00C896 (positive financial outcome)
+ *      - FAILED / BLOCKED: #FF6B4A (failed state / safety block)
+ *      - EXECUTING / ACTIVE: #05E0E0 (system intelligence/action)
+ *      - QUEUED / POLICY_CHECK: #AAB1F2 / #7A83CC (neutral pipeline)
  */
 import React from 'react';
 import type { ExecutionStatus } from '../data/demo.js';
 
-type BadgeStatus = ExecutionStatus | 'BLOCKED' | 'APPROVED';
+export type BadgeStatus =
+  | ExecutionStatus
+  | 'BLOCKED'
+  | 'APPROVED'
+  | 'NEEDS_REVIEW'
+  | 'PENDING';
 
-interface StatusBadgeProps {
-  status: BadgeStatus;
-  /** Show as pill chip (default) or icon-only */
+export interface StatusBadgeProps {
+  status: BadgeStatus | string;
   mode?: 'chip' | 'icon';
+  className?: string;
 }
 
 const CONFIG: Record<
-  BadgeStatus,
+  string,
   { icon: string; label: string; textClass: string; bgClass: string; borderClass: string }
 > = {
   RECOVERED: {
     icon: 'check_circle',
     label: 'RECOVERED',
-    textClass: 'text-primary-container',
-    bgClass: 'bg-primary-container/10',
-    borderClass: 'border-primary-container/30',
-  },
-  EXECUTING: {
-    icon: 'sync',
-    label: 'EXECUTING',
-    textClass: 'text-on-surface-variant',
-    bgClass: 'bg-surface-container-high',
-    borderClass: 'border-outline-variant',
-  },
-  QUEUED: {
-    icon: 'hourglass_empty',
-    label: 'QUEUED',
-    textClass: 'text-on-surface-variant',
-    bgClass: 'bg-surface-container',
-    borderClass: 'border-outline-variant',
-  },
-  FAILED: {
-    icon: 'cancel',
-    label: 'FAILED',
-    textClass: 'text-error',
-    bgClass: 'bg-error/10',
-    borderClass: 'border-error/30',
-  },
-  POLICY_CHECK: {
-    icon: 'policy',
-    label: 'POLICY',
-    textClass: 'text-on-surface-variant',
-    bgClass: 'bg-surface-container',
-    borderClass: 'border-outline-variant',
-  },
-  BLOCKED: {
-    icon: 'block',
-    label: 'BLOCKED',
-    textClass: 'text-error',
-    bgClass: 'bg-error/10',
-    borderClass: 'border-error/30',
+    textClass: 'text-recovered',
+    bgClass: 'bg-recovered/10',
+    borderClass: 'border-recovered/30',
   },
   APPROVED: {
     icon: 'verified',
     label: 'APPROVED',
-    textClass: 'text-primary-container',
-    bgClass: 'bg-primary-container/10',
-    borderClass: 'border-primary-container/30',
+    textClass: 'text-recovered',
+    bgClass: 'bg-recovered/10',
+    borderClass: 'border-recovered/30',
+  },
+  EXECUTING: {
+    icon: 'sync',
+    label: 'EXECUTING',
+    textClass: 'text-ai-signal',
+    bgClass: 'bg-ai-signal/10',
+    borderClass: 'border-ai-signal/30',
+  },
+  POLICY_CHECK: {
+    icon: 'policy',
+    label: 'POLICY CHECK',
+    textClass: 'text-text-secondary',
+    bgClass: 'bg-surface',
+    borderClass: 'border-border-hairline',
+  },
+  QUEUED: {
+    icon: 'hourglass_empty',
+    label: 'QUEUED',
+    textClass: 'text-text-tertiary',
+    bgClass: 'bg-surface',
+    borderClass: 'border-border-hairline',
+  },
+  FAILED: {
+    icon: 'cancel',
+    label: 'FAILED',
+    textClass: 'text-risk',
+    bgClass: 'bg-risk/10',
+    borderClass: 'border-risk/30',
+  },
+  BLOCKED: {
+    icon: 'block',
+    label: 'BLOCKED',
+    textClass: 'text-risk',
+    bgClass: 'bg-risk/10',
+    borderClass: 'border-risk/30',
+  },
+  NEEDS_REVIEW: {
+    icon: 'warning',
+    label: 'NEEDS REVIEW',
+    textClass: 'text-warning',
+    bgClass: 'bg-warning/10',
+    borderClass: 'border-warning/30',
   },
 };
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, mode = 'chip' }) => {
-  const cfg = CONFIG[status];
-  const isSpinning = status === 'EXECUTING';
+export const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
+  mode = 'chip',
+  className = '',
+}) => {
+  const upperStatus = status.toUpperCase().replace(/\s+/g, '_');
+  const cfg = CONFIG[upperStatus] ?? {
+    icon: 'info',
+    label: status.toUpperCase(),
+    textClass: 'text-text-secondary',
+    bgClass: 'bg-surface',
+    borderClass: 'border-border-hairline',
+  };
+
+  const isSpinning = upperStatus === 'EXECUTING';
 
   if (mode === 'icon') {
     return (
       <span
-        className={`material-symbols-outlined ${cfg.textClass} ${isSpinning ? 'animate-spin' : ''}`}
+        className={`material-symbols-outlined ${cfg.textClass} ${
+          isSpinning ? 'animate-spin' : ''
+        } ${className}`}
         style={{ fontSize: '18px', fontVariationSettings: "'FILL' 1" }}
+        title={cfg.label}
       >
         {cfg.icon}
       </span>
@@ -92,15 +119,14 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, mode = 'chip' 
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-xs py-0.5 rounded-DEFAULT border font-label-caps text-label-caps uppercase ${cfg.textClass} ${cfg.bgClass} ${cfg.borderClass}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[17px] border font-mono text-[11px] uppercase tracking-[0.08em] font-semibold ${cfg.textClass} ${cfg.bgClass} ${cfg.borderClass} ${className}`}
     >
       <span
-        className={`material-symbols-outlined ${isSpinning ? 'animate-spin' : ''}`}
-        style={{ fontSize: '12px' }}
+        className={`material-symbols-outlined text-[13px] ${isSpinning ? 'animate-spin' : ''}`}
       >
         {cfg.icon}
       </span>
-      {cfg.label}
+      <span>{cfg.label}</span>
     </span>
   );
 };

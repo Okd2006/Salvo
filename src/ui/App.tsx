@@ -1,8 +1,13 @@
 /**
- * App.tsx — Root shell for Salvo AI.
+ * App.tsx — Salvo Deep-Space Financial Command Center Shell.
  *
- * Tab-based SPA routing via useState.
- * All six core screens share the SideNavBar and TopAppBar.
+ * Tab-based SPA routing via useState:
+ *  - Overview: Recovery telemetry dashboard
+ *  - Diagnosis: AI Diagnosis & Explainable Gemini Analyst
+ *  - Simulator: Algorithmic Recovery Simulator
+ *  - Execution: Signature Live Execution Feed
+ *  - Audit: Immutable Compliance Ledger & Cryptographic Trace
+ *  - Launch: About Salvo & Autonomous Recovery introduction
  */
 import React, { useState } from 'react';
 import { SideNavBar, NavTab } from './components/SideNavBar.js';
@@ -42,7 +47,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex font-body-md text-body-md antialiased min-h-screen bg-background text-on-surface">
+    <div className="flex font-sans antialiased min-h-screen bg-[#03081A] text-white">
       {/* Persistent Side Navigation */}
       <SideNavBar
         activeTab={activeTab}
@@ -51,8 +56,8 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        {/* Persistent Top Bar (hidden on LaunchScreen which has its own minimal header) */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-[#03081A]">
+        {/* Top Header Bar (hidden on launch screen for cinematic focus) */}
         {activeTab !== 'launch' && <TopAppBar />}
 
         {/* Screen Canvas */}
