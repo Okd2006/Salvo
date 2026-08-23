@@ -44,7 +44,7 @@ export default [
 
   // TypeScript source files — full type-aware linting
   {
-    files: ['src/agents/**/*.ts', 'src/lib/**/*.ts', 'src/types/**/*.ts', 'src/index.ts', 'scripts/**/*.ts'],
+    files: ['src/agents/**/*.ts', 'src/lib/**/*.ts', 'src/types/**/*.ts', 'src/db/**/*.ts', 'src/evaluation/**/*.ts', 'src/index.ts', 'scripts/**/*.ts', 'tests/**/*.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -77,6 +77,14 @@ export default [
       // Style
       'no-console': 'warn',
       'prefer-const': 'error',
+    },
+  },
+
+  // Test files override — allow floating promises for node:test test() functions
+  {
+    files: ['tests/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
 

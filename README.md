@@ -1,156 +1,189 @@
-# Salvo — AI Revenue Recovery Agent
+# Salvo — Autonomous AI Revenue Recovery Platform
 
-> Salvo doesn't tell merchants what went wrong. It takes responsibility for what happens next.
+> **Salvo doesn't tell merchants what went wrong. It takes responsibility for what happens next.**
 
 Built for the **Razorpay AI Buildathon**.
 
 ---
 
-## What is Salvo?
+## 1. Product Overview
 
-Salvo is an AI-powered revenue recovery agent that:
+Salvo is an autonomous revenue recovery agent that finds revenue lost through failed and abandoned payments, diagnoses why the revenue was lost using Gemini agent reasoning, plans recovery actions, gates every action through deterministic safety policies, executes approved recovery actions through Razorpay APIs, and records an immutable, auditable compliance trail.
 
-1. **Finds** revenue lost through failed and abandoned payments
-2. **Diagnoses** why the revenue was lost using LLM-driven root-cause analysis
-3. **Plans** recovery actions (retries, payment-link re-issuance, routing changes)
-4. **Gates** every action through deterministic safety policies — the LLM never directly executes a payment action
-5. **Executes** approved recovery actions via Razorpay APIs
-6. **Records** a full auditable trail of every decision and action
+### Core Architecture
 
----
-
-## Architecture
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                         Salvo                            │
-│                                                          │
-│  ┌──────────────┐   ┌──────────────┐   ┌─────────────┐  │
-│  │ Diagnose &   │──▶│ Policy Gate  │──▶│   Execute   │  │
-│  │    Plan      │   │(deterministic│   │  (Razorpay  │  │
-│  │  (GPT-4o /   │   │    code)     │   │    APIs)    │  │
-│  │ gpt-4o-mini) │   └──────────────┘   └─────────────┘  │
-│  └──────────────┘                                        │
-│         │                                                │
-│         ▼                                                │
-│  ┌──────────────┐                                        │
-│  │  Audit Log   │  (Supabase / Postgres)                 │
-│  └──────────────┘                                        │
-└──────────────────────────────────────────────────────────┘
+```text
+React Frontend (Stitch-Generated UI)
+          ↓
+  Node.js API Shell
+          ↓
+┌─────────────────┬─────────────────┬─────────────────┐
+│   Gemini API    │  MongoDB Atlas  │  Razorpay Test  │
+│ (Diagnose/Plan) │ (State/Ledger)  │  (Executions)   │
+└─────────────────┴─────────────────┴─────────────────┘
 ```
 
-### Key Design Rules
-
-- **Policy Gate is always deterministic code.** The LLM proposes actions; the gate approves or blocks them based on hard rules. No LLM call can directly trigger a payment mutation.
-- `gpt-4o-mini` — structured classification and failure-code reasoning (cost-efficient, high-volume)
-- `gpt-4o` — merchant-facing explanations and narratives (quality-critical, low-volume)
-
 ---
 
-## Stack
+## 2. Environment Configuration
 
-| Layer     | Technology                          |
-|-----------|-------------------------------------|
-| Frontend  | React · TypeScript · Vite · Tailwind CSS · shadcn/ui · Recharts |
-| Backend   | Node.js · TypeScript                |
-| Database  | Supabase / Postgres                 |
-| AI        | OpenAI API (gpt-4o, gpt-4o-mini)    |
-| Payments  | Razorpay Test Mode APIs             |
-
----
-
-## Getting Started
-
-### 1. Clone and install
+Copy `.env.example` to `.env` and configure your credentials:
 
 ```bash
-git clone <repo-url>
-cd salvo
-cp .env.example .env        # fill in your keys
-npm install
+cp .env.example .env
 ```
 
-### 2. Database setup
+| Variable | Description | Default / Example |
+| :--- | :--- | :--- |
+| `MONGODB_URI` | MongoDB Atlas cluster connection string | `mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority` |
+| `MONGODB_DB_NAME` | Database name | `salvo` |
+| `GEMINI_API_KEY` | Google Gemini API key | `AIza...` |
+| `RAZORPAY_KEY_ID` | Razorpay Test Key ID | `rzp_test_...` |
+| `RAZORPAY_KEY_SECRET` | Razorpay Test Key Secret | `...` |
+| `DATASET_SEED` | Seed key for reproducible synthetic dataset | `salvo-buildathon-v1` |
+| `DATASET_SIZE` | Total number of transactions generated | `1350` |
 
-Apply the schema to your Supabase project:
+*Note: If `MONGODB_URI` is not configured, the repository gracefully persists data to high-performance local mirrors in `data/*.json`.*
 
-```bash
-# In the Supabase SQL editor, run:
-src/db/schema.sql
+---
+
+## 3. MongoDB Collections
+
+Salvo structures financial and execution state across three core collections:
+
+1. **`transactions`**: Complete ledger of payments, customer history, failure taxonomy, hidden ground truth, and simulation traces.
+2. **`recovery_actions`**: Recovery strategies proposed, intervention costs, execution status, and realized yield.
+3. **`audit_logs`**: Chronological event trail tracking diagnosis, deterministic policy checks, and execution states.
+
+---
+
+## 4. Synthetic Dataset Design
+
+> **"The dataset is synthetic and deterministic."**
+
+Running `npm run seed` produces the exact same dataset byte-for-byte across runs using a seeded Mulberry32 PRNG.
+
+### 4.1 Dataset Size & Currency
+* **Records:** 1,350 transactions across 6 merchant verticals.
+* **Currency:** Indian Rupee (INR), stored strictly as **integer paise** (`1 INR = 100 paise`) to prevent floating-point rounding errors.
+
+### 4.2 Failure Taxonomy
+* `temporary_network_failure`: Gateway/acquirer timeout (85% recoverable via `smart_retry`)
+* `bank_decline`: Issuer throttling / velocity limits (52% recoverable via `smart_retry`)
+* `insufficient_funds`: Balance drop (58% recoverable via `payment_link`)
+* `authentication_failure`: 3DS OTP timeout / biometric drop (72% recoverable via `reminder`)
+* `payment_method_issue`: Card expiry / mandate limits (66% recoverable via `payment_method_switch`)
+* `customer_abandonment`: Checkout drop at UPI intent (42% recoverable via `payment_link`)
+* `expired_payment`: QR / Link validity expired (46% recoverable via `payment_link`)
+* `suspected_risk`: Fraud flags / velocity spikes (**0% recoverable** — Policy Gate blocks)
+* `unrecoverable`: Stolen card / closed account (**0% recoverable** — Policy Gate blocks)
+
+### 4.3 Ground Truth Isolation
+Every transaction document contains an evaluation-only `groundTruth` object:
+```json
+"groundTruth": {
+  "recoverable": true,
+  "optimalStrategy": "smart_retry",
+  "expectedRecoveryPaise": 840000,
+  "shouldIntervene": true,
+  "interventionCostPaise": 150,
+  "riskScore": 0.05
+}
 ```
+*Ground truth is strictly isolated from model prompt contexts and exists exclusively for evaluation.*
 
-### 3. Seed test transactions
+---
 
+## 5. Deterministic Evaluation Engine
+
+The evaluation engine (`npm run evaluate`) processes the **complete dataset** without sampling.
+
+### 5.1 Financial Formulas
+* **Gross Recovery:** Sum of actual recovered amounts from executed actions ($\sum \text{actualRecoveryPaise}$).
+* **Intervention Cost:** Sum of API and notification costs incurred ($\sum \text{interventionCostPaise}$).
+* **Net Revenue Recovered:** $\text{Gross Recovery} - \text{Intervention Cost}$.
+* **Recovery Yield on Loss:** $\frac{\text{Gross Recovery}}{\text{Total Failed Volume}} \times 100$.
+
+### 5.2 Precision & Recall Metrics
+* **Positive Prediction ($P$):** Salvo recommends an active recovery action (`strategy !== 'no_action'`).
+* **Actual Positive ($A$):** Ground truth indicates transaction is genuinely recoverable (`groundTruth.recoverable === true`).
+* **True Positive ($TP$):** Recommended active recovery & transaction is recoverable.
+* **False Positive ($FP$):** Recommended active recovery & transaction is unrecoverable.
+* **False Negative ($FN$):** Recommended `no_action` & transaction was recoverable.
+* **True Negative ($TN$):** Recommended `no_action` & transaction was unrecoverable.
+$$\text{Precision} = \frac{TP}{TP + FP} \quad\quad \text{Recall} = \frac{TP}{TP + FN} \quad\quad \text{F1} = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$$
+
+---
+
+## 6. Execution Commands
+
+### Seed Dataset
 ```bash
 npm run seed
 ```
 
-### 4. Run the agent
-
-```bash
-npm run dev
-```
-
-### 5. Evaluate
-
+### Run Batch Evaluation
 ```bash
 npm run evaluate
 ```
 
----
-
-## Available Scripts
-
-| Script           | Description                                      |
-|------------------|--------------------------------------------------|
-| `npm run dev`    | Start the agent in watch mode (tsx)              |
-| `npm run build`  | Compile TypeScript to `dist/`                    |
-| `npm run lint`   | Run ESLint over all `.ts` files                  |
-| `npm run format` | Format with Prettier                             |
-| `npm run seed`   | Seed synthetic failed transactions into Supabase |
-| `npm run evaluate` | Run recovery evaluation against seeded data   |
-| `npm run typecheck` | Type-check without emitting files            |
-
----
-
-## Repository Structure
-
+### Run Automated Unit Test Suite
+```bash
+npm run test
 ```
-salvo/
-├── README.md
-├── package.json
-├── tsconfig.json
-├── .env.example
-├── .eslintrc.cjs
-├── .prettierrc
-├── scripts/
-│   ├── seed_transactions.ts   # Seed synthetic Razorpay-style failed transactions
-│   └── evaluate.ts            # Evaluate recovery rate against seeded data
-├── src/
-│   ├── index.ts               # Entry point
-│   ├── types/
-│   │   └── index.ts           # Shared typed interfaces
-│   ├── agents/
-│   │   ├── diagnosePlan.ts    # LLM-driven diagnosis + recovery plan
-│   │   ├── policyGate.ts      # Deterministic safety gate
-│   │   └── execute.ts         # Razorpay action executor
-│   ├── lib/
-│   │   ├── openai.ts          # OpenAI client + helpers
-│   │   └── razorpay.ts        # Razorpay client + helpers
-│   └── db/
-│       └── schema.sql         # Postgres schema (Supabase)
-└── data/
-    └── .gitkeep
+
+### Run Production Build
+```bash
+npm run build
+```
+
+### Run Code Quality Linter
+```bash
+npm run lint
 ```
 
 ---
 
-## Environment Variables
+## 7. Sample Evaluation Terminal Output
 
-See [`.env.example`](.env.example) for all required variables.
+```text
+========================================
+  SALVO BATCH EVALUATION REPORT
+========================================
 
----
+  Transactions Evaluated:   1,350
+  Total Failed Revenue:     ₹1,99,21,910
+  Actually Recoverable:     ₹1,86,24,129
+  Predicted Recovery:       ₹1,29,33,177
+  Gross Actual Recovery:    ₹1,55,19,083
+  Intervention Cost:        ₹2,901
+  ────────────────────────────────────────
+  NET REVENUE RECOVERED:    ₹1,55,16,182
+  Recovery Yield on Loss:   77.9%
+  ────────────────────────────────────────
+  Precision:                99.1%
+  Recall:                   95.9%
+  F1 Score:                 97.5%
+  ────────────────────────────────────────
+  Safety Policy Blocks:     145
+  Successful Recoveries:    1,142
+  Failed Recovery Attempts: 45
+  Unattempted / Isolated:   163
 
-## License
+========================================
+  STRATEGY-LEVEL PERFORMANCE BREAKDOWN
+========================================
 
-MIT
+  Strategy                 | Predicted | Optimal | Accuracy |    Gross Yield |       Cost |       Net Gain
+  ────────────────────────────────────────────────────────────────────────────────────────────────────
+  smart retry              |       491 |     551 |    94.7% |     ₹62,49,809 |       ₹871 |     ₹62,48,938
+  payment method switch    |       137 |     128 |    80.3% |     ₹16,84,564 |       ₹532 |     ₹16,84,032
+  payment link             |       373 |     386 |    89.3% |     ₹51,95,553 |       ₹983 |     ₹51,94,571
+  reminder                 |       214 |     191 |    76.6% |     ₹23,89,157 |       ₹516 |     ₹23,88,642
+  no action                |       135 |      94 |    61.5% |             ₹0 |         ₹0 |             ₹0
+
+========================================
+  Machine-readable results written to:
+  C:\Users\Omkrrish\Salvo\evaluation-results.json
+========================================
+```

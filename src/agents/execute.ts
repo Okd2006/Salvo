@@ -49,11 +49,11 @@ async function handleSendPaymentLink(
   const linkParams: Parameters<typeof createPaymentLink>[0] = {
     amountPaise: transaction.amountPaise,
     currency: transaction.currency,
-    description: `Recovery payment for order ${transaction.orderId}`,
-    orderId: transaction.orderId,
+    description: `Recovery payment for order ${transaction.orderId || transaction.transactionId}`,
   };
-  if (transaction.email !== null) linkParams.customerEmail = transaction.email;
-  if (transaction.contact !== null) linkParams.customerContact = transaction.contact;
+  if (transaction.orderId) linkParams.orderId = transaction.orderId;
+  if (transaction.email) linkParams.customerEmail = transaction.email;
+  if (transaction.contact) linkParams.customerContact = transaction.contact;
 
   const link = await createPaymentLink(linkParams);
 
@@ -79,11 +79,11 @@ async function handleRetryPayment(
   const linkParams: Parameters<typeof createPaymentLink>[0] = {
     amountPaise: transaction.amountPaise,
     currency: transaction.currency,
-    description: `Retry payment for order ${transaction.orderId}`,
-    orderId: transaction.orderId,
+    description: `Retry payment for order ${transaction.orderId || transaction.transactionId}`,
   };
-  if (transaction.email !== null) linkParams.customerEmail = transaction.email;
-  if (transaction.contact !== null) linkParams.customerContact = transaction.contact;
+  if (transaction.orderId) linkParams.orderId = transaction.orderId;
+  if (transaction.email) linkParams.customerEmail = transaction.email;
+  if (transaction.contact) linkParams.customerContact = transaction.contact;
 
   const link = await createPaymentLink(linkParams);
   return {
@@ -151,9 +151,11 @@ export async function executeAction(
   action: RecoveryAction,
   policyResult: PolicyResult,
 ): Promise<ExecutionResult> {
+  const txnId = transaction.transactionId || transaction.id || '';
+
   // Guard: never execute an unapproved action
   if (policyResult.verdict !== 'approved') {
-    const auditEvent = makeAuditEvent(transaction.id, 'action_blocked', {
+    const auditEvent = makeAuditEvent(txnId, 'action_blocked', {
       action,
       policyResult,
       reason: 'Called executeAction with a non-approved PolicyResult',
@@ -167,7 +169,7 @@ export async function executeAction(
 
   const handler = ACTION_HANDLERS[action.type];
   if (!handler) {
-    const auditEvent = makeAuditEvent(transaction.id, 'action_failed', {
+    const auditEvent = makeAuditEvent(txnId, 'action_failed', {
       action,
       reason: `No handler registered for action type: ${action.type}`,
     });
@@ -185,7 +187,7 @@ export async function executeAction(
       action.type === 'flag_for_manual_review' ? 'manual_review_flagged' : 'action_executed';
 
     const auditEvent = makeAuditEvent(
-      transaction.id,
+      txnId,
       eventType,
       { action, policyResult },
       razorpayPayload,
@@ -194,7 +196,7 @@ export async function executeAction(
     return { success: true, auditEvent, razorpayPayload };
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err);
-    const auditEvent = makeAuditEvent(transaction.id, 'action_failed', {
+    const auditEvent = makeAuditEvent(txnId, 'action_failed', {
       action,
       policyResult,
       error,
@@ -211,14 +213,18 @@ function makeAuditEvent(
   payload: Record<string, unknown>,
   razorpayResponse?: Record<string, unknown>,
 ): AuditEvent {
-  // Build object without the optional field, then conditionally add it.
-  // Required by exactOptionalPropertyTypes: true — undefined != absent.
+  const eventId = randomUUID();
+  const timestamp = new Date().toISOString();
   const event: AuditEvent = {
-    id: randomUUID(),
+    eventId,
+    id: eventId,
     transactionId,
     eventType,
+    actor: 'razorpay_executor',
+    details: payload,
     payload,
-    createdAt: new Date().toISOString(),
+    timestamp,
+    createdAt: timestamp,
   };
   if (razorpayResponse !== undefined) {
     event.razorpayResponse = razorpayResponse;

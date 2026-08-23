@@ -209,9 +209,10 @@ export async function diagnosePlan(
   const expectedRecoveryPaise = Math.round(
     transaction.amountPaise * geminiPayload.predictedRecovery,
   );
+  const txnId = transaction.transactionId || transaction.id || '';
 
   return {
-    transactionId: transaction.id,
+    transactionId: txnId,
     geminiPayload,
     merchantNarrative,
     proposedActions,
@@ -231,13 +232,14 @@ export async function diagnoseBatch(
 ): Promise<{ result?: DiagnosisResult; error?: string; transactionId: string }[]> {
   return Promise.all(
     transactions.map(async (tx) => {
+      const txnId = tx.transactionId || tx.id || '';
       try {
         const history = await getHistory(tx);
         const result = await diagnosePlan(tx, history);
-        return { transactionId: tx.id, result };
+        return { transactionId: txnId, result };
       } catch (err) {
         return {
-          transactionId: tx.id,
+          transactionId: txnId,
           error: err instanceof Error ? err.message : String(err),
         };
       }

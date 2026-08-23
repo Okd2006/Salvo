@@ -200,8 +200,10 @@ export function evaluatePolicy(
     }
   }
 
+  const txnId = transaction.transactionId || transaction.id || '';
+
   return {
-    transactionId: transaction.id,
+    transactionId: txnId,
     action,
     verdict: finalVerdict,
     triggeredRules,

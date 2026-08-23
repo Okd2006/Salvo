@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "seed": "tsx scripts/seed_transactions.ts",
     "evaluate": "tsx scripts/evaluate.ts",
+    "test": "tsx --test tests/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "lucide-react": "^0.475.0",
+    "mongodb": "^7.5.0",
     "razorpay": "^2.9.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

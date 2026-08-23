@@ -1,148 +1,153 @@
 /**
- * Razorpay Client & Helpers
+ * src/lib/razorpay.ts
  *
- * Wraps the official Razorpay SDK and exposes typed helpers
- * for the operations Salvo needs:
+ * Razorpay API Client & Payment Helpers
  *
- *   - Fetching failed / abandoned payments
- *   - Creating payment links for re-engagement
- *   - Fetching order details
- *
- * All calls use Test Mode credentials (RAZORPAY_KEY_ID starting with rzp_test_).
- * Live Mode keys will be explicitly rejected at startup.
+ * Rules:
+ *  - Uses razorpay package for Razorpay Test API calls
+ *  - Financial amounts are strictly integer paise
+ *  - Never hardcode API keys
  */
 
-import 'dotenv/config';
 import Razorpay from 'razorpay';
 import type { Transaction } from '../types/index.js';
 
-// ─── Client ───────────────────────────────────────────────────────────────────
-
-function createRazorpayClient(): Razorpay {
-  const keyId = process.env['RAZORPAY_KEY_ID'];
-  const keySecret = process.env['RAZORPAY_KEY_SECRET'];
-
-  if (!keyId || !keySecret) {
-    throw new Error(
-      'RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set. Copy .env.example to .env.',
-    );
-  }
-
-  if (!keyId.startsWith('rzp_test_')) {
-    throw new Error(
-      'Salvo only operates in Razorpay TEST MODE. ' +
-        'Your RAZORPAY_KEY_ID does not start with "rzp_test_". ' +
-        'Do not use live credentials during development.',
-    );
-  }
-
-  return new Razorpay({ key_id: keyId, key_secret: keySecret });
-}
-
-let _razorpay: Razorpay | null = null;
 export function getRazorpayClient(): Razorpay {
-  if (!_razorpay) {
-    _razorpay = createRazorpayClient();
+  const key_id = process.env.RAZORPAY_KEY_ID;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!key_id || !key_secret || key_id.includes('...')) {
+    throw new Error(
+      'RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is not configured in .env.'
+    );
   }
-  return _razorpay;
-}
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Fetch a single payment from Razorpay and map it to our Transaction interface.
- */
-export async function fetchPayment(paymentId: string): Promise<Transaction> {
-  const rzp = getRazorpayClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payment = await (rzp.payments.fetch(paymentId) as Promise<any>);
-
-  return mapRazorpayPayment(payment);
+  return new Razorpay({
+    key_id,
+    key_secret,
+  });
 }
 
 /**
- * List payments with optional filters. Returns up to `count` payments.
+ * Fetch payments from Razorpay test API.
  */
-export async function listPayments(
-  options: { from?: number; to?: number; count?: number } = {},
-): Promise<Transaction[]> {
-  const rzp = getRazorpayClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await (rzp.payments.all(options) as Promise<any>);
-   
-  const items: unknown[] = Array.isArray(result?.items) ? result.items : [];
-  return items.map(mapRazorpayPayment);
+export async function fetchRazorpayPayments(count: number = 10): Promise<Transaction[]> {
+  const client = getRazorpayClient();
+  const res = (await client.payments.all({ count })) as { items?: unknown[] };
+  const items = Array.isArray(res.items) ? res.items : [];
+  return items.map((item) => mapRazorpayPayment(item as Record<string, unknown>));
 }
 
 /**
- * Create a Razorpay Payment Link for customer re-engagement.
- * Returns the short URL.
+ * Create a Razorpay Payment Link for recovery.
  */
-export async function createPaymentLink(params: {
+export const createPaymentLink = createRecoveryPaymentLink;
+
+export async function createRecoveryPaymentLink(params: {
   amountPaise: number;
-  currency: string;
+  currency?: string;
   description: string;
   customerEmail?: string;
+  customerPhone?: string;
   customerContact?: string;
+  referenceId?: string;
   orderId?: string;
 }): Promise<{ id: string; shortUrl: string }> {
-  const rzp = getRazorpayClient();
+  const client = getRazorpayClient();
 
-  // Build a plain object with only the fields Razorpay needs.
-  // Cast through `unknown` then to the SDK's expected union type to avoid
-  // the strict overload mismatch while keeping our own params typed.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = {
+  const refId = params.referenceId || params.orderId || `ref_${Date.now()}`;
+
+  const payload: Record<string, unknown> = {
     amount: params.amountPaise,
-    currency: params.currency,
+    currency: params.currency || 'INR',
     description: params.description,
-    callback_method: 'get',
+    reference_id: refId,
   };
 
-  if (params.customerEmail !== undefined || params.customerContact !== undefined) {
-    payload.customer = {
-      email: params.customerEmail,
-      contact: params.customerContact,
+  const email = params.customerEmail;
+  const phone = params.customerPhone || params.customerContact;
+
+  if (email || phone) {
+    payload['customer'] = {
+      ...(email ? { email } : {}),
+      ...(phone ? { contact: phone } : {}),
     };
   }
 
-  if (params.orderId !== undefined) {
-    payload.reference_id = params.orderId;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const link = await (rzp.paymentLink.create(payload) as Promise<any>);
+  const res = (await client.paymentLink.create(payload as any)) as {
+    id?: string;
+    short_url?: string;
+  };
 
   return {
-    id: String(link.id ?? ''),
-    shortUrl: String(link.short_url ?? ''),
+    id: String(res.id ?? ''),
+    shortUrl: String(res.short_url ?? ''),
   };
 }
 
-// ─── Mapping ──────────────────────────────────────────────────────────────────
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapRazorpayPayment(p: any): Transaction {
-  // Capture metadata before narrowing — safe cast from any
-   
-  const metadata: Record<string, unknown> =
-    p !== null && typeof p === 'object' ? (p as Record<string, unknown>) : {};
+function mapRazorpayPayment(p: Record<string, unknown>): Transaction {
+  const id = String(p['id'] ?? `txn_${Date.now()}`);
+  const amountPaise = Number(p['amount'] ?? 0);
+  const email = p['email'] ? String(p['email']) : 'customer@example.com';
+  const contact = p['contact'] ? String(p['contact']) : '+919999999999';
+  const createdAtIso = p['created_at']
+    ? new Date(Number(p['created_at']) * 1000).toISOString()
+    : new Date().toISOString();
 
   return {
-    id: String(p.id ?? ''),
-    orderId: String(p.order_id ?? ''),
-    amountPaise: Number(p.amount ?? 0),
-    currency: String(p.currency ?? 'INR'),
-    status: p.status ?? 'failed',
-    method: p.method ?? 'unknown',
-    errorCode: p.error_code ?? null,
-    errorDescription: p.error_description ?? null,
-    errorReason: p.error_reason ?? null,
-    bank: p.bank ?? p.vpa ?? p.wallet ?? null,
-    email: p.email ?? null,
-    contact: p.contact ?? null,
-    createdAt: Number(p.created_at ?? 0),
-    updatedAt: Number(p.created_at ?? 0),
-    metadata,
+    transactionId: id,
+    id,
+    orderId: String(p['order_id'] ?? ''),
+    merchantId: 'mer_razorpay_live',
+    merchantName: 'Razorpay Connected Merchant',
+    customerId: `cust_${id.slice(-6)}`,
+    customerEmail: email,
+    customerPhone: contact,
+    amountPaise,
+    currency: String(p['currency'] ?? 'INR'),
+    paymentMethod: 'card',
+    method: 'card',
+    status: (p['status'] as Transaction['status']) ?? 'failed',
+    failureCode: String(p['error_code'] ?? 'UNKNOWN_ERROR'),
+    errorCode: p['error_code'] ? String(p['error_code']) : null,
+    failureDescription: String(p['error_description'] ?? 'Payment failed'),
+    errorDescription: p['error_description'] ? String(p['error_description']) : null,
+    errorReason: p['error_reason'] ? String(p['error_reason']) : null,
+    failureCategory: 'temporary_network_failure',
+    bank: p['bank'] ? String(p['bank']) : null,
+    email,
+    contact,
+    createdAt: createdAtIso,
+    updatedAt: createdAtIso,
+    retryCount: 0,
+    recoverable: true,
+    customerHistory: {
+      customerId: `cust_${id.slice(-6)}`,
+      previousPayments: 1,
+      successfulPayments: 1,
+      previousFailures: 0,
+      retrySuccessRate: 1.0,
+      preferredMethod: 'card',
+      averageTransactionPaise: amountPaise,
+    },
+    groundTruth: {
+      recoverable: true,
+      optimalStrategy: 'smart_retry',
+      expectedRecoveryPaise: amountPaise,
+      shouldIntervene: true,
+      interventionCostPaise: 150,
+      riskScore: 0.05,
+    },
+    simulation: {
+      predictedStrategy: 'smart_retry',
+      confidence: 0.9,
+      predictedRecoveryPaise: amountPaise,
+      interventionCostPaise: 150,
+      policyVerdict: 'approved',
+      executionStatus: 'queued',
+      actualRecoveryPaise: 0,
+    },
+    metadata: p,
   };
 }

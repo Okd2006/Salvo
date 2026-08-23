@@ -1,17 +1,20 @@
 /**
- * Salvo — Shared Type Definitions
+ * Salvo — Shared Type Definitions & Schemas
  *
- * These interfaces form the strict contract between the three backend components:
- *   1. Diagnose & Plan  (src/agents/diagnosePlan.ts)   — Gemini-powered
- *   2. Policy Gate      (src/agents/policyGate.ts)     — deterministic code
- *   3. Execute          (src/agents/execute.ts)        — Razorpay API calls
+ * Single source of truth for:
+ *   1. Transaction, Customer History, Failure Categories
+ *   2. Recovery Strategies & Ground Truth (Evaluation only)
+ *   3. MongoDB Collections: transactions, recovery_actions, audit_logs
+ *   4. Deterministic Evaluation Engine Contracts
  *
- * RULE: Financial calculations are NEVER derived from LLM prose.
- *       All monetary values are computed by deterministic application code.
+ * RULES:
+ *  - Financial calculations are ALWAYS in integer paise (1 INR = 100 paise)
+ *  - No floating point arithmetic for financial sums
+ *  - Ground truth fields exist strictly for evaluation and are never sent to AI
  */
 
 // ─────────────────────────────────────────────────────────────
-// Transaction
+// 1. Transaction & Domain Primitives
 // ─────────────────────────────────────────────────────────────
 
 export type TransactionStatus =
@@ -26,147 +29,158 @@ export type PaymentMethod =
   | 'upi'
   | 'netbanking'
   | 'wallet'
-  | 'emi'
-  | 'cod'
-  | 'unknown';
+  | 'emi';
 
-export interface Transaction {
-  /** Razorpay payment ID, e.g. pay_XXXXXXXXXXXXX */
-  id: string;
-  /** Order ID the payment belongs to */
-  orderId: string;
-  /** Amount in paise (INR × 100) */
-  amountPaise: number;
-  currency: string;
-  status: TransactionStatus;
-  method: PaymentMethod;
-  /** Razorpay error code, e.g. BAD_REQUEST_ERROR */
-  errorCode: string | null;
-  /** Human-readable error description from Razorpay */
-  errorDescription: string | null;
-  /** Razorpay internal error reason */
-  errorReason: string | null;
-  /** Issuing bank / VPA / wallet provider */
-  bank: string | null;
-  /** Customer email */
-  email: string | null;
-  /** Customer contact number */
-  contact: string | null;
-  /** Unix timestamp of payment creation */
-  createdAt: number;
-  /** Unix timestamp of last status update */
-  updatedAt: number;
-  /** Raw Razorpay metadata (arbitrary JSON) */
-  metadata: Record<string, unknown>;
-}
+export type FailureCategory =
+  | 'temporary_network_failure'
+  | 'bank_decline'
+  | 'insufficient_funds'
+  | 'authentication_failure'
+  | 'payment_method_issue'
+  | 'customer_abandonment'
+  | 'expired_payment'
+  | 'suspected_risk'
+  | 'unrecoverable';
 
-// ─────────────────────────────────────────────────────────────
-// Customer History  (input to Diagnose & Plan)
-// ─────────────────────────────────────────────────────────────
-
-export interface CustomerHistory {
-  customerId: string;
-  totalTransactions: number;
-  successfulTransactions: number;
-  failedTransactions: number;
-  /** Historical retry success rate 0–1, computed deterministically */
-  retrySuccessRate: number;
-  preferredMethod: PaymentMethod;
-  averageTransactionPaise: number;
-}
-
-// ─────────────────────────────────────────────────────────────
-// Diagnosis Result  (Gemini structured output — validated before Policy Gate)
-// ─────────────────────────────────────────────────────────────
-
-/**
- * Nature of the failure — used by Policy Gate for hard rules.
- *
- * temporary          → transient network/bank issue; retry is viable
- * customer           → user-caused (abandoned, insufficient funds); engagement needed
- * payment_method     → method-specific issue; switch may work
- * unrecoverable      → fraud block, permanent decline; no automated action
- */
-export type FailureType = 'temporary' | 'customer' | 'payment_method' | 'unrecoverable';
-
-/**
- * The recovery strategy recommended by Gemini.
- * The Policy Gate decides whether this is permitted.
- */
-export type RecommendedStrategy =
+export type RecoveryStrategy =
   | 'smart_retry'
   | 'payment_method_switch'
   | 'payment_link'
   | 'reminder'
   | 'no_action';
 
-/**
- * Structured output from Gemini's Diagnose & Plan stage.
- *
- * IMPORTANT: `predictedRecovery` is a PROBABILITY from Gemini (0–1).
- * Actual INR recovery amounts are computed deterministically in application code
- * by multiplying this probability × transaction.amountPaise.
- *
- * Never render `predictedRecovery` as a currency amount directly.
- */
-export interface GeminiDiagnosisPayload {
-  failureType: FailureType;
-  /** Gemini's estimate of recoverability 0–1 */
-  recoverability: number;
-  recommendedStrategy: RecommendedStrategy;
-  /** Confidence in the diagnosis 0–1 */
-  confidence: number;
-  /** Specific evidence supporting the diagnosis (max 5 items) */
-  evidence: string[];
-  /**
-   * Probability 0–1 that the recovery strategy will succeed.
-   * NOT an INR amount — application code computes expected INR.
-   */
-  predictedRecovery: number;
+// Alias for Gemini module compatibility
+export type RecommendedStrategy = RecoveryStrategy;
+export type FailureType = 'temporary' | 'customer' | 'payment_method' | 'unrecoverable';
+
+// ─────────────────────────────────────────────────────────────
+// 2. Customer Profile & History
+// ─────────────────────────────────────────────────────────────
+
+export interface CustomerHistory {
+  customerId: string;
+  previousPayments: number;
+  successfulPayments: number;
+  previousFailures: number;
+  /** Historical retry success rate 0–1, computed deterministically */
+  retrySuccessRate: number;
+  preferredMethod: PaymentMethod;
+  averageTransactionPaise: number;
+  accountAgeDays?: number;
+
+  // Compatibility aliases
+  totalTransactions?: number;
+  successfulTransactions?: number;
+  failedTransactions?: number;
 }
 
+// ─────────────────────────────────────────────────────────────
+// 3. Ground Truth (HIDDEN / EVALUATION ONLY)
+// ─────────────────────────────────────────────────────────────
+
 /**
- * Full DiagnosisResult after Gemini output is validated and enriched
- * with deterministically-computed financial projections.
+ * Ground truth represents the actual deterministic reality of a transaction.
+ * It is used EXCLUSIVELY by the evaluation engine.
+ * Never expose groundTruth to Gemini prompt contexts or public client endpoints.
  */
-export interface DiagnosisResult {
-  transactionId: string;
-  /** Validated Gemini structured output */
-  geminiPayload: GeminiDiagnosisPayload;
-  /**
-   * Merchant-facing explanation from Gemini.
-   * PRESENTATION ONLY — never used for financial calculations.
-   */
-  merchantNarrative: string;
-  /**
-   * Proposed recovery actions derived from recommendedStrategy.
-   * Ordered by estimated success probability.
-   */
-  proposedActions: RecoveryAction[];
-  /**
-   * Expected recovery amount in paise.
-   * DETERMINISTIC: amountPaise × geminiPayload.predictedRecovery
-   * Computed by application code, not by Gemini.
-   */
+export interface GroundTruth {
+  /** True if the transaction is genuinely recoverable under optimal intervention */
+  recoverable: boolean;
+  /** The single optimal recovery strategy */
+  optimalStrategy: RecoveryStrategy;
+  /** Expected recoverable yield in integer paise */
   expectedRecoveryPaise: number;
-  diagnosedAt: string; // ISO-8601
+  /** True if safety policy permits automated recovery intervention */
+  shouldIntervene: boolean;
+  /** Baseline intervention cost in integer paise */
+  interventionCostPaise: number;
+  /** Risk classification score 0–1 */
+  riskScore: number;
 }
 
-// Legacy alias kept for Policy Gate compatibility during migration
-export type FailureCategory =
-  | 'insufficient_funds'
-  | 'card_declined'
-  | 'network_timeout'
-  | 'authentication_failure'
-  | 'user_abandoned'
-  | 'bank_downtime'
-  | 'invalid_details'
-  | 'fraud_block'
-  | 'unknown';
+// ─────────────────────────────────────────────────────────────
+// 4. Simulation / Execution Trace
+// ─────────────────────────────────────────────────────────────
+
+export type PolicyVerdict = 'approved' | 'blocked' | 'needs_review';
+export type ExecutionStatus = 'recovered' | 'failed' | 'blocked' | 'queued' | 'not_attempted';
+
+export interface SimulationTrace {
+  predictedStrategy: RecoveryStrategy;
+  confidence: number;
+  predictedRecoveryPaise: number;
+  interventionCostPaise: number;
+  policyVerdict: PolicyVerdict;
+  executionStatus: ExecutionStatus;
+  actualRecoveryPaise: number;
+  executedAt?: string;
+}
 
 // ─────────────────────────────────────────────────────────────
-// Recovery Action
+// 5. MongoDB Collections & Documents
 // ─────────────────────────────────────────────────────────────
+
+/**
+ * Primary document in `transactions` collection.
+ */
+export interface TransactionDocument {
+  transactionId: string;
+  merchantId: string;
+  merchantName: string;
+  customerId: string;
+  customerEmail: string;
+  customerPhone: string;
+  /** Integer paise (1 INR = 100 paise) */
+  amountPaise: number;
+  currency: string;
+  paymentMethod: PaymentMethod;
+  status: TransactionStatus;
+  failureCode: string;
+  failureDescription: string;
+  failureCategory: FailureCategory;
+  createdAt: string; // ISO-8601
+  updatedAt: string; // ISO-8601
+  customerHistory: CustomerHistory;
+  retryCount: number;
+  /** Derived top-level indicator */
+  recoverable: boolean;
+  /** Evaluation-only ground truth — isolated from production prompts */
+  groundTruth: GroundTruth;
+  /** Baseline simulation output */
+  simulation: SimulationTrace;
+
+  // Compatibility aliases for existing backend modules
+  id?: string;
+  orderId?: string;
+  method?: PaymentMethod;
+  errorCode?: string | null;
+  errorDescription?: string | null;
+  errorReason?: string | null;
+  bank?: string | null;
+  email?: string | null;
+  contact?: string | null;
+  metadata?: Record<string, unknown>;
+}
+
+// Standard application transaction interface
+export type Transaction = TransactionDocument;
+
+/**
+ * Document in `recovery_actions` collection.
+ */
+export interface RecoveryActionDocument {
+  actionId: string;
+  transactionId: string;
+  strategy: RecoveryStrategy;
+  predictedRecoveryPaise: number;
+  actualRecoveryPaise: number;
+  interventionCostPaise: number;
+  confidence: number;
+  policyStatus: PolicyVerdict;
+  executionStatus: ExecutionStatus;
+  createdAt: string;
+  executedAt: string | null;
+}
 
 export type ActionType =
   | 'retry_payment'
@@ -178,70 +192,130 @@ export type ActionType =
 
 export interface RecoveryAction {
   type: ActionType;
-  /** Human-readable rationale for proposing this action */
   rationale: string;
-  /** Parameters consumed by the Execute layer */
   params: Record<string, unknown>;
-  /** Estimated probability this action leads to successful payment (0–1) */
   estimatedSuccessProbability: number;
 }
-
-// ─────────────────────────────────────────────────────────────
-// Policy Result  (output of the deterministic Policy Gate)
-// ─────────────────────────────────────────────────────────────
-
-export type PolicyVerdict = 'approved' | 'blocked' | 'needs_review';
 
 export interface PolicyResult {
   transactionId: string;
   action: RecoveryAction;
   verdict: PolicyVerdict;
-  /** Policy rule(s) that produced this verdict */
   triggeredRules: string[];
-  /** Human-readable explanation of the gate decision */
   explanation: string;
-  evaluatedAt: string; // ISO-8601
+  evaluatedAt: string;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Audit Event
-// ─────────────────────────────────────────────────────────────
-
+/**
+ * Document in `audit_logs` collection.
+ */
 export type AuditEventType =
+  | 'transaction_created'
+  | 'diagnosis_created'
   | 'diagnosis_completed'
+  | 'recovery_recommended'
+  | 'policy_checked'
   | 'policy_evaluated'
   | 'action_approved'
-  | 'action_blocked'
   | 'action_executed'
+  | 'action_blocked'
   | 'action_failed'
+  | 'execution_failed'
+  | 'fallback_selected'
+  | 'recovery_completed'
   | 'recovery_successful'
   | 'manual_review_flagged';
 
-export interface AuditEvent {
-  id: string; // UUID
+export interface AuditLogDocument {
+  eventId: string;
   transactionId: string;
   eventType: AuditEventType;
-  /** Snapshot of the relevant data at the time of the event */
-  payload: Record<string, unknown>;
-  /** Razorpay API response if this event involved an API call */
+  actor: 'system' | 'gemini_agent' | 'policy_gate' | 'razorpay_executor';
+  details: Record<string, unknown>;
+  timestamp: string; // ISO-8601
+
+  // Compatibility aliases
+  id?: string;
+  payload?: Record<string, unknown>;
   razorpayResponse?: Record<string, unknown>;
-  createdAt: string; // ISO-8601
+  createdAt?: string;
+}
+
+export type AuditEvent = AuditLogDocument;
+
+// ─────────────────────────────────────────────────────────────
+// 6. Gemini Integration Contracts (Used in Phase 2)
+// ─────────────────────────────────────────────────────────────
+
+export interface GeminiDiagnosisPayload {
+  failureType: FailureType;
+  recoverability: number;
+  recommendedStrategy: RecommendedStrategy;
+  confidence: number;
+  evidence: string[];
+  predictedRecovery: number;
+}
+
+export interface DiagnosisResult {
+  transactionId: string;
+  geminiPayload: GeminiDiagnosisPayload;
+  merchantNarrative: string;
+  proposedActions: RecoveryAction[];
+  expectedRecoveryPaise: number;
+  diagnosedAt: string;
 }
 
 // ─────────────────────────────────────────────────────────────
-// Evaluation (used by scripts/evaluate.ts)
+// 7. Evaluation Engine Contracts
 // ─────────────────────────────────────────────────────────────
 
-export interface EvaluationResult {
+export interface StrategyPerformanceMetrics {
+  strategy: RecoveryStrategy;
+  /** Count of transactions where model predicted this strategy */
+  predictedCount: number;
+  /** Count of transactions where ground truth optimal was this strategy */
+  groundTruthOptimalCount: number;
+  /** Count of correct recommendations (predicted === optimal) */
+  correctPredictions: number;
+  /** Count of incorrect recommendations */
+  incorrectPredictions: number;
+  /** Total gross revenue recovered under this strategy in paise */
+  recoveryAmountPaise: number;
+  /** Total cost incurred executing this strategy in paise */
+  interventionCostPaise: number;
+  /** Net recovery = recoveryAmountPaise - interventionCostPaise in paise */
+  netRecoveryPaise: number;
+  /** Recovery accuracy rate (correct / predicted) */
+  accuracyRate: number;
+}
+
+export interface ConfusionMatrix {
+  truePositives: number;
+  falsePositives: number;
+  falseNegatives: number;
+  trueNegatives: number;
+  precision: number;
+  recall: number;
+  f1Score: number;
+}
+
+export interface EvaluationReport {
+  evaluatedAt: string;
+  seed: string;
   totalTransactions: number;
-  diagnosisAttempted: number;
-  recoveryActionsProposed: number;
-  actionsApprovedByGate: number;
-  actionsBlocked: number;
-  actionsExecuted: number;
-  successfulRecoveries: number;
-  /** Recovered amount in paise — deterministic computation */
-  totalRecoveredPaise: number;
-  recoveryRatePercent: number;
-  evaluatedAt: string; // ISO-8601
+  totalFailedRevenuePaise: number;
+  totalActuallyRecoverablePaise: number;
+  predictedRecoverableRevenuePaise: number;
+  actualRecoveryPaise: number;
+  interventionCostPaise: number;
+  netRecoveryPaise: number;
+  recoveryYieldPercent: number;
+  confusionMatrix: ConfusionMatrix;
+  policyBlockedCount: number;
+  successfulRecoveriesCount: number;
+  failedRecoveryAttemptsCount: number;
+  unattemptedCount: number;
+  strategyBreakdown: Record<RecoveryStrategy, StrategyPerformanceMetrics>;
 }
+
+export type EvaluationResult = EvaluationReport;

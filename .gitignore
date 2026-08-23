@@ -1,4 +1,6 @@
 .env
+.env.local
+.env.*.local
 node_modules/
 dist/
 *.log
@@ -6,7 +8,7 @@ dist/
 Thumbs.db
 data/*.json
 data/*.csv
+evaluation-results.json
 .stitch-mcp/
 stitch_output/
 stitch_src/
-
