@@ -12,11 +12,13 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "seed": "tsx scripts/seed_transactions.ts",
+    "diagnose": "tsx scripts/diagnose.ts",
     "evaluate": "tsx scripts/evaluate.ts",
     "test": "tsx --test tests/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@google/genai": "^2.18.0",
     "@google/generative-ai": "^0.21.0",
     "@supabase/supabase-js": "^2.44.4",
     "clsx": "^2.1.1",

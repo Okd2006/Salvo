@@ -1,16 +1,14 @@
 # Salvo — Autonomous AI Revenue Recovery Platform
 
-> **Salvo doesn't tell merchants what went wrong. It takes responsibility for what happens next.**
+> **"Gemini recommends. Deterministic policy code decides. Execution code acts."**
 
 Built for the **Razorpay AI Buildathon**.
 
 ---
 
-## 1. Product Overview
+## 1. Architecture Overview
 
-Salvo is an autonomous revenue recovery agent that finds revenue lost through failed and abandoned payments, diagnoses why the revenue was lost using Gemini agent reasoning, plans recovery actions, gates every action through deterministic safety policies, executes approved recovery actions through Razorpay APIs, and records an immutable, auditable compliance trail.
-
-### Core Architecture
+Salvo finds revenue lost through failed and abandoned payments, diagnoses why the revenue was lost using Gemini agent reasoning, plans recovery actions, gates every action through deterministic safety policies, executes approved recovery actions through Razorpay APIs, and records an immutable, auditable compliance trail.
 
 ```text
 React Frontend (Stitch-Generated UI)
@@ -35,155 +33,147 @@ cp .env.example .env
 
 | Variable | Description | Default / Example |
 | :--- | :--- | :--- |
-| `MONGODB_URI` | MongoDB Atlas cluster connection string | `mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority` |
-| `MONGODB_DB_NAME` | Database name | `salvo` |
 | `GEMINI_API_KEY` | Google Gemini API key | `AIza...` |
+| `GEMINI_MODEL` | Gemini model for diagnosis & structured reasoning | `gemini-2.5-flash` |
+| `MONGODB_URI` | MongoDB Atlas cluster connection string | `mongodb+srv://...` |
+| `MONGODB_DB_NAME` | Database name | `salvo` |
 | `RAZORPAY_KEY_ID` | Razorpay Test Key ID | `rzp_test_...` |
 | `RAZORPAY_KEY_SECRET` | Razorpay Test Key Secret | `...` |
 | `DATASET_SEED` | Seed key for reproducible synthetic dataset | `salvo-buildathon-v1` |
 | `DATASET_SIZE` | Total number of transactions generated | `1350` |
-
-*Note: If `MONGODB_URI` is not configured, the repository gracefully persists data to high-performance local mirrors in `data/*.json`.*
-
----
-
-## 3. MongoDB Collections
-
-Salvo structures financial and execution state across three core collections:
-
-1. **`transactions`**: Complete ledger of payments, customer history, failure taxonomy, hidden ground truth, and simulation traces.
-2. **`recovery_actions`**: Recovery strategies proposed, intervention costs, execution status, and realized yield.
-3. **`audit_logs`**: Chronological event trail tracking diagnosis, deterministic policy checks, and execution states.
+| `DIAGNOSIS_LIMIT` | Optional limit for batch diagnosis during development | `10` |
 
 ---
 
-## 4. Synthetic Dataset Design
+## 3. Gemini AI Intelligence Layer (Phase 2)
 
-> **"The dataset is synthetic and deterministic."**
+Salvo uses Google Gemini (`@google/genai` SDK) to perform structured root-cause diagnosis and recommend safe recovery vectors.
 
-Running `npm run seed` produces the exact same dataset byte-for-byte across runs using a seeded Mulberry32 PRNG.
+### 3.1 Model Selection (`AI_CONFIG`)
+* **Diagnosis & Classification Model:** `gemini-2.5-flash` (low latency, high-accuracy structured reasoning, native JSON schema support).
+* **Narrative Explanation Model:** `gemini-2.5-flash` (merchant-facing contextual notes).
 
-### 4.1 Dataset Size & Currency
-* **Records:** 1,350 transactions across 6 merchant verticals.
-* **Currency:** Indian Rupee (INR), stored strictly as **integer paise** (`1 INR = 100 paise`) to prevent floating-point rounding errors.
+### 3.2 Native Structured Output Architecture
+Salvo uses Gemini's native `responseSchema` to guarantee strict JSON output without parsing markdown fences or free-form prose.
 
-### 4.2 Failure Taxonomy
-* `temporary_network_failure`: Gateway/acquirer timeout (85% recoverable via `smart_retry`)
-* `bank_decline`: Issuer throttling / velocity limits (52% recoverable via `smart_retry`)
-* `insufficient_funds`: Balance drop (58% recoverable via `payment_link`)
-* `authentication_failure`: 3DS OTP timeout / biometric drop (72% recoverable via `reminder`)
-* `payment_method_issue`: Card expiry / mandate limits (66% recoverable via `payment_method_switch`)
-* `customer_abandonment`: Checkout drop at UPI intent (42% recoverable via `payment_link`)
-* `expired_payment`: QR / Link validity expired (46% recoverable via `payment_link`)
-* `suspected_risk`: Fraud flags / velocity spikes (**0% recoverable** — Policy Gate blocks)
-* `unrecoverable`: Stolen card / closed account (**0% recoverable** — Policy Gate blocks)
-
-### 4.3 Ground Truth Isolation
-Every transaction document contains an evaluation-only `groundTruth` object:
-```json
-"groundTruth": {
-  "recoverable": true,
-  "optimalStrategy": "smart_retry",
-  "expectedRecoveryPaise": 840000,
-  "shouldIntervene": true,
-  "interventionCostPaise": 150,
-  "riskScore": 0.05
+```ts
+export interface RecoveryRecommendation {
+  transactionId: string;
+  failureType: 'temporary' | 'customer' | 'payment_method' | 'risk' | 'unrecoverable';
+  recoverability: number; // 0.0 to 1.0
+  recommendedStrategy: 'smart_retry' | 'payment_method_switch' | 'payment_link' | 'reminder' | 'no_action';
+  confidence: number; // 0.0 to 1.0
+  evidence: string[]; // Minimum 1 item
+  reasoning: string;
+  predictedRecoveryPaise: number; // Integer paise, 0 <= predicted <= amountPaise
+  recommendedInterventionCostPaise: number; // Integer paise >= 0
 }
 ```
-*Ground truth is strictly isolated from model prompt contexts and exists exclusively for evaluation.*
+
+### 3.3 Observation Boundary & Ground Truth Protection
+To ensure evaluation integrity, Gemini receives **only** observable transaction metadata:
+* **Allowed:** `transactionId`, `amountPaise`, `paymentMethod`, `status`, `failureCode`, `failureCategory`, `failureDescription`, `customerHistory` (past success/failure counts, retry success rate, preferred method), `retryCount`, `merchantName`.
+* **FORBIDDEN (Never Sent):** `groundTruth.recoverable`, `groundTruth.optimalStrategy`, `groundTruth.expectedRecoveryPaise`, `groundTruth.shouldIntervene`, `groundTruth.riskScore`.
+* Ground truth is stripped via `toObservableTransaction()` and verified by `assertNoGroundTruthLeakage()`.
+
+### 3.4 Financial Arithmetic Invariant
+* Gemini is **never** trusted for raw financial calculations.
+* Predicted recovery amounts are deterministically derived and clamped:
+  $$0 \le \text{predictedRecoveryPaise} \le \text{transaction.amountPaise}$$
+* All monetary values are strictly maintained as **integer paise** (`1 INR = 100 paise`).
+
+### 3.5 Bounded Retries & Error Handling
+* Transient Gemini API errors (rate limits, network timeouts) are retried with exponential backoff up to a **maximum of 2 attempts**.
+* Config errors and schema validation errors fail immediately without retries.
+* If Gemini fails, Salvo returns a typed `GeminiError` and **never** fabricates fake AI results or falls back to ground truth.
 
 ---
 
-## 5. Deterministic Evaluation Engine
+## 4. Database Collections & Persistence
 
-The evaluation engine (`npm run evaluate`) processes the **complete dataset** without sampling.
+1. **`transactions`**: Complete ledger of payments, customer history, failure taxonomy, hidden ground truth, and simulation traces.
+2. **`recovery_actions`**: Generated after AI diagnosis with initial state:
+   * `policyStatus: "pending"` (Policy Gate has not run yet)
+   * `executionStatus: "not_executed"` (Razorpay has not run yet)
+3. **`audit_logs`**: Event trail logging `diagnosis_created` with model name, recommendation telemetry, and timestamp.
 
-### 5.1 Financial Formulas
-* **Gross Recovery:** Sum of actual recovered amounts from executed actions ($\sum \text{actualRecoveryPaise}$).
-* **Intervention Cost:** Sum of API and notification costs incurred ($\sum \text{interventionCostPaise}$).
-* **Net Revenue Recovered:** $\text{Gross Recovery} - \text{Intervention Cost}$.
-* **Recovery Yield on Loss:** $\frac{\text{Gross Recovery}}{\text{Total Failed Volume}} \times 100$.
+---
 
-### 5.2 Precision & Recall Metrics
-* **Positive Prediction ($P$):** Salvo recommends an active recovery action (`strategy !== 'no_action'`).
-* **Actual Positive ($A$):** Ground truth indicates transaction is genuinely recoverable (`groundTruth.recoverable === true`).
-* **True Positive ($TP$):** Recommended active recovery & transaction is recoverable.
-* **False Positive ($FP$):** Recommended active recovery & transaction is unrecoverable.
-* **False Negative ($FN$):** Recommended `no_action` & transaction was recoverable.
-* **True Negative ($TN$):** Recommended `no_action` & transaction was unrecoverable.
-$$\text{Precision} = \frac{TP}{TP + FP} \quad\quad \text{Recall} = \frac{TP}{TP + FN} \quad\quad \text{F1} = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$$
+## 5. API Endpoints
+
+### Diagnose Transaction
+```http
+POST /api/diagnose
+Content-Type: application/json
+
+{
+  "transactionId": "txn_salv_0001"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "recommendation": {
+    "transactionId": "txn_salv_0001",
+    "failureType": "temporary",
+    "recoverability": 0.85,
+    "recommendedStrategy": "smart_retry",
+    "confidence": 0.92,
+    "evidence": [
+      "Acquiring switch timeout GATEWAY_TIMEOUT",
+      "Customer history shows 94% success rate over 16 payments"
+    ],
+    "reasoning": "Transient gateway latency observed during peak authorization window.",
+    "predictedRecoveryPaise": 482350,
+    "recommendedInterventionCostPaise": 150
+  },
+  "actionId": "act_txn_salv_0001_1724391200000",
+  "diagnosedAt": "2026-08-23T11:08:00.000Z"
+}
+```
 
 ---
 
 ## 6. Execution Commands
 
-### Seed Dataset
 ```bash
-npm run seed
-```
-
-### Run Batch Evaluation
-```bash
-npm run evaluate
-```
-
-### Run Automated Unit Test Suite
-```bash
+# 1. Run Automated Unit Test Suite (28 unit tests)
 npm run test
-```
 
-### Run Production Build
-```bash
-npm run build
-```
+# 2. Seed 1,350 Synthetic Transactions
+npm run seed
 
-### Run Code Quality Linter
-```bash
+# 3. Run Gemini AI Batch Diagnosis (e.g. 10 development transactions)
+DIAGNOSIS_LIMIT=10 npm run diagnose
+
+# 4. Run Full Batch Revenue Evaluation
+npm run evaluate
+
+# 5. TypeScript Typecheck
+npm run typecheck
+
+# 6. ESLint Code Quality Verification
 npm run lint
+
+# 7. Production Bundle Build
+npm run build
 ```
 
 ---
 
-## 7. Sample Evaluation Terminal Output
+## 7. Synthetic Dataset & Ground Truth
 
-```text
-========================================
-  SALVO BATCH EVALUATION REPORT
-========================================
+> **"The dataset is synthetic and deterministic."**
 
-  Transactions Evaluated:   1,350
-  Total Failed Revenue:     ₹1,99,21,910
-  Actually Recoverable:     ₹1,86,24,129
-  Predicted Recovery:       ₹1,29,33,177
-  Gross Actual Recovery:    ₹1,55,19,083
-  Intervention Cost:        ₹2,901
-  ────────────────────────────────────────
-  NET REVENUE RECOVERED:    ₹1,55,16,182
-  Recovery Yield on Loss:   77.9%
-  ────────────────────────────────────────
-  Precision:                99.1%
-  Recall:                   95.9%
-  F1 Score:                 97.5%
-  ────────────────────────────────────────
-  Safety Policy Blocks:     145
-  Successful Recoveries:    1,142
-  Failed Recovery Attempts: 45
-  Unattempted / Isolated:   163
-
-========================================
-  STRATEGY-LEVEL PERFORMANCE BREAKDOWN
-========================================
-
-  Strategy                 | Predicted | Optimal | Accuracy |    Gross Yield |       Cost |       Net Gain
-  ────────────────────────────────────────────────────────────────────────────────────────────────────
-  smart retry              |       491 |     551 |    94.7% |     ₹62,49,809 |       ₹871 |     ₹62,48,938
-  payment method switch    |       137 |     128 |    80.3% |     ₹16,84,564 |       ₹532 |     ₹16,84,032
-  payment link             |       373 |     386 |    89.3% |     ₹51,95,553 |       ₹983 |     ₹51,94,571
-  reminder                 |       214 |     191 |    76.6% |     ₹23,89,157 |       ₹516 |     ₹23,88,642
-  no action                |       135 |      94 |    61.5% |             ₹0 |         ₹0 |             ₹0
-
-========================================
-  Machine-readable results written to:
-  C:\Users\Omkrrish\Salvo\evaluation-results.json
-========================================
-```
+Generated using a seeded Mulberry32 PRNG across 9 failure categories:
+* `temporary_network_failure` (`smart_retry`, 85% base yield)
+* `bank_decline` (`smart_retry`, 52% base yield)
+* `insufficient_funds` (`payment_link`, 58% base yield)
+* `authentication_failure` (`reminder`, 72% base yield)
+* `payment_method_issue` (`payment_method_switch`, 66% base yield)
+* `customer_abandonment` (`payment_link`, 42% base yield)
+* `expired_payment` (`payment_link`, 46% base yield)
+* `suspected_risk` (`no_action`, **0% yield — Policy Gate blocked**)
+* `unrecoverable` (`no_action`, **0% yield — Policy Gate blocked**)

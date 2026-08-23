@@ -1,248 +1,291 @@
 /**
- * Agent 1: Diagnose & Plan
+ * src/agents/diagnosePlan.ts
  *
- * Responsibilities:
- *  1. Accept a failed/abandoned Transaction + optional CustomerHistory
- *  2. Call Gemini (structured output) to classify the failure
- *  3. Validate the Gemini response before it touches the Policy Gate
- *  4. Call Gemini (narrative) to generate a merchant-facing explanation
- *  5. Derive RecoveryActions from the validated structured output
- *  6. Compute expectedRecoveryPaise DETERMINISTICALLY (no LLM math)
- *  7. Return a typed DiagnosisResult
+ * Gemini Diagnose & Plan Agent for Salvo
  *
- * SAFETY INVARIANTS:
- *  - Gemini output is ALWAYS validated before use (validateDiagnosisPayload in gemini.ts)
- *  - Financial amounts are NEVER parsed from Gemini prose
- *  - expectedRecoveryPaise = amountPaise × predictedRecovery (deterministic)
- *  - This agent only PROPOSES actions; the Policy Gate decides
+ * Core Workflow:
+ *  1. Accepts an ObservableTransaction (strict observation boundary)
+ *  2. Constructs prompt with NO ground truth leakage
+ *  3. Calls Gemini for structured JSON schema diagnosis
+ *  4. Enforces strict financial clamping (0 <= predictedRecoveryPaise <= amountPaise)
+ *  5. Validates output with Zod RecoveryRecommendationSchema
+ *  6. Creates pending RecoveryActionDocument and diagnosis_created AuditLogDocument
+ *
+ * SAFETY GUARANTEES:
+ *  - Gemini NEVER executes transactions or calls Razorpay APIs
+ *  - Policy Gate remains the final gatekeeper (policyStatus is initially 'pending')
+ *  - No fake fallback recommendations on AI failure
  */
 
-import { callDiagnosisModel, callExplanationModel } from '../lib/gemini.js';
+import { randomUUID } from 'node:crypto';
 import type {
-  Transaction,
-  CustomerHistory,
-  DiagnosisResult,
-  GeminiDiagnosisPayload,
-  RecoveryAction,
-  ActionType,
-  RecommendedStrategy,
+  TransactionDocument,
+  ObservableTransaction,
+  RecoveryRecommendation,
+  RecoveryActionDocument,
+  AuditLogDocument,
+  RecoveryStrategy,
 } from '../types/index.js';
+import { toObservableTransaction, assertNoGroundTruthLeakage } from './observation.js';
+import { executeStructuredDiagnosis, AI_CONFIG } from '../lib/gemini.js';
+import { RecoveryRecommendationSchema } from '../lib/schemas.js';
+import { formatPaise } from '../lib/currency.js';
 
-// ─── Prompt Builders ──────────────────────────────────────────────────────────
+// ─── System Prompt ────────────────────────────────────────────────────────────
 
-function buildDiagnosisPrompt(
-  transaction: Transaction,
-  history: CustomerHistory | null,
-): string {
-  const lines: string[] = [
-    'Diagnose this failed Razorpay payment and determine the best recovery strategy.',
-    '',
-    '## Transaction',
-    `ID: ${transaction.id}`,
-    `Order ID: ${transaction.orderId}`,
-    `Amount: ₹${(transaction.amountPaise / 100).toFixed(2)} (${transaction.amountPaise} paise)`,
-    `Currency: ${transaction.currency}`,
-    `Status: ${transaction.status}`,
-    `Payment Method: ${transaction.method}`,
-    `Error Code: ${transaction.errorCode ?? 'none'}`,
-    `Error Description: ${transaction.errorDescription ?? 'none'}`,
-    `Error Reason: ${transaction.errorReason ?? 'none'}`,
-    `Bank / Issuer: ${transaction.bank ?? 'unknown'}`,
-  ];
+export const SALVO_DIAGNOSIS_SYSTEM_PROMPT = `You are Salvo, an autonomous revenue recovery intelligence system built for payment gateways and merchants.
 
-  if (history) {
-    lines.push(
-      '',
-      '## Customer History',
-      `Total transactions: ${history.totalTransactions}`,
-      `Successful: ${history.successfulTransactions}`,
-      `Failed: ${history.failedTransactions}`,
-      `Historical retry success rate: ${(history.retrySuccessRate * 100).toFixed(1)}%`,
-      `Preferred payment method: ${history.preferredMethod}`,
-      `Average transaction: ₹${(history.averageTransactionPaise / 100).toFixed(2)}`,
-    );
-  }
+Your job is to diagnose why a payment failed or was abandoned and recommend the safest appropriate recovery strategy.
 
-  lines.push(
-    '',
-    '## Instructions',
-    'Return a structured JSON object following exactly the responseSchema.',
-    'predictedRecovery must be a probability (0–1), NOT an INR amount.',
-    'evidence must contain specific, factual observations — not generic statements.',
-    'Maximum 5 evidence items.',
-  );
+Operational Directives:
+1. You may recommend an action.
+2. You do NOT execute actions.
+3. You do NOT override safety policies.
+4. You must base your diagnosis and recommendation ONLY on the observable transaction metadata and customer history provided.
+5. Base intervention cost recommendations in integer paise (e.g., ₹1.50 = 150 paise, ₹3.00 = 300 paise).
+6. Provide concise, executive evidence (1 to 4 bullet points) suitable for merchant ledger auditability.
 
-  return lines.join('\n');
-}
+Strategy Guidelines:
+- "smart_retry": Appropriate for transient network latency, gateway timeouts, and temporary bank switch throttles.
+- "payment_method_switch": Appropriate when the card/instrument has expired, BIN is blocked, or recurring mandate limits are exceeded.
+- "payment_link": Appropriate for insufficient funds, checkout abandonment, or expired sessions where a fresh payment flow is optimal.
+- "reminder": Appropriate when the customer dropped during OTP/3DS verification or biometric challenge.
+- "no_action": Appropriate when suspected fraud/risk is detected or the instrument/account is permanently unrecoverable.`;
 
-function buildNarrativePrompt(
-  transaction: Transaction,
-  payload: GeminiDiagnosisPayload,
-): string {
-  return [
-    'You are Salvo, an AI revenue recovery agent writing for a merchant dashboard.',
-    'Write one concise paragraph (2–3 sentences max) explaining what happened with',
-    'this payment and what Salvo is doing about it.',
-    '',
-    'Rules:',
-    '- Be specific about the actual failure reason',
-    '- Reference the recovery strategy in plain language',
-    '- Professional, direct tone — no jargon, no hedging',
-    '- Do NOT mention specific probability numbers or confidence scores',
-    '- Do NOT mention rupee amounts (those are shown separately)',
-    '',
-    `Failure type: ${payload.failureType}`,
-    `Strategy: ${payload.recommendedStrategy}`,
-    `Evidence: ${payload.evidence.join('; ')}`,
-    `Transaction: ${transaction.method} payment${transaction.bank ? ` via ${transaction.bank}` : ''}`,
-  ].join('\n');
-}
-
-// ─── Strategy → Action Mapping ────────────────────────────────────────────────
-// Converts Gemini's recommendedStrategy into concrete RecoveryActions.
-// The estimatedSuccessProbability is taken directly from predictedRecovery.
-
-function strategyToActions(
-  strategy: RecommendedStrategy,
-  payload: GeminiDiagnosisPayload,
-  transaction: Transaction,
-): RecoveryAction[] {
-  const p = payload.predictedRecovery;
-
-  const actionMap: Record<RecommendedStrategy, RecoveryAction[]> = {
-    smart_retry: [
-      {
-        type: 'retry_payment' as ActionType,
-        rationale: `Transient failure detected. Retry has ${(p * 100).toFixed(0)}% predicted success.`,
-        params: { orderId: transaction.orderId, method: transaction.method },
-        estimatedSuccessProbability: p,
-      },
-      {
-        type: 'send_payment_link' as ActionType,
-        rationale: 'Fallback: send payment link if retry fails.',
-        params: { orderId: transaction.orderId },
-        estimatedSuccessProbability: p * 0.7,
-      },
-    ],
-    payment_method_switch: [
-      {
-        type: 'change_payment_method' as ActionType,
-        rationale: `Payment method ${transaction.method} has issues. Switching may resolve.`,
-        params: { currentMethod: transaction.method, suggestedMethod: 'upi' },
-        estimatedSuccessProbability: p,
-      },
-      {
-        type: 'send_payment_link' as ActionType,
-        rationale: 'Payment link lets the customer choose a different method.',
-        params: { orderId: transaction.orderId },
-        estimatedSuccessProbability: p * 0.8,
-      },
-    ],
-    payment_link: [
-      {
-        type: 'send_payment_link' as ActionType,
-        rationale: 'Customer-side failure. A fresh payment link re-engages without friction.',
-        params: { orderId: transaction.orderId, email: transaction.email },
-        estimatedSuccessProbability: p,
-      },
-      {
-        type: 'notify_customer' as ActionType,
-        rationale: 'Notify customer about payment failure and link.',
-        params: { channel: 'email', orderId: transaction.orderId },
-        estimatedSuccessProbability: p * 0.6,
-      },
-    ],
-    reminder: [
-      {
-        type: 'notify_customer' as ActionType,
-        rationale: 'Customer abandoned checkout. A reminder may bring them back.',
-        params: { channel: 'email', orderId: transaction.orderId },
-        estimatedSuccessProbability: p,
-      },
-    ],
-    no_action: [
-      {
-        type: 'flag_for_manual_review' as ActionType,
-        rationale: `Failure type "${payload.failureType}" has no automated recovery path. Manual review required.`,
-        params: { reason: payload.evidence.join('; ') },
-        estimatedSuccessProbability: 0,
-      },
-    ],
-  };
-
-  return (actionMap[strategy] ?? actionMap['no_action']).sort(
-    (a, b) => b.estimatedSuccessProbability - a.estimatedSuccessProbability,
-  );
-}
-
-// ─── Main Export ──────────────────────────────────────────────────────────────
+// ─── Single Diagnosis Core Function ───────────────────────────────────────────
 
 /**
- * Diagnose a failed transaction and return a fully typed recovery plan.
- *
- * @param transaction  The failed/abandoned Razorpay payment
- * @param history      Optional customer payment history for richer diagnosis
+ * Diagnoses a single observable transaction using Gemini AI.
+ * Throws typed GeminiError on failure without returning fake fallback recommendations.
  */
 export async function diagnosePlan(
-  transaction: Transaction,
-  history: CustomerHistory | null = null,
-): Promise<DiagnosisResult> {
-  // Step 1: Build prompt and call Gemini for structured diagnosis
-  const diagnosisPrompt = buildDiagnosisPrompt(transaction, history);
-  const geminiPayload = await callDiagnosisModel(diagnosisPrompt);
-  // geminiPayload is now validated — safe to proceed
+  observable: ObservableTransaction
+): Promise<RecoveryRecommendation> {
+  // 1. Build prompt containing only observable data
+  const prompt = buildObservablePrompt(observable);
 
-  // Step 2: Generate merchant narrative (presentation only)
-  const narrativePrompt = buildNarrativePrompt(transaction, geminiPayload);
-  const merchantNarrative = await callExplanationModel(narrativePrompt);
+  // 2. Assert no ground truth leakage in the prompt
+  assertNoGroundTruthLeakage(prompt);
 
-  // Step 3: Derive recovery actions from validated strategy
-  const proposedActions = strategyToActions(
-    geminiPayload.recommendedStrategy,
-    geminiPayload,
-    transaction,
-  );
+  // 3. Call Gemini with native structured schema
+  const rawDiagnosis = await executeStructuredDiagnosis(prompt, SALVO_DIAGNOSIS_SYSTEM_PROMPT);
 
-  // Step 4: Compute expected recovery DETERMINISTICALLY
-  // This is the only place INR amounts are derived from predictedRecovery.
-  // No LLM prose is ever parsed for financial values.
-  const expectedRecoveryPaise = Math.round(
-    transaction.amountPaise * geminiPayload.predictedRecovery,
-  );
-  const txnId = transaction.transactionId || transaction.id || '';
+  // 4. Financial Calculations & Clamping (Application-level determinism)
+  // Derive expected recovery deterministically: amountPaise * recoverability
+  let predictedRecoveryPaise: number;
+  if (rawDiagnosis.recommendedStrategy === 'no_action' || rawDiagnosis.recoverability === 0) {
+    predictedRecoveryPaise = 0;
+  } else if (rawDiagnosis.estimatedRecoveryPaise !== undefined) {
+    // Validate & clamp model-estimated paise between 0 and transaction amount
+    predictedRecoveryPaise = Math.max(
+      0,
+      Math.min(observable.amountPaise, rawDiagnosis.estimatedRecoveryPaise)
+    );
+  } else {
+    // Deterministic arithmetic from recoverability probability
+    predictedRecoveryPaise = Math.round(observable.amountPaise * rawDiagnosis.recoverability);
+  }
+
+  // Hard safety invariant: Predicted recovery can NEVER exceed the transaction amount
+  predictedRecoveryPaise = Math.max(0, Math.min(observable.amountPaise, predictedRecoveryPaise));
+
+  // Determine intervention cost in integer paise
+  let recommendedInterventionCostPaise = 0;
+  if (rawDiagnosis.recommendedStrategy !== 'no_action') {
+    if (rawDiagnosis.recommendedInterventionCostPaise !== undefined) {
+      recommendedInterventionCostPaise = Math.max(0, rawDiagnosis.recommendedInterventionCostPaise);
+    } else {
+      // Default heuristic cost in paise based on strategy
+      recommendedInterventionCostPaise = getDefaultInterventionCostPaise(rawDiagnosis.recommendedStrategy);
+    }
+  }
+
+  const recommendationPayload: RecoveryRecommendation = {
+    transactionId: observable.transactionId,
+    failureType: rawDiagnosis.failureType,
+    recoverability: rawDiagnosis.recoverability,
+    recommendedStrategy: rawDiagnosis.recommendedStrategy,
+    confidence: rawDiagnosis.confidence,
+    evidence: rawDiagnosis.evidence.length > 0 ? rawDiagnosis.evidence : ['Automated telemetry classification'],
+    reasoning: rawDiagnosis.reasoning,
+    predictedRecoveryPaise,
+    recommendedInterventionCostPaise,
+  };
+
+  // 5. Strict runtime schema validation
+  const validated = RecoveryRecommendationSchema.parse(recommendationPayload);
+
+  return validated;
+}
+
+// ─── Transaction Full Pipeline Wrapper ────────────────────────────────────────
+
+export interface DiagnosisOutput {
+  recommendation: RecoveryRecommendation;
+  action: RecoveryActionDocument;
+  auditLog: AuditLogDocument;
+}
+
+/**
+ * Process a TransactionDocument: extracts observable view, calls Gemini, and builds
+ * corresponding database documents (recovery_action with policyStatus 'pending' and audit_log).
+ */
+export async function diagnoseTransaction(
+  txn: TransactionDocument
+): Promise<DiagnosisOutput> {
+  const observable = toObservableTransaction(txn);
+  const recommendation = await diagnosePlan(observable);
+
+  const actionId = `act_${recommendation.transactionId}_${Date.now()}`;
+  const now = new Date().toISOString();
+
+  // Build RecoveryAction document
+  const action: RecoveryActionDocument = {
+    actionId,
+    transactionId: recommendation.transactionId,
+    strategy: recommendation.recommendedStrategy,
+    predictedRecoveryPaise: recommendation.predictedRecoveryPaise,
+    actualRecoveryPaise: 0,
+    interventionCostPaise: recommendation.recommendedInterventionCostPaise,
+    confidence: recommendation.confidence,
+    policyStatus: 'pending', // Pending Policy Gate check in next phase
+    executionStatus: 'not_executed',
+    evidence: recommendation.evidence,
+    reasoning: recommendation.reasoning,
+    diagnosis: recommendation,
+    createdAt: now,
+    executedAt: null,
+  };
+
+  // Build AuditLog document
+  const auditLog: AuditLogDocument = {
+    eventId: `evt_${recommendation.transactionId}_diag_${randomUUID().slice(0, 8)}`,
+    transactionId: recommendation.transactionId,
+    eventType: 'diagnosis_created',
+    actor: 'gemini_agent',
+    details: {
+      actionId,
+      failureType: recommendation.failureType,
+      recommendedStrategy: recommendation.recommendedStrategy,
+      confidence: recommendation.confidence,
+      recoverability: recommendation.recoverability,
+      predictedRecoveryPaise: recommendation.predictedRecoveryPaise,
+      model: AI_CONFIG.diagnosisModel,
+      evidenceCount: recommendation.evidence.length,
+    },
+    timestamp: now,
+  };
 
   return {
-    transactionId: txnId,
-    geminiPayload,
-    merchantNarrative,
-    proposedActions,
-    expectedRecoveryPaise,
-    diagnosedAt: new Date().toISOString(),
+    recommendation,
+    action,
+    auditLog,
   };
 }
 
 // ─── Batch Helper ─────────────────────────────────────────────────────────────
 
+export interface BatchDiagnosisResult {
+  successful: DiagnosisOutput[];
+  failed: { transactionId: string; error: string }[];
+  totalProcessed: number;
+}
+
 /**
- * Diagnose multiple transactions, collecting errors without stopping the batch.
+ * Process a batch of transactions with controlled concurrency and delay to respect API rate limits.
  */
-export async function diagnoseBatch(
-  transactions: Transaction[],
-  getHistory: (tx: Transaction) => Promise<CustomerHistory | null> = async () => null,
-): Promise<{ result?: DiagnosisResult; error?: string; transactionId: string }[]> {
-  return Promise.all(
-    transactions.map(async (tx) => {
-      const txnId = tx.transactionId || tx.id || '';
-      try {
-        const history = await getHistory(tx);
-        const result = await diagnosePlan(tx, history);
-        return { transactionId: txnId, result };
-      } catch (err) {
-        return {
+export async function diagnoseBatchTransactions(
+  transactions: TransactionDocument[],
+  concurrency: number = 3
+): Promise<BatchDiagnosisResult> {
+  const successful: DiagnosisOutput[] = [];
+  const failed: { transactionId: string; error: string }[] = [];
+
+  for (let i = 0; i < transactions.length; i += concurrency) {
+    const chunk = transactions.slice(i, i + concurrency);
+
+    const chunkResults = await Promise.allSettled(
+      chunk.map(async (t) => {
+        return await diagnoseTransaction(t);
+      })
+    );
+
+    for (let j = 0; j < chunkResults.length; j++) {
+      const res = chunkResults[j];
+      const txn = chunk[j];
+      const txnId = txn.transactionId || txn.id || `txn_${i + j}`;
+
+      if (res.status === 'fulfilled') {
+        successful.push(res.value);
+      } else {
+        failed.push({
           transactionId: txnId,
-          error: err instanceof Error ? err.message : String(err),
-        };
+          error: res.reason instanceof Error ? res.reason.message : String(res.reason),
+        });
       }
-    }),
-  );
+    }
+
+    // Brief cooldown between chunks
+    if (i + concurrency < transactions.length) {
+      await new Promise((r) => setTimeout(r, 250));
+    }
+  }
+
+  return {
+    successful,
+    failed,
+    totalProcessed: transactions.length,
+  };
+}
+
+// ─── Helper Functions ─────────────────────────────────────────────────────────
+
+function buildObservablePrompt(obs: ObservableTransaction): string {
+  const history = obs.customerHistory;
+  const amountFormatted = formatPaise(obs.amountPaise);
+
+  return `### FAILED TRANSACTION FOR DIAGNOSIS
+
+**Transaction Details:**
+- Transaction ID: ${obs.transactionId}
+- Amount: ${amountFormatted} (${obs.amountPaise} paise)
+- Currency: ${obs.currency}
+- Payment Method: ${obs.paymentMethod}
+- Gateway Status: ${obs.status}
+- Gateway Failure Code: ${obs.failureCode}
+- Failure Category: ${obs.failureCategory}
+- Failure Description: ${obs.failureDescription || 'None'}
+- Retry Count: ${obs.retryCount}
+- Merchant: ${obs.merchantName || 'Merchant'}
+- Created At: ${obs.createdAt}
+
+**Observable Customer Profile & History:**
+- Customer ID: ${history.customerId}
+- Previous Transactions: ${history.previousPayments}
+- Successful Payments: ${history.successfulPayments}
+- Failed Payments: ${history.previousFailures}
+- Historical Retry Success Rate: ${(history.retrySuccessRate * 100).toFixed(1)}%
+- Preferred Payment Method: ${history.preferredMethod}
+- Average Transaction Volume: ${formatPaise(history.averageTransactionPaise)}
+${history.accountAgeDays ? `- Account Age: ${history.accountAgeDays} days` : ''}
+
+Analyze the root cause and provide your structured diagnosis according to the schema.`;
+}
+
+function getDefaultInterventionCostPaise(strategy: RecoveryStrategy): number {
+  switch (strategy) {
+    case 'smart_retry':
+      return 150; // ₹1.50
+    case 'bank_decline' as unknown as RecoveryStrategy:
+      return 200; // ₹2.00
+    case 'payment_method_switch':
+      return 450; // ₹4.50
+    case 'payment_link':
+      return 250; // ₹2.50
+    case 'reminder':
+      return 250; // ₹2.50
+    case 'no_action':
+    default:
+      return 0;
+  }
 }

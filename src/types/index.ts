@@ -4,8 +4,10 @@
  * Single source of truth for:
  *   1. Transaction, Customer History, Failure Categories
  *   2. Recovery Strategies & Ground Truth (Evaluation only)
- *   3. MongoDB Collections: transactions, recovery_actions, audit_logs
- *   4. Deterministic Evaluation Engine Contracts
+ *   3. Observable Transaction DTO (Ground-Truth Protection Boundary)
+ *   4. RecoveryRecommendation & Gemini AI Contracts
+ *   5. MongoDB Collections: transactions, recovery_actions, audit_logs
+ *   6. Deterministic Evaluation Engine Contracts
  *
  * RULES:
  *  - Financial calculations are ALWAYS in integer paise (1 INR = 100 paise)
@@ -49,9 +51,16 @@ export type RecoveryStrategy =
   | 'reminder'
   | 'no_action';
 
+export type DiagnosisFailureType =
+  | 'temporary'
+  | 'customer'
+  | 'payment_method'
+  | 'risk'
+  | 'unrecoverable';
+
 // Alias for Gemini module compatibility
 export type RecommendedStrategy = RecoveryStrategy;
-export type FailureType = 'temporary' | 'customer' | 'payment_method' | 'unrecoverable';
+export type FailureType = DiagnosisFailureType;
 
 // ─────────────────────────────────────────────────────────────
 // 2. Customer Profile & History
@@ -99,11 +108,69 @@ export interface GroundTruth {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 4. Simulation / Execution Trace
+// 4. Observable Transaction DTO (Observation Boundary)
 // ─────────────────────────────────────────────────────────────
 
-export type PolicyVerdict = 'approved' | 'blocked' | 'needs_review';
-export type ExecutionStatus = 'recovered' | 'failed' | 'blocked' | 'queued' | 'not_attempted';
+/**
+ * Strictly sanitized transaction observation.
+ * This is the ONLY object allowed to enter the Gemini prompt context.
+ * Excludes all groundTruth and hidden evaluation fields.
+ */
+export interface ObservableCustomerHistory {
+  customerId: string;
+  previousPayments: number;
+  successfulPayments: number;
+  previousFailures: number;
+  retrySuccessRate: number;
+  preferredMethod: PaymentMethod;
+  averageTransactionPaise: number;
+  accountAgeDays?: number;
+}
+
+export interface ObservableTransaction {
+  transactionId: string;
+  amountPaise: number;
+  currency: string;
+  paymentMethod: PaymentMethod;
+  status: TransactionStatus;
+  failureCode: string;
+  failureCategory: FailureCategory;
+  failureDescription?: string;
+  createdAt: string;
+  customerHistory: ObservableCustomerHistory;
+  retryCount: number;
+  merchantName?: string;
+  merchantCategory?: string;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 5. Recovery Recommendation (Gemini Output)
+// ─────────────────────────────────────────────────────────────
+
+export interface RecoveryRecommendation {
+  transactionId: string;
+  failureType: DiagnosisFailureType;
+  /** Recoverability estimate 0–1 */
+  recoverability: number;
+  recommendedStrategy: RecoveryStrategy;
+  /** Confidence score 0–1 */
+  confidence: number;
+  /** Minimum 1 supporting evidence item */
+  evidence: string[];
+  /** Merchant-facing concise explanation */
+  reasoning: string;
+  /** Integer paise (0 <= predictedRecoveryPaise <= transaction.amountPaise) */
+  predictedRecoveryPaise: number;
+  /** Integer paise (>= 0) */
+  recommendedInterventionCostPaise: number;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 6. Simulation / Execution Trace
+// ─────────────────────────────────────────────────────────────
+
+export type PolicyVerdict = 'approved' | 'blocked' | 'needs_review' | 'pending';
+export type ExecutionStatus = 'recovered' | 'failed' | 'blocked' | 'queued' | 'not_attempted' | 'not_executed';
 
 export interface SimulationTrace {
   predictedStrategy: RecoveryStrategy;
@@ -117,7 +184,7 @@ export interface SimulationTrace {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 5. MongoDB Collections & Documents
+// 7. MongoDB Collections & Documents
 // ─────────────────────────────────────────────────────────────
 
 /**
@@ -162,7 +229,6 @@ export interface TransactionDocument {
   metadata?: Record<string, unknown>;
 }
 
-// Standard application transaction interface
 export type Transaction = TransactionDocument;
 
 /**
@@ -178,6 +244,9 @@ export interface RecoveryActionDocument {
   confidence: number;
   policyStatus: PolicyVerdict;
   executionStatus: ExecutionStatus;
+  evidence?: string[];
+  reasoning?: string;
+  diagnosis?: Partial<RecoveryRecommendation>;
   createdAt: string;
   executedAt: string | null;
 }
@@ -244,7 +313,7 @@ export interface AuditLogDocument {
 export type AuditEvent = AuditLogDocument;
 
 // ─────────────────────────────────────────────────────────────
-// 6. Gemini Integration Contracts (Used in Phase 2)
+// 8. Legacy Gemini Integration Contracts (Maintained for compatibility)
 // ─────────────────────────────────────────────────────────────
 
 export interface GeminiDiagnosisPayload {
@@ -266,26 +335,18 @@ export interface DiagnosisResult {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 7. Evaluation Engine Contracts
+// 9. Evaluation Engine Contracts
 // ─────────────────────────────────────────────────────────────
 
 export interface StrategyPerformanceMetrics {
   strategy: RecoveryStrategy;
-  /** Count of transactions where model predicted this strategy */
   predictedCount: number;
-  /** Count of transactions where ground truth optimal was this strategy */
   groundTruthOptimalCount: number;
-  /** Count of correct recommendations (predicted === optimal) */
   correctPredictions: number;
-  /** Count of incorrect recommendations */
   incorrectPredictions: number;
-  /** Total gross revenue recovered under this strategy in paise */
   recoveryAmountPaise: number;
-  /** Total cost incurred executing this strategy in paise */
   interventionCostPaise: number;
-  /** Net recovery = recoveryAmountPaise - interventionCostPaise in paise */
   netRecoveryPaise: number;
-  /** Recovery accuracy rate (correct / predicted) */
   accuracyRate: number;
 }
 
@@ -319,3 +380,23 @@ export interface EvaluationReport {
 }
 
 export type EvaluationResult = EvaluationReport;
+
+// ─────────────────────────────────────────────────────────────
+// 10. AI Diagnosis Metrics (Phase 2 Diagnostic Evaluation)
+// ─────────────────────────────────────────────────────────────
+
+export interface AIDiagnosisMetrics {
+  totalDiagnosed: number;
+  strategyAgreementCount: number;
+  strategyAgreementRate: number;
+  classificationAgreementCount: number;
+  classificationAgreementRate: number;
+  averageConfidence: number;
+  precision: number;
+  recall: number;
+  f1Score: number;
+  totalPredictedRecoveryPaise: number;
+  totalGroundTruthRecoverablePaise: number;
+  model: string;
+  durationMs: number;
+}

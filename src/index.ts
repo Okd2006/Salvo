@@ -1,32 +1,35 @@
 /**
  * src/index.ts
  *
- * Salvo — Backend Entry Point
+ * Salvo — Backend Server & API Entrypoint
  *
- * This file is the target of `npm run dev`.
- * It will be expanded in later phases to run the full recovery pipeline.
- *
- * Current state: validates configuration and prints a startup banner.
+ * Provides:
+ *  - HTTP API server with POST /api/diagnose
+ *  - Health status checks
+ *  - Pipeline telemetry
  */
 
+import http from 'node:http';
 import 'dotenv/config';
-import { AI_CONFIG } from './lib/gemini.js';
+import { handleApiRequest } from './api/handler.js';
+import { AI_CONFIG, isGeminiConfigured } from './lib/gemini.js';
+import { isMongoConfigured } from './db/mongo.js';
 
-function printBanner(): void {
-  console.log('');
-  console.log('  ╔══════════════════════════════════════╗');
-  console.log('  ║   SALVO — AI Revenue Recovery Agent  ║');
-  console.log('  ║   Razorpay AI Buildathon             ║');
-  console.log('  ╚══════════════════════════════════════╝');
-  console.log('');
-  console.log('  Diagnosis model:', AI_CONFIG.diagnosisModel);
-  console.log('  Explanation model:', AI_CONFIG.explanationModel);
-  console.log('');
-  console.log('  Architecture:');
-  console.log('    Gemini → Diagnose & Plan → Policy Gate → Execute → Razorpay');
-  console.log('');
-  console.log('  Status: Initialised. Ready for Phase 1 (Seed + Schema).');
-  console.log('');
-}
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
-printBanner();
+const server = http.createServer((req, res) => {
+  void handleApiRequest(req, res);
+});
+
+server.listen(PORT, () => {
+  console.log('\n  ╔═════════════════════════════════════════════════════╗');
+  console.log('  ║   SALVO — AI Revenue Recovery Intelligence Server   ║');
+  console.log('  ║   Razorpay AI Buildathon                            ║');
+  console.log('  ╚═════════════════════════════════════════════════════╝\n');
+  console.log(`  • Server Listening:    http://localhost:${PORT}`);
+  console.log(`  • Gemini Diagnosis:    ${AI_CONFIG.diagnosisModel} (${isGeminiConfigured() ? 'Ready' : 'No Key'})`);
+  console.log(`  • Database Target:     ${isMongoConfigured() ? 'MongoDB Atlas' : 'Local Repository (data/*.json)'}`);
+  console.log(`  • API Endpoint:        POST http://localhost:${PORT}/api/diagnose\n`);
+});
+
+export { server };
