@@ -1,0 +1,401 @@
+{
+  "evaluatedAt": "2026-08-24T05:31:30.820Z",
+  "totalTransactionsProcessed": 10,
+  "business": {
+    "totalTransactions": 10,
+    "totalFailedRevenuePaise": 25628400,
+    "totalActuallyRecoverablePaise": 14689300,
+    "predictedRecoverableRevenuePaise": 10242609,
+    "grossRecoveredPaise": 12306215,
+    "interventionCostPaise": 1750,
+    "netRecoveredPaise": 12304465,
+    "recoveryYieldPercent": 48.02,
+    "recoveryRatePercent": 70,
+    "averageRecoveredPaise": 1758031,
+    "averageInterventionCostPaise": 175
+  },
+  "ai": {
+    "totalDiagnosed": 10,
+    "strategyAccuracyPercent": 80,
+    "classificationAccuracyPercent": 100,
+    "precisionPercent": 100,
+    "recallPercent": 100,
+    "f1ScorePercent": 100,
+    "averageConfidencePercent": 81.7,
+    "averageRecoverabilityPredictionPercent": 76.5,
+    "predictedRecoveryOpportunityPaise": 10242609,
+    "actualRecoverableOpportunityPaise": 14689300
+  },
+  "safety": {
+    "totalPolicyEvaluations": 10,
+    "approvedActions": 7,
+    "blockedActions": 3,
+    "policyBlockRatePercent": 30,
+    "reasonCodeBreakdown": {
+      "ALLOWED": 7,
+      "RISK_BLOCK": 1,
+      "UNRECOVERABLE_BLOCK": 0,
+      "CONFIDENCE_TOO_LOW": 0,
+      "RETRY_LIMIT_EXCEEDED": 0,
+      "CONTACT_LIMIT_EXCEEDED": 0,
+      "AMOUNT_THRESHOLD_EXCEEDED": 0,
+      "STRATEGY_NOT_PERMITTED": 2,
+      "NEGATIVE_EXPECTED_VALUE": 0,
+      "INVALID_RECOVERY_AMOUNT": 0
+    },
+    "attemptedExecutions": 7,
+    "blockedBeforeExecutionCount": 3,
+    "unauthorizedExecutionCount": 0,
+    "invariantViolationsCount": 0
+  },
+  "agent": {
+    "firstAttemptRecoveryRatePercent": 70,
+    "fallbackInvocationRatePercent": 0,
+    "fallbackSuccessRatePercent": 0,
+    "averageAttemptsPerTransaction": 0.7,
+    "averageAttemptsPerRecoveredTransaction": 1,
+    "recoveredThroughFallbackCount": 0,
+    "recoveredThroughFallbackPaise": 0,
+    "maxAttemptStopsCount": 0,
+    "permanentlyUnrecoveredCount": 3,
+    "totalExecutionFailuresCount": 0
+  },
+  "fallbackAnalysis": {
+    "initialExecutionFailuresCount": 0,
+    "fallbackAttemptsCount": 0,
+    "fallbackSuccessesCount": 0,
+    "fallbackFailuresCount": 0,
+    "revenueRecoveredThroughFallbackPaise": 0,
+    "percentageOfRecoveriesRequiringFallbackPercent": 0
+  },
+  "invariants": {
+    "valid": true,
+    "totalChecks": 12,
+    "passedChecks": 12,
+    "failedChecks": 0,
+    "totalViolations": 0,
+    "checkResults": [
+      {
+        "invariantId": 1,
+        "name": "NO_BLOCKED_ACTION_EXECUTED",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Blocked policy decisions must never trigger payment execution.",
+        "violations": []
+      },
+      {
+        "invariantId": 2,
+        "name": "EXECUTED_ACTIONS_MUST_BE_APPROVED",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Every executed action must have passed deterministic Policy Gate checks.",
+        "violations": []
+      },
+      {
+        "invariantId": 3,
+        "name": "FALLBACK_POLICY_REEVALUATION",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Every autonomous fallback strategy must be re-evaluated by the Policy Gate.",
+        "violations": []
+      },
+      {
+        "invariantId": 4,
+        "name": "MAX_ATTEMPTS_ENFORCED",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "No transaction may execute more than 3 attempts in a recovery session.",
+        "violations": []
+      },
+      {
+        "invariantId": 5,
+        "name": "FINANCIAL_RECOVERY_CEILING",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Recovered revenue in integer paise can never exceed original transaction volume.",
+        "violations": []
+      },
+      {
+        "invariantId": 6,
+        "name": "IDEMPOTENCY_UNIQUENESS",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Idempotency keys prevent double execution and replay mutations.",
+        "violations": []
+      },
+      {
+        "invariantId": 7,
+        "name": "RECOVERY_COMPLETED_AUDIT_REQUIRED",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Successful recoveries must record an immutable recovery_completed audit record.",
+        "violations": []
+      },
+      {
+        "invariantId": 8,
+        "name": "EXECUTION_FAILED_AUDIT_REQUIRED",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Failed executions must record an explicit execution_failed audit record.",
+        "violations": []
+      },
+      {
+        "invariantId": 9,
+        "name": "POLICY_EVALUATION_AUDIT_REQUIRED",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Every deterministic policy evaluation must append an auditable trace record.",
+        "violations": []
+      },
+      {
+        "invariantId": 10,
+        "name": "RISK_BLOCKED_ZERO_EXECUTIONS",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Transactions flagged as suspected risk must have strictly 0 execution attempts.",
+        "violations": []
+      },
+      {
+        "invariantId": 11,
+        "name": "PRODUCTION_MODE_FORBIDDEN",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Live production payment mutations are strictly forbidden in this harness.",
+        "violations": []
+      },
+      {
+        "invariantId": 12,
+        "name": "GROUND_TRUTH_PROMPT_ISOLATION",
+        "passed": true,
+        "violationsCount": 0,
+        "details": "Ground truth evaluation parameters are isolated and never dispatched to AI prompt contexts.",
+        "violations": []
+      }
+    ],
+    "auditedAt": "2026-08-24T05:31:30.818Z"
+  },
+  "baselineComparison": {
+    "baseline": {
+      "totalTransactions": 10,
+      "eligibleTransactions": 6,
+      "ineligibleTransactions": 4,
+      "totalFailedRevenuePaise": 25628400,
+      "grossRecoveredPaise": 2078444,
+      "interventionCostPaise": 900,
+      "netRecoveredPaise": 2077544,
+      "recoveredTransactionsCount": 3,
+      "failedTransactionsCount": 3,
+      "recoveryYieldPercent": 8.11,
+      "recoveryRatePercent": 30
+    },
+    "salvo": {
+      "grossRecoveredPaise": 12306215,
+      "interventionCostPaise": 1750,
+      "netRecoveredPaise": 12304465,
+      "recoveredTransactionsCount": 7,
+      "recoveryYieldPercent": 48.02,
+      "recoveryRatePercent": 70,
+      "fallbackRecoveredPaise": 0
+    },
+    "comparison": {
+      "additionalGrossRecoveryPaise": 10227771,
+      "additionalNetRecoveryPaise": 10226921,
+      "netImprovementPercent": 492.26,
+      "yieldImprovementPercent": 39.91,
+      "rateImprovementPercent": 40,
+      "additionalRecoveredTransactions": 4,
+      "fallbackContributionPercent": 0
+    }
+  },
+  "categoryBreakdown": {
+    "temporary_network_failure": {
+      "category": "temporary_network_failure",
+      "transactionCount": 3,
+      "failedRevenuePaise": 2491100,
+      "recoverableRevenuePaise": 2491100,
+      "policyBlocksCount": 1,
+      "approvedActionsCount": 2,
+      "successfulRecoveriesCount": 2,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 66.67,
+      "netRecoveryPaise": 2032135
+    },
+    "bank_decline": {
+      "category": "bank_decline",
+      "transactionCount": 0,
+      "failedRevenuePaise": 0,
+      "recoverableRevenuePaise": 0,
+      "policyBlocksCount": 0,
+      "approvedActionsCount": 0,
+      "successfulRecoveriesCount": 0,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 0,
+      "netRecoveryPaise": 0
+    },
+    "insufficient_funds": {
+      "category": "insufficient_funds",
+      "transactionCount": 1,
+      "failedRevenuePaise": 66300,
+      "recoverableRevenuePaise": 66300,
+      "policyBlocksCount": 0,
+      "approvedActionsCount": 1,
+      "successfulRecoveriesCount": 1,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 100,
+      "netRecoveryPaise": 56105
+    },
+    "authentication_failure": {
+      "category": "authentication_failure",
+      "transactionCount": 0,
+      "failedRevenuePaise": 0,
+      "recoverableRevenuePaise": 0,
+      "policyBlocksCount": 0,
+      "approvedActionsCount": 0,
+      "successfulRecoveriesCount": 0,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 0,
+      "netRecoveryPaise": 0
+    },
+    "payment_method_issue": {
+      "category": "payment_method_issue",
+      "transactionCount": 2,
+      "failedRevenuePaise": 10513200,
+      "recoverableRevenuePaise": 10513200,
+      "policyBlocksCount": 1,
+      "approvedActionsCount": 1,
+      "successfulRecoveriesCount": 1,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 50,
+      "netRecoveryPaise": 8841080
+    },
+    "customer_abandonment": {
+      "category": "customer_abandonment",
+      "transactionCount": 3,
+      "failedRevenuePaise": 1618700,
+      "recoverableRevenuePaise": 1618700,
+      "policyBlocksCount": 0,
+      "approvedActionsCount": 3,
+      "successfulRecoveriesCount": 3,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 100,
+      "netRecoveryPaise": 1375145
+    },
+    "expired_payment": {
+      "category": "expired_payment",
+      "transactionCount": 0,
+      "failedRevenuePaise": 0,
+      "recoverableRevenuePaise": 0,
+      "policyBlocksCount": 0,
+      "approvedActionsCount": 0,
+      "successfulRecoveriesCount": 0,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 0,
+      "netRecoveryPaise": 0
+    },
+    "suspected_risk": {
+      "category": "suspected_risk",
+      "transactionCount": 1,
+      "failedRevenuePaise": 10939100,
+      "recoverableRevenuePaise": 0,
+      "policyBlocksCount": 1,
+      "approvedActionsCount": 0,
+      "successfulRecoveriesCount": 0,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 0,
+      "netRecoveryPaise": 0
+    },
+    "unrecoverable": {
+      "category": "unrecoverable",
+      "transactionCount": 0,
+      "failedRevenuePaise": 0,
+      "recoverableRevenuePaise": 0,
+      "policyBlocksCount": 0,
+      "approvedActionsCount": 0,
+      "successfulRecoveriesCount": 0,
+      "failedExecutionsCount": 0,
+      "fallbackRecoveriesCount": 0,
+      "recoveryRatePercent": 0,
+      "netRecoveryPaise": 0
+    }
+  },
+  "strategyBreakdown": {
+    "smart_retry": {
+      "strategy": "smart_retry",
+      "recommendationCount": 3,
+      "policyApprovalsCount": 0,
+      "policyBlocksCount": 0,
+      "executionsCount": 2,
+      "successesCount": 2,
+      "failuresCount": 0,
+      "fallbackUsageCount": 0,
+      "grossRecoveryPaise": 2032435,
+      "interventionCostPaise": 300,
+      "netRecoveryPaise": 2032135,
+      "successRatePercent": 100
+    },
+    "payment_method_switch": {
+      "strategy": "payment_method_switch",
+      "recommendationCount": 2,
+      "policyApprovalsCount": 0,
+      "policyBlocksCount": 0,
+      "executionsCount": 1,
+      "successesCount": 1,
+      "failuresCount": 0,
+      "fallbackUsageCount": 0,
+      "grossRecoveryPaise": 8841530,
+      "interventionCostPaise": 450,
+      "netRecoveryPaise": 8841080,
+      "successRatePercent": 100
+    },
+    "payment_link": {
+      "strategy": "payment_link",
+      "recommendationCount": 4,
+      "policyApprovalsCount": 0,
+      "policyBlocksCount": 0,
+      "executionsCount": 4,
+      "successesCount": 4,
+      "failuresCount": 0,
+      "fallbackUsageCount": 0,
+      "grossRecoveryPaise": 1432250,
+      "interventionCostPaise": 1000,
+      "netRecoveryPaise": 1431250,
+      "successRatePercent": 100
+    },
+    "reminder": {
+      "strategy": "reminder",
+      "recommendationCount": 0,
+      "policyApprovalsCount": 0,
+      "policyBlocksCount": 0,
+      "executionsCount": 0,
+      "successesCount": 0,
+      "failuresCount": 0,
+      "fallbackUsageCount": 0,
+      "grossRecoveryPaise": 0,
+      "interventionCostPaise": 0,
+      "netRecoveryPaise": 0,
+      "successRatePercent": 0
+    },
+    "no_action": {
+      "strategy": "no_action",
+      "recommendationCount": 1,
+      "policyApprovalsCount": 0,
+      "policyBlocksCount": 0,
+      "executionsCount": 0,
+      "successesCount": 0,
+      "failuresCount": 0,
+      "fallbackUsageCount": 0,
+      "grossRecoveryPaise": 0,
+      "interventionCostPaise": 0,
+      "netRecoveryPaise": 0,
+      "successRatePercent": 0
+    }
+  }
+}

@@ -1,0 +1,787 @@
+{
+  "totalProcessed": 10,
+  "evaluatedAt": "2026-08-24T05:31:30.820Z",
+  "sessions": [
+    {
+      "transactionId": "txn_salv_0001",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 1454860,
+      "finalStrategy": "smart_retry",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0001_1b5820fe",
+          "transactionId": "txn_salv_0001",
+          "strategy": "smart_retry",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 1454860,
+          "executedAt": "2026-08-24T05:31:30.646Z",
+          "providerReference": "rzp_test_sim_v_0001_smar_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.637Z",
+          "transactionId": "txn_salv_0001",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.654Z"
+    },
+    {
+      "transactionId": "txn_salv_0002",
+      "success": false,
+      "attempts": 0,
+      "totalRecoveredPaise": 0,
+      "finalStrategy": "smart_retry",
+      "finalStatus": "blocked",
+      "actions": [],
+      "policyDecisions": [
+        {
+          "allowed": false,
+          "reasonCode": "STRATEGY_NOT_PERMITTED",
+          "reason": "Recommended strategy is incompatible with observable failure mode.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": false,
+              "reason": "Strategy \"smart_retry\" is incompatible with failure category \"payment_method_issue\"."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.661Z",
+          "transactionId": "txn_salv_0002",
+          "verdict": "blocked",
+          "triggeredRules": [
+            "STRATEGY_PERMISSIBILITY_CHECK"
+          ],
+          "explanation": "Recommended strategy is incompatible with observable failure mode."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.668Z"
+    },
+    {
+      "transactionId": "txn_salv_0003",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 56355,
+      "finalStrategy": "payment_link",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0003_9b1b29aa",
+          "transactionId": "txn_salv_0003",
+          "strategy": "payment_link",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 56355,
+          "executedAt": "2026-08-24T05:31:30.679Z",
+          "providerReference": "rzp_test_sim_v_0003_paym_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.671Z",
+          "transactionId": "txn_salv_0003",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.686Z"
+    },
+    {
+      "transactionId": "txn_salv_0004",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 8841530,
+      "finalStrategy": "payment_method_switch",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0004_e5448a01",
+          "transactionId": "txn_salv_0004",
+          "strategy": "payment_method_switch",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 8841530,
+          "executedAt": "2026-08-24T05:31:30.698Z",
+          "providerReference": "rzp_test_sim_v_0004_paym_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.690Z",
+          "transactionId": "txn_salv_0004",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.706Z"
+    },
+    {
+      "transactionId": "txn_salv_0005",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 162690,
+      "finalStrategy": "payment_link",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0005_9817a556",
+          "transactionId": "txn_salv_0005",
+          "strategy": "payment_link",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 162690,
+          "executedAt": "2026-08-24T05:31:30.719Z",
+          "providerReference": "rzp_test_sim_v_0005_paym_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.710Z",
+          "transactionId": "txn_salv_0005",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.728Z"
+    },
+    {
+      "transactionId": "txn_salv_0006",
+      "success": false,
+      "attempts": 0,
+      "totalRecoveredPaise": 0,
+      "finalStrategy": "payment_method_switch",
+      "finalStatus": "blocked",
+      "actions": [],
+      "policyDecisions": [
+        {
+          "allowed": false,
+          "reasonCode": "STRATEGY_NOT_PERMITTED",
+          "reason": "Recommended strategy is incompatible with observable failure mode.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": false,
+              "reason": "Strategy \"payment_method_switch\" is incompatible with failure category \"temporary_network_failure\"."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.732Z",
+          "transactionId": "txn_salv_0006",
+          "verdict": "blocked",
+          "triggeredRules": [
+            "STRATEGY_PERMISSIBILITY_CHECK"
+          ],
+          "explanation": "Recommended strategy is incompatible with observable failure mode."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.741Z"
+    },
+    {
+      "transactionId": "txn_salv_0007",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 97410,
+      "finalStrategy": "payment_link",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0007_f0b82737",
+          "transactionId": "txn_salv_0007",
+          "strategy": "payment_link",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 97410,
+          "executedAt": "2026-08-24T05:31:30.752Z",
+          "providerReference": "rzp_test_sim_v_0007_paym_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.745Z",
+          "transactionId": "txn_salv_0007",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.761Z"
+    },
+    {
+      "transactionId": "txn_salv_0008",
+      "success": false,
+      "attempts": 0,
+      "totalRecoveredPaise": 0,
+      "finalStrategy": "no_action",
+      "finalStatus": "blocked",
+      "actions": [],
+      "policyDecisions": [
+        {
+          "allowed": false,
+          "reasonCode": "RISK_BLOCK",
+          "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": false,
+              "reason": "Suspected fraud or high-risk velocity anomaly detected. Automated recovery prohibited."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": false,
+              "reason": "Terminal decline or unrecoverable instrument. No automated intervention permitted."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.767Z",
+          "transactionId": "txn_salv_0008",
+          "verdict": "blocked",
+          "triggeredRules": [
+            "RISK_SAFETY_CHECK",
+            "UNRECOVERABLE_SAFETY_CHECK"
+          ],
+          "explanation": "Anti-fraud policy gate blocked recovery on suspected risk transaction."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.775Z"
+    },
+    {
+      "transactionId": "txn_salv_0009",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 577575,
+      "finalStrategy": "smart_retry",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0009_47056e71",
+          "transactionId": "txn_salv_0009",
+          "strategy": "smart_retry",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 577575,
+          "executedAt": "2026-08-24T05:31:30.786Z",
+          "providerReference": "rzp_test_sim_v_0009_smar_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.778Z",
+          "transactionId": "txn_salv_0009",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.794Z"
+    },
+    {
+      "transactionId": "txn_salv_0010",
+      "success": true,
+      "attempts": 1,
+      "totalRecoveredPaise": 1115795,
+      "finalStrategy": "payment_link",
+      "finalStatus": "succeeded",
+      "actions": [
+        {
+          "success": true,
+          "actionId": "act_txn_salv_0010_9948b6ed",
+          "transactionId": "txn_salv_0010",
+          "strategy": "payment_link",
+          "provider": "razorpay_test",
+          "status": "succeeded",
+          "recoveredAmountPaise": 1115795,
+          "executedAt": "2026-08-24T05:31:30.806Z",
+          "providerReference": "rzp_test_sim_v_0010_paym_1"
+        }
+      ],
+      "policyDecisions": [
+        {
+          "allowed": true,
+          "reasonCode": "ALLOWED",
+          "reason": "All deterministic policy gate safety checks passed successfully.",
+          "checks": [
+            {
+              "name": "RISK_SAFETY_CHECK",
+              "passed": true,
+              "reason": "No fraud or risk anomalies detected."
+            },
+            {
+              "name": "UNRECOVERABLE_SAFETY_CHECK",
+              "passed": true,
+              "reason": "Failure is classified as potentially recoverable."
+            },
+            {
+              "name": "RETRY_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Retry count is within permissible limits."
+            },
+            {
+              "name": "CONFIDENCE_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Diagnosis confidence meets or exceeds safety threshold."
+            },
+            {
+              "name": "POSITIVE_EXPECTED_VALUE_CHECK",
+              "passed": true,
+              "reason": "Intervention maintains positive net expected financial value."
+            },
+            {
+              "name": "AMOUNT_VALIDITY_CHECK",
+              "passed": true,
+              "reason": "Predicted recovery amount is structurally valid."
+            },
+            {
+              "name": "AMOUNT_THRESHOLD_CHECK",
+              "passed": true,
+              "reason": "Transaction amount is within automated execution limits."
+            },
+            {
+              "name": "STRATEGY_PERMISSIBILITY_CHECK",
+              "passed": true,
+              "reason": "Strategy is compatible with failure mode."
+            },
+            {
+              "name": "CONTACT_LIMIT_CHECK",
+              "passed": true,
+              "reason": "Customer contact attempt limit respected."
+            }
+          ],
+          "evaluatedAt": "2026-08-24T05:31:30.798Z",
+          "transactionId": "txn_salv_0010",
+          "verdict": "approved",
+          "triggeredRules": [],
+          "explanation": "All deterministic policy gate safety checks passed successfully."
+        }
+      ],
+      "completedAt": "2026-08-24T05:31:30.813Z"
+    }
+  ]
+}

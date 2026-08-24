@@ -8,6 +8,7 @@
  *  - POST /api/policy-gate: Evaluates a deterministic policy gate check on a transaction & recommendation.
  *  - POST /api/execute: Executes a policy-approved recovery action via Razorpay test adapter.
  *  - POST /api/recover: Runs the complete autonomous agent recovery loop (Diagnose -> Gate -> Exec -> Fallback).
+ *  - POST /api/demo/recovery: Runs a deterministic demo scenario through the real orchestrator.
  *  - GET /api/health: Returns system status.
  */
 
@@ -22,6 +23,7 @@ import { diagnoseTransaction } from '../agents/diagnosePlan.js';
 import { evaluatePolicyGate } from '../agents/policyGate.js';
 import { executeRecoveryAction } from '../agents/executor.js';
 import { runAutonomousRecovery } from '../agents/orchestrator.js';
+import { executeDemoScenario, type DemoScenarioName } from '../agents/demoScenarios.js';
 import { toObservableTransaction } from '../agents/observation.js';
 import type { RecoveryRecommendation, AuditLogDocument } from '../types/index.js';
 
@@ -268,6 +270,51 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
       res.end(
         JSON.stringify({
           error: err instanceof Error ? err.message : 'Internal Server Error during recovery session',
+        })
+      );
+    }
+    return;
+  }
+
+  // POST /api/demo/recovery
+  if (url === '/api/demo/recovery' && method === 'POST') {
+    try {
+      const body = await parseJsonBody<{ scenario?: DemoScenarioName }>(req);
+
+      const validScenarios: DemoScenarioName[] = [
+        'success',
+        'fallback',
+        'risk_block',
+        'confidence_block',
+        'retry_limit',
+        'max_attempts',
+      ];
+
+      if (!body.scenario || !validScenarios.includes(body.scenario)) {
+        res.statusCode = 400;
+        res.end(
+          JSON.stringify({
+            error: `Invalid or missing scenario. Must be one of: ${validScenarios.join(', ')}`,
+          })
+        );
+        return;
+      }
+
+      const recoverySession = await executeDemoScenario(body.scenario);
+
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          success: recoverySession.success,
+          scenario: body.scenario,
+          recoverySession,
+        })
+      );
+    } catch (err) {
+      res.statusCode = 500;
+      res.end(
+        JSON.stringify({
+          error: err instanceof Error ? err.message : 'Internal Server Error during demo scenario',
         })
       );
     }

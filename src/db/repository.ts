@@ -1,27 +1,31 @@
 /**
  * src/db/repository.ts
  *
- * Unified Data Access Repository for Salvo
+ * Salvo Unified Data Repository
  *
- * Supports dual-mode persistence:
- *  1. MongoDB Atlas when MONGODB_URI is provided.
- *  2. High-performance deterministic file-backed storage (data/*.json)
- *     when running in offline/local test environments.
+ * Manages persistence for:
+ *  - transactions
+ *  - recovery_actions
+ *  - audit_logs
+ *
+ * Implements fallback strategy:
+ *  1. Uses MongoDB Atlas if MONGODB_URI is provided.
+ *  2. Transparently falls back to local JSON files in data/ directory for deterministic offline benchmarking.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
+import type {
+  TransactionDocument,
+  RecoveryActionDocument,
+  AuditLogDocument,
+} from '../types/index.js';
 import {
   isMongoConfigured,
   getTransactionsCollection,
   getRecoveryActionsCollection,
   getAuditLogsCollection,
 } from './mongo.js';
-import type {
-  TransactionDocument,
-  RecoveryActionDocument,
-  AuditLogDocument,
-} from '../types/index.js';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
@@ -49,18 +53,14 @@ export async function saveTransactions(
       await col.deleteMany({});
       if (transactions.length > 0) {
         await col.insertMany(transactions);
-        // Create indexes for high query performance
         await col.createIndex({ transactionId: 1 }, { unique: true });
-        await col.createIndex({ failureCategory: 1 });
         await col.createIndex({ status: 1 });
+        await col.createIndex({ failureCategory: 1 });
       }
-      // Also write local mirror for instant evaluation runs
       fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2), 'utf-8');
       return { count: transactions.length, source: 'mongodb' };
     } catch (err) {
-      console.warn(
-        `[repository] MongoDB connection failed (${(err as Error).message}). Storing in local file data/transactions.json`
-      );
+      console.warn(`[repository] MongoDB save transactions failed: ${(err as Error).message}`);
     }
   }
 
@@ -74,16 +74,10 @@ export async function getAllTransactions(): Promise<TransactionDocument[]> {
       const col = await getTransactionsCollection();
       const docs = await col.find({}).toArray();
       if (docs.length > 0) {
-        return docs.map((d) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { _id, ...rest } = d as unknown as { _id?: unknown } & TransactionDocument;
-          return rest as TransactionDocument;
-        });
+        return docs as unknown as TransactionDocument[];
       }
     } catch (err) {
-      console.warn(
-        `[repository] MongoDB read failed (${(err as Error).message}). Falling back to local data/transactions.json`
-      );
+      console.warn(`[repository] MongoDB read transactions failed: ${(err as Error).message}`);
     }
   }
 
@@ -96,7 +90,7 @@ export async function getAllTransactions(): Promise<TransactionDocument[]> {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Recovery Actions Repository
+// Recovery Actions Repository (Upsert/Merge Behavior)
 // ─────────────────────────────────────────────────────────────
 
 export async function saveRecoveryActions(
@@ -104,24 +98,42 @@ export async function saveRecoveryActions(
 ): Promise<{ count: number; source: 'mongodb' | 'file' }> {
   ensureDataDir();
 
+  // Read existing actions
+  let existingActions: RecoveryActionDocument[] = [];
+  if (fs.existsSync(ACTIONS_FILE)) {
+    try {
+      const raw = fs.readFileSync(ACTIONS_FILE, 'utf-8');
+      existingActions = JSON.parse(raw) as RecoveryActionDocument[];
+    } catch {
+      existingActions = [];
+    }
+  }
+
+  // Merge/upsert by actionId
+  const actionMap = new Map<string, RecoveryActionDocument>();
+  for (const a of existingActions) {
+    actionMap.set(a.actionId, a);
+  }
+  for (const a of actions) {
+    actionMap.set(a.actionId, a);
+  }
+  const mergedActions = Array.from(actionMap.values());
+
   if (isMongoConfigured()) {
     try {
       const col = await getRecoveryActionsCollection();
-      await col.deleteMany({});
-      if (actions.length > 0) {
-        await col.insertMany(actions);
-        await col.createIndex({ actionId: 1 }, { unique: true });
-        await col.createIndex({ transactionId: 1 });
+      for (const act of actions) {
+        await col.updateOne({ actionId: act.actionId }, { $set: act }, { upsert: true });
       }
-      fs.writeFileSync(ACTIONS_FILE, JSON.stringify(actions, null, 2), 'utf-8');
-      return { count: actions.length, source: 'mongodb' };
+      fs.writeFileSync(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2), 'utf-8');
+      return { count: mergedActions.length, source: 'mongodb' };
     } catch (err) {
       console.warn(`[repository] MongoDB save recovery actions failed: ${(err as Error).message}`);
     }
   }
 
-  fs.writeFileSync(ACTIONS_FILE, JSON.stringify(actions, null, 2), 'utf-8');
-  return { count: actions.length, source: 'file' };
+  fs.writeFileSync(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2), 'utf-8');
+  return { count: mergedActions.length, source: 'file' };
 }
 
 export async function getAllRecoveryActions(): Promise<RecoveryActionDocument[]> {
@@ -146,7 +158,7 @@ export async function getAllRecoveryActions(): Promise<RecoveryActionDocument[]>
 }
 
 // ─────────────────────────────────────────────────────────────
-// Audit Logs Repository
+// Audit Logs Repository (Append/Merge Behavior)
 // ─────────────────────────────────────────────────────────────
 
 export async function saveAuditLogs(
@@ -154,25 +166,42 @@ export async function saveAuditLogs(
 ): Promise<{ count: number; source: 'mongodb' | 'file' }> {
   ensureDataDir();
 
+  // Read existing logs
+  let existingLogs: AuditLogDocument[] = [];
+  if (fs.existsSync(AUDIT_FILE)) {
+    try {
+      const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
+      existingLogs = JSON.parse(raw) as AuditLogDocument[];
+    } catch {
+      existingLogs = [];
+    }
+  }
+
+  // Merge/append by eventId
+  const logMap = new Map<string, AuditLogDocument>();
+  for (const l of existingLogs) {
+    logMap.set(l.eventId, l);
+  }
+  for (const l of logs) {
+    logMap.set(l.eventId, l);
+  }
+  const mergedLogs = Array.from(logMap.values());
+
   if (isMongoConfigured()) {
     try {
       const col = await getAuditLogsCollection();
-      await col.deleteMany({});
-      if (logs.length > 0) {
-        await col.insertMany(logs);
-        await col.createIndex({ eventId: 1 }, { unique: true });
-        await col.createIndex({ transactionId: 1 });
-        await col.createIndex({ timestamp: -1 });
+      for (const log of logs) {
+        await col.updateOne({ eventId: log.eventId }, { $set: log }, { upsert: true });
       }
-      fs.writeFileSync(AUDIT_FILE, JSON.stringify(logs, null, 2), 'utf-8');
-      return { count: logs.length, source: 'mongodb' };
+      fs.writeFileSync(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2), 'utf-8');
+      return { count: mergedLogs.length, source: 'mongodb' };
     } catch (err) {
       console.warn(`[repository] MongoDB save audit logs failed: ${(err as Error).message}`);
     }
   }
 
-  fs.writeFileSync(AUDIT_FILE, JSON.stringify(logs, null, 2), 'utf-8');
-  return { count: logs.length, source: 'file' };
+  fs.writeFileSync(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2), 'utf-8');
+  return { count: mergedLogs.length, source: 'file' };
 }
 
 export async function getAllAuditLogs(): Promise<AuditLogDocument[]> {

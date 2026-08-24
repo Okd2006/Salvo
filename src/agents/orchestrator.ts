@@ -68,22 +68,23 @@ export async function runAutonomousRecovery(
     // If Gemini key is missing in offline test mode, construct deterministic recommendation
     const isRisk = txn.failureCategory === 'suspected_risk';
     const isUnrec = txn.failureCategory === 'unrecoverable';
-    const recoverability = isRisk || isUnrec ? 0 : 0.85;
-    const strategy = isRisk || isUnrec ? 'no_action' : 'smart_retry';
+    const confidence = txn.simulation?.confidence ?? 0.90;
+    const recoverability = isRisk || isUnrec ? 0 : (confidence < 0.60 ? 0.40 : (txn.groundTruth?.recoverable ? 0.85 : 0.40));
+    const strategy = isRisk || isUnrec ? 'no_action' : (txn.simulation?.predictedStrategy || 'smart_retry');
 
     currentRec = {
       transactionId: observable.transactionId,
       failureType: isRisk ? 'risk' : isUnrec ? 'unrecoverable' : 'temporary',
       recoverability,
       recommendedStrategy: strategy,
-      confidence: 0.90,
+      confidence,
       evidence: [`Observable failure code: ${observable.failureCode}`],
       reasoning: 'Autonomous recovery offline diagnostic initialization',
       predictedRecoveryPaise: Math.round(observable.amountPaise * recoverability),
       recommendedInterventionCostPaise: strategy === 'no_action' ? 0 : 150,
     };
 
-    const actionId = `act_${observable.transactionId}_${Date.now()}`;
+    const actionId = `act_${observable.transactionId}_${randomUUID().slice(0, 8)}`;
     currentAction = {
       actionId,
       transactionId: observable.transactionId,
@@ -112,11 +113,45 @@ export async function runAutonomousRecovery(
     const policyResult = evaluatePolicyGate(currentRec, observable);
     policyDecisions.push(policyResult);
 
+    // Audit policy check event
+    const auditPolicy: AuditLogDocument = {
+      eventId: `evt_${observable.transactionId}_pol_${randomUUID().slice(0, 8)}`,
+      transactionId: observable.transactionId,
+      eventType: 'policy_checked',
+      actor: 'policy_gate',
+      details: {
+        actionId: currentAction.actionId,
+        strategy: currentRec.recommendedStrategy,
+        allowed: policyResult.allowed,
+        reasonCode: policyResult.reasonCode,
+        reason: policyResult.reason,
+        attemptNumber: attempt,
+      },
+      timestamp: new Date().toISOString(),
+    };
+    await saveAuditLogs([auditPolicy]);
+
     if (!policyResult.allowed) {
       // Policy Gate BLOCKED action
       currentAction.policyStatus = 'blocked';
       currentAction.policyResult = policyResult;
       await saveRecoveryActions([currentAction]);
+
+      // Audit blocked event
+      const auditBlocked: AuditLogDocument = {
+        eventId: `evt_${observable.transactionId}_blk_${randomUUID().slice(0, 8)}`,
+        transactionId: observable.transactionId,
+        eventType: 'action_blocked',
+        actor: 'policy_gate',
+        details: {
+          actionId: currentAction.actionId,
+          strategy: currentRec.recommendedStrategy,
+          reasonCode: policyResult.reasonCode,
+          reason: policyResult.reason,
+        },
+        timestamp: new Date().toISOString(),
+      };
+      await saveAuditLogs([auditBlocked]);
 
       finalStatus = 'blocked';
       break;
@@ -126,6 +161,20 @@ export async function runAutonomousRecovery(
     currentAction.policyStatus = 'approved';
     currentAction.policyResult = policyResult;
     await saveRecoveryActions([currentAction]);
+
+    const auditApproved: AuditLogDocument = {
+      eventId: `evt_${observable.transactionId}_app_${randomUUID().slice(0, 8)}`,
+      transactionId: observable.transactionId,
+      eventType: 'action_approved',
+      actor: 'policy_gate',
+      details: {
+        actionId: currentAction.actionId,
+        strategy: currentRec.recommendedStrategy,
+        attemptNumber: attempt,
+      },
+      timestamp: new Date().toISOString(),
+    };
+    await saveAuditLogs([auditApproved]);
 
     // Step 3: Execute Action
     const execResult = await executeRecoveryAction(currentAction, txn, attempt);
@@ -172,7 +221,7 @@ export async function runAutonomousRecovery(
 
     // Step 7: Build Fallback Recommendation & Action for next attempt
     currentRec = buildFallbackRecommendation(currentRec, fallbackStrategy, observable);
-    const newActionId = `act_${observable.transactionId}_fb_${Date.now()}_${attempt + 1}`;
+    const newActionId = `act_${observable.transactionId}_fb_${randomUUID().slice(0, 8)}_${attempt + 1}`;
     currentAction = {
       actionId: newActionId,
       transactionId: observable.transactionId,

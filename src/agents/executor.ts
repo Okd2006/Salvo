@@ -24,12 +24,12 @@ import { assertTestMode, RAZORPAY_CONFIG, isRazorpayConfigured, createRecoveryPa
 import { saveRecoveryActions, saveAuditLogs } from '../db/repository.js';
 import { ExecutionResultSchema } from '../lib/schemas.js';
 
-// ─── Idempotency Ledger (In-memory set to prevent concurrent re-entrancy) ──────
+// ─── Idempotency Ledger (In-memory map to store execution results and prevent concurrent re-entrancy) ──────
 
-const executedIdempotencyKeys = new Set<string>();
+const executedIdempotencyResults = new Map<string, ExecutionResult>();
 
 export function clearIdempotencyCache(): void {
-  executedIdempotencyKeys.clear();
+  executedIdempotencyResults.clear();
 }
 
 // ─── Deterministic Hash Simulation Helper ────────────────────────────────────
@@ -60,11 +60,36 @@ export function simulateDeterministicOutcome(
 
   const providerRef = `rzp_test_sim_${txn.transactionId.slice(-6)}_${strategy.slice(0, 4)}_${attemptNumber}`;
 
-  // Deterministic success heuristics aligned with synthetic dataset ground truth
+  // If transaction is ground-truth unrecoverable, execution must fail
+  if (txn.groundTruth && !txn.groundTruth.recoverable) {
+    return {
+      success: false,
+      errorCode: 'UNRECOVERABLE_DECLINE',
+      errorMessage: 'Instrument declined permanently by issuer.',
+      providerReference: providerRef,
+    };
+  }
+
+  // If strategy matches optimal ground truth strategy, it succeeds
+  if (txn.groundTruth && txn.groundTruth.optimalStrategy) {
+    if (strategy === txn.groundTruth.optimalStrategy) {
+      return { success: true, providerReference: providerRef };
+    } else {
+      // Sub-optimal strategy: attempt 1 fails to trigger realistic fallback
+      if (attemptNumber === 1) {
+        return {
+          success: false,
+          errorCode: 'SUBOPTIMAL_STRATEGY_DECLINE',
+          errorMessage: `Execution with "${strategy}" was rejected by payment switch. Alternative method required.`,
+          providerReference: providerRef,
+        };
+      }
+    }
+  }
+
+  // Standard category heuristics
   if (strategy === 'smart_retry') {
-    // High success on temporary network; lower on first attempt if bank decline
     if (txn.failureCategory === 'temporary_network_failure') {
-      // 85% success probability
       if (normalizedProb < 0.85) {
         return { success: true, providerReference: providerRef };
       }
@@ -75,7 +100,6 @@ export function simulateDeterministicOutcome(
         providerReference: providerRef,
       };
     } else if (txn.failureCategory === 'bank_decline') {
-      // 55% success probability
       if (normalizedProb < 0.55) {
         return { success: true, providerReference: providerRef };
       }
@@ -86,7 +110,6 @@ export function simulateDeterministicOutcome(
         providerReference: providerRef,
       };
     } else {
-      // General retry failure
       return {
         success: false,
         errorCode: 'RETRY_UNSUPPORTED',
@@ -97,7 +120,6 @@ export function simulateDeterministicOutcome(
   }
 
   if (strategy === 'payment_method_switch') {
-    // Switching payment method succeeds 78% of the time
     if (normalizedProb < 0.78) {
       return { success: true, providerReference: providerRef };
     }
@@ -110,7 +132,6 @@ export function simulateDeterministicOutcome(
   }
 
   if (strategy === 'payment_link') {
-    // Payment links succeed 70% of the time on attempt 1, 85% on attempt 2
     const threshold = attemptNumber >= 2 ? 0.85 : 0.70;
     if (normalizedProb < threshold) {
       return { success: true, providerReference: providerRef };
@@ -124,7 +145,6 @@ export function simulateDeterministicOutcome(
   }
 
   if (strategy === 'reminder') {
-    // Reminders succeed 65% of the time
     if (normalizedProb < 0.65) {
       return { success: true, providerReference: providerRef };
     }
@@ -190,24 +210,13 @@ export async function executeRecoveryAction(
   }
 
   // 3. IDEMPOTENCY / RE-ENTRANCY CHECK
-  if (
-    action.executionStatus === 'succeeded' ||
-    executedIdempotencyKeys.has(idempotencyKey)
-  ) {
+  if (executedIdempotencyResults.has(idempotencyKey)) {
+    const prev = executedIdempotencyResults.get(idempotencyKey)!;
     return {
-      success: true,
-      actionId: action.actionId,
-      transactionId: action.transactionId,
-      strategy: action.strategy,
-      provider: 'razorpay_test',
+      ...prev,
       status: 'already_executed',
-      recoveredAmountPaise: action.actualRecoveryPaise || txn.amountPaise,
-      executedAt,
     };
   }
-
-  // Mark idempotency key to prevent concurrent replay
-  executedIdempotencyKeys.add(idempotencyKey);
 
   // 4. Log execution started audit event
   const auditStart: AuditLogDocument = {
@@ -295,6 +304,9 @@ export async function executeRecoveryAction(
 
   updatedAction.executionResult = execResultPayload;
   await saveRecoveryActions([updatedAction]);
+
+  // Record idempotency result
+  executedIdempotencyResults.set(idempotencyKey, execResultPayload);
 
   // 8. Create Audit Logs
   const auditLogsToSave: AuditLogDocument[] = [];
