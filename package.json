@@ -16,6 +16,7 @@
     "evaluate": "tsx scripts/evaluate.ts",
     "e2e": "tsx scripts/e2e.ts",
     "benchmark": "tsx scripts/e2e.ts",
+    "integration:check": "tsx scripts/check_integrations.ts",
     "test": "tsx --test tests/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
