@@ -1,0 +1,38 @@
+{
+  "metrics": {
+    "totalDiagnosed": 1,
+    "strategyAgreementCount": 1,
+    "strategyAgreementRate": 1,
+    "classificationAgreementCount": 1,
+    "classificationAgreementRate": 1,
+    "averageConfidence": 0.8,
+    "precision": 1,
+    "recall": 1,
+    "f1Score": 1,
+    "totalPredictedRecoveryPaise": 1711600,
+    "totalGroundTruthRecoverablePaise": 1393590,
+    "model": "openai/gpt-oss-20b",
+    "durationMs": 2808
+  },
+  "diagnoses": [
+    {
+      "transactionId": "txn_salv_0001",
+      "failureType": "temporary",
+      "recoverability": 0.6,
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.8,
+      "evidence": [
+        "Gateway status captured",
+        "Failure code SOCKET_CONNECTION_TIMEOUT",
+        "Failure category temporary_network_failure",
+        "Retry count 1",
+        "Historical retry success rate 25.0%",
+        "Customer preferred payment method emi"
+      ],
+      "reasoning": "The failure is a transient network timeout (SOCKET_CONNECTION_TIMEOUT) during capture, which is a classic temporary network issue. The gateway status indicates the transaction was ultimately captured, suggesting the payment can be retried with a high probability of success. The customer’s preferred method is EMI and the transaction amount is typical for this customer. Given the low intervention cost (no additional fees for a retry) and the potential to recover the full amount, a smart retry is the safest and most cost‑effective strategy.",
+      "predictedRecoveryPaise": 1711600,
+      "recommendedInterventionCostPaise": 0
+    }
+  ],
+  "failures": []
+}

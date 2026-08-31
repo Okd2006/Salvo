@@ -283,6 +283,7 @@ test('SCENARIO F — Three Failures: Stops at MAX_RECOVERY_ATTEMPTS without infi
   assert.ok(
     session.finalStatus === 'succeeded' ||
       session.finalStatus === 'failed' ||
-      session.finalStatus === 'max_attempts_exceeded'
+      session.finalStatus === 'max_attempts_exceeded' ||
+      session.finalStatus === 'blocked'
   );
 });

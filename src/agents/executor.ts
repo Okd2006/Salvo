@@ -244,27 +244,37 @@ export async function executeRecoveryAction(
     errorMessage?: string;
   };
 
-  if (!RAZORPAY_CONFIG.isSimulation && isRazorpayConfigured() && action.strategy === 'payment_link') {
-    // Real Razorpay Test API Call for Payment Link
-    try {
-      const plink = await createRecoveryPaymentLink({
-        amountPaise: txn.amountPaise,
-        currency: txn.currency,
-        description: `Salvo Recovery Link - Txn ${txn.transactionId}`,
-        customerEmail: txn.customerEmail,
-        customerPhone: txn.customerPhone,
-        referenceId: `salv_${action.actionId}`,
-      });
-      outcome = {
-        success: true,
-        providerReference: plink.id,
-      };
-    } catch (apiErr) {
+  if (!RAZORPAY_CONFIG.isSimulation && isRazorpayConfigured()) {
+    if (action.strategy === 'payment_link') {
+      // Real Razorpay Test API Call for Payment Link
+      try {
+        const plink = await createRecoveryPaymentLink({
+          amountPaise: txn.amountPaise,
+          currency: txn.currency,
+          description: `Salvo Recovery Link - Txn ${txn.transactionId}`,
+          customerEmail: txn.customerEmail,
+          customerPhone: txn.customerPhone,
+          referenceId: `salv_${action.actionId.slice(0, 30)}`,
+        });
+        outcome = {
+          success: true,
+          providerReference: plink.id,
+        };
+      } catch (apiErr) {
+        outcome = {
+          success: false,
+          providerReference: `rzp_test_err_${action.actionId}`,
+          errorCode: 'RAZORPAY_API_ERROR',
+          errorMessage: apiErr instanceof Error ? apiErr.message : String(apiErr),
+        };
+      }
+    } else {
+      // Real Razorpay Test API does not expose direct autonomous backend trigger for this strategy
       outcome = {
         success: false,
-        providerReference: `rzp_test_err_${action.actionId}`,
-        errorCode: 'RAZORPAY_API_ERROR',
-        errorMessage: apiErr instanceof Error ? apiErr.message : String(apiErr),
+        providerReference: `rzp_test_unsupported_${action.strategy}`,
+        errorCode: 'RAZORPAY_CAPABILITY_UNAVAILABLE',
+        errorMessage: `Razorpay Test API does not support autonomous server-side "${action.strategy}" execution without customer-present token authorization.`,
       };
     }
   } else {

@@ -22,7 +22,7 @@ let cachedDb: Db | null = null;
  */
 export function isMongoConfigured(): boolean {
   const uri = process.env.MONGODB_URI;
-  return Boolean(uri && uri.trim() !== '' && !uri.includes('<username>'));
+  return Boolean(uri && uri.trim() !== '' && !uri.includes('<') && !uri.includes('>'));
 }
 
 /**
@@ -30,7 +30,7 @@ export function isMongoConfigured(): boolean {
  */
 export async function getMongoClient(): Promise<MongoClient> {
   const uri = process.env.MONGODB_URI;
-  if (!uri || uri.includes('<username>')) {
+  if (!uri || uri.includes('<') || uri.includes('>')) {
     throw new Error(
       'MONGODB_URI is not configured in .env. Please set a valid MongoDB Atlas connection string.'
     );
@@ -42,8 +42,10 @@ export async function getMongoClient(): Promise<MongoClient> {
 
   const client = new MongoClient(uri, {
     maxPoolSize: 10,
+    minPoolSize: 1,
     serverSelectionTimeoutMS: 5000,
     connectTimeoutMS: 10000,
+    socketTimeoutMS: 15000,
   });
 
   await client.connect();
@@ -94,8 +96,13 @@ export async function getAuditLogsCollection(): Promise<Collection<AuditLogDocum
  */
 export async function closeMongoClient(): Promise<void> {
   if (cachedClient) {
-    await cachedClient.close();
-    cachedClient = null;
-    cachedDb = null;
+    try {
+      await cachedClient.close();
+    } catch {
+      // ignore
+    } finally {
+      cachedClient = null;
+      cachedDb = null;
+    }
   }
 }

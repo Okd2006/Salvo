@@ -1,7 +1,7 @@
 /**
  * scripts/diagnose.ts
  *
- * Salvo Batch Gemini Diagnosis Script
+ * Salvo Batch LLM Diagnosis Script
  *
  * Usage:
  *   DIAGNOSIS_LIMIT=10 npm run diagnose
@@ -9,7 +9,7 @@
  *
  * Features:
  *  - Loads transactions and converts to ObservableTransaction DTOs (ground truth stripped)
- *  - Calls Gemini for structured diagnosis recommendations
+ *  - Calls active LLM provider (OpenRouter / Gemini) for structured diagnosis recommendations
  *  - Persists recovery_actions and audit_logs to repository / database
  *  - Evaluates AI diagnostic accuracy against hidden ground truth post-hoc
  *  - Emits diagnose-results.json
@@ -20,7 +20,7 @@ import path from 'node:path';
 import 'dotenv/config';
 import { getAllTransactions, saveRecoveryActions, saveAuditLogs } from '../src/db/repository.js';
 import { diagnoseBatchTransactions } from '../src/agents/diagnosePlan.js';
-import { isGeminiConfigured, AI_CONFIG } from '../src/lib/gemini.js';
+import { isLLMConfigured, getLLMProvider, getActiveModelName } from '../src/lib/llm.js';
 import { formatPaise, formatPercent } from '../src/lib/currency.js';
 import type { AIDiagnosisMetrics, RecoveryActionDocument, AuditLogDocument } from '../src/types/index.js';
 
@@ -28,17 +28,25 @@ async function runDiagnose(): Promise<void> {
   const startTime = Date.now();
   const limitEnv = process.env.DIAGNOSIS_LIMIT;
   const limit = limitEnv && limitEnv !== 'all' ? parseInt(limitEnv, 10) : undefined;
+  const provider = getLLMProvider();
+  const modelName = getActiveModelName();
+  const isConfigured = isLLMConfigured();
 
   console.log('\n========================================');
-  console.log('  SALVO — GEMINI AI DIAGNOSE & PLAN');
+  console.log(`  SALVO — ${provider.toUpperCase()} AI DIAGNOSE & PLAN`);
   console.log('========================================\n');
-  console.log(`  AI Model:         ${AI_CONFIG.diagnosisModel}`);
+  console.log(`  LLM Provider:     ${provider.toUpperCase()}`);
+  console.log(`  AI Model:         ${modelName}`);
   console.log(`  Diagnosis Limit:  ${limit ? limit.toLocaleString('en-IN') : 'Full Dataset'}`);
-  console.log(`  Gemini Key:       ${isGeminiConfigured() ? 'Configured' : 'Missing / Incomplete'}`);
+  console.log(`  API Key:          ${isConfigured ? 'Configured' : 'Missing / Incomplete'}`);
 
-  if (!isGeminiConfigured()) {
-    console.error('\n[diagnose] ERROR: GEMINI_API_KEY is not set or contains placeholder value in .env.');
-    console.error('[diagnose] Please set a valid Google Gemini API key in .env before running diagnosis.\n');
+  if (!isConfigured) {
+    console.error(`\n[diagnose] ERROR: API key for provider ${provider.toUpperCase()} is not set in .env.`);
+    console.error(
+      `[diagnose] Please set a valid ${
+        provider === 'groq' ? 'GROQ_API_KEY' : provider === 'openrouter' ? 'OPENROUTER_API_KEY' : 'GEMINI_API_KEY'
+      } in .env before running diagnosis.\n`
+    );
     process.exit(1);
   }
 
@@ -51,13 +59,19 @@ async function runDiagnose(): Promise<void> {
   }
 
   const transactionsToProcess = limit ? allTransactions.slice(0, limit) : allTransactions;
-  console.log(`  [2/4] Selected ${transactionsToProcess.length.toLocaleString('en-IN')} transactions for Gemini diagnosis.`);
-  console.log(`  [3/4] Dispatching structured diagnoses to Gemini (concurrency: 3)...`);
+  console.log(
+    `  [2/4] Selected ${transactionsToProcess.length.toLocaleString('en-IN')} transactions for ${provider.toUpperCase()} diagnosis.`
+  );
+  console.log(`  [3/4] Dispatching structured diagnoses to ${provider.toUpperCase()} (concurrency: 3)...`);
 
   const batchResult = await diagnoseBatchTransactions(transactionsToProcess, 3);
   const durationMs = Date.now() - startTime;
 
-  console.log(`  [4/4] Completed: ${batchResult.successful.length} succeeded, ${batchResult.failed.length} failed in ${(durationMs / 1000).toFixed(1)}s.\n`);
+  console.log(
+    `  [4/4] Completed: ${batchResult.successful.length} succeeded, ${batchResult.failed.length} failed in ${(
+      durationMs / 1000
+    ).toFixed(1)}s.\n`
+  );
 
   if (batchResult.failed.length > 0) {
     console.warn(`  ⚠️ Warnings / Failures:`);
@@ -69,7 +83,7 @@ async function runDiagnose(): Promise<void> {
     }
   }
 
-  // ─── Save Results to Database Collections ────────────────────────────────────
+  // ─── Save Results to Database Collections ───────────────────────────────────
   const newActions: RecoveryActionDocument[] = batchResult.successful.map((s) => s.action);
   const newAuditLogs: AuditLogDocument[] = batchResult.successful.map((s) => s.auditLog);
 
@@ -78,7 +92,7 @@ async function runDiagnose(): Promise<void> {
     await saveAuditLogs(newAuditLogs);
   }
 
-  // ─── Post-hoc AI Metrics Computation ─────────────────────────────────────────
+  // ─── Post-hoc AI Metrics Computation ────────────────────────────────────────
   // Compare model predictions against ground truth (strictly post-hoc)
   let strategyAgreementCount = 0;
   let classificationAgreementCount = 0;
@@ -108,7 +122,8 @@ async function runDiagnose(): Promise<void> {
     }
 
     // Classification agreement (recoverable vs unrecoverable)
-    const isModelRecoverable = recommendation.recommendedStrategy !== 'no_action' && recommendation.recoverability > 0.3;
+    const isModelRecoverable =
+      recommendation.recommendedStrategy !== 'no_action' && recommendation.recoverability > 0.3;
     if (isModelRecoverable === gt.recoverable) {
       classificationAgreementCount++;
     }
@@ -139,7 +154,7 @@ async function runDiagnose(): Promise<void> {
     f1Score: Number(f1Score.toFixed(4)),
     totalPredictedRecoveryPaise,
     totalGroundTruthRecoverablePaise,
-    model: AI_CONFIG.diagnosisModel,
+    model: modelName,
     durationMs,
   };
 
@@ -159,15 +174,21 @@ async function runDiagnose(): Promise<void> {
     'utf-8'
   );
 
-  // ─── Print Terminal Report ───────────────────────────────────────────────────
+  // ─── Print Terminal Report ──────────────────────────────────────────────────
   console.log('========================================');
-  console.log('  GEMINI DIAGNOSTIC EVALUATION REPORT');
+  console.log(`  ${provider.toUpperCase()} DIAGNOSTIC EVALUATION REPORT`);
   console.log('========================================\n');
   console.log(`  Model Evaluated:          ${aiMetrics.model}`);
   console.log(`  Transactions Diagnosed:   ${aiMetrics.totalDiagnosed.toLocaleString('en-IN')}`);
   console.log(`  Average Confidence:       ${formatPercent(aiMetrics.averageConfidence)}`);
-  console.log(`  Strategy Agreement Rate:  ${formatPercent(aiMetrics.strategyAgreementRate)} (${strategyAgreementCount}/${count})`);
-  console.log(`  Classification Accuracy:  ${formatPercent(aiMetrics.classificationAgreementRate)} (${classificationAgreementCount}/${count})`);
+  console.log(
+    `  Strategy Agreement Rate:  ${formatPercent(aiMetrics.strategyAgreementRate)} (${strategyAgreementCount}/${count})`
+  );
+  console.log(
+    `  Classification Accuracy:  ${formatPercent(
+      aiMetrics.classificationAgreementRate
+    )} (${classificationAgreementCount}/${count})`
+  );
   console.log(`  ────────────────────────────────────────`);
   console.log(`  Recommendation Precision: ${formatPercent(aiMetrics.precision)}`);
   console.log(`  Recommendation Recall:    ${formatPercent(aiMetrics.recall)}`);
@@ -180,7 +201,7 @@ async function runDiagnose(): Promise<void> {
   if (batchResult.successful.length > 0) {
     const sample = batchResult.successful[0].recommendation;
     console.log('\n========================================');
-    console.log('  SAMPLE STRUCTURED GEMINI RECOMMENDATION');
+    console.log(`  SAMPLE STRUCTURED ${provider.toUpperCase()} RECOMMENDATION`);
     console.log('========================================\n');
     console.log(`  Transaction ID:   ${sample.transactionId}`);
     console.log(`  Failure Type:     ${sample.failureType}`);

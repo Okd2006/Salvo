@@ -1,161 +1,151 @@
 /**
- * SimulatorScreen — Algorithmic Recovery Simulator.
+ * src/ui/screens/SimulatorScreen.tsx
  *
- * Visual Concept: Deep-Space Financial Command Center
- *  - 35px architectural comparison ledger
- *  - 48px plan approval controls
- *  - 17px recommended badges
- *  - High-precision JetBrains Mono numerical ledger
+ * Salvo Recovery Simulator / Scenario Lab
+ * Connects directly to POST /api/demo/recovery
  */
-import React, { useState } from 'react';
-import { PageHeader } from '../components/PageHeader.js';
-import { CurrencyValue } from '../components/CurrencyValue.js';
-import { RecoveryStrategyRow } from '../components/RecoveryStrategyRow.js';
-import { DEMO_SIMULATOR_STRATEGIES } from '../data/demo.js';
+import React, { useState, useCallback } from 'react';
+import { SalvoApi, SalvoApiError } from '../lib/api.js';
+import type { RecoverySessionResult } from '../../types/index.js';
+import {
+  SimulatorHeader,
+  ScenarioSelector,
+  ScenarioContextCard,
+  SimulationPipeline,
+  SimulationResultCard,
+  ScenarioComparisonTable,
+  type DemoScenarioName,
+} from '../components/simulator/index.js';
+import { Card } from '../components/ui/card.js';
+import { Button } from '../components/ui/button.js';
+import { Skeleton } from '../components/ui/skeleton.js';
+import { AlertCircle, FlaskConical } from 'lucide-react';
 
-interface SimulatorScreenProps {
-  onNavigate?: (tab: string) => void;
+export interface SimulatorScreenProps {
+  onNavigate?: (route: string) => void;
+  initialScenario?: DemoScenarioName;
 }
 
-export const SimulatorScreen: React.FC<SimulatorScreenProps> = ({ onNavigate }) => {
-  const [selectedId, setSelectedId] = useState<string>('preemptive-verify');
+export const SimulatorScreen: React.FC<SimulatorScreenProps> = ({
+  initialScenario = 'success',
+}) => {
+  const [selectedScenario, setSelectedScenario] = useState<DemoScenarioName>(initialScenario);
+  const [sessionResult, setSessionResult] = useState<RecoverySessionResult | null>(null);
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const selectedStrategy =
-    DEMO_SIMULATOR_STRATEGIES.find((s) => s.id === selectedId) ??
-    DEMO_SIMULATOR_STRATEGIES[0];
+  // Run simulation via POST /api/demo/recovery
+  const runSimulation = useCallback(async (scenarioToRun: DemoScenarioName) => {
+    setIsSimulating(true);
+    setErrorMessage(null);
+    setSessionResult(null);
+
+    try {
+      const res = await SalvoApi.runDemo(scenarioToRun);
+      if (res.success && res.recoverySession) {
+        setSessionResult(res.recoverySession);
+      } else {
+        setErrorMessage('Simulation completed with unexpected format.');
+      }
+    } catch (err: unknown) {
+      if (err instanceof SalvoApiError) {
+        setErrorMessage(`Simulation Error: ${err.message}`);
+      } else if (err instanceof Error) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage('Failed to execute recovery simulation.');
+      }
+    } finally {
+      setIsSimulating(false);
+    }
+  }, []);
+
+  // Handle scenario switch
+  const handleSelectScenario = (scenario: DemoScenarioName) => {
+    setSelectedScenario(scenario);
+    setSessionResult(null);
+    setErrorMessage(null);
+  };
+
+  // Reset lab
+  const handleReset = () => {
+    setSessionResult(null);
+    setErrorMessage(null);
+  };
 
   return (
-    <main className="flex-1 p-6 lg:p-10 flex flex-col gap-8 overflow-y-auto min-w-0 bg-[#03081A] text-white">
-      <div className="max-w-[1280px] w-full mx-auto space-y-8">
-        {/* Screen Header */}
-        <PageHeader
-          eyebrow="Algorithmic Simulation"
-          eyebrowVariant="ai"
-          title="Recovery Simulator"
-          subtitle="Compare algorithmic recovery strategies against your pending decline volume. Projections are computed from 30-day historical conversion models."
-          actions={
-            <div className="flex items-center gap-3">
-              <button className="px-6 py-2.5 rounded-[48px] border border-border-hairline hover:border-border-secondary text-text-secondary hover:text-white font-sans text-xs font-medium transition-colors">
-                Export Simulation Data
-              </button>
-              <button
-                onClick={() => onNavigate?.('execution')}
-                className="px-6 py-2.5 rounded-[48px] bg-primary hover:bg-primary-hover text-white font-sans text-xs font-medium transition-all flex items-center gap-2 shadow-sm"
-              >
-                <span>Approve Recovery Plan</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-              </button>
-            </div>
-          }
-        />
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+      {/* 1. Header */}
+      <SimulatorHeader onReset={handleReset} isSimulating={isSimulating} />
 
-        {/* Selected Strategy KPI Summary Cards (35px Radius) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-surface border border-border-hairline rounded-[35px] p-6 flex flex-col justify-between gap-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
-              Selected Strategy Vector
-            </span>
-            <div className="font-sans text-[20px] font-medium text-white">
-              {selectedStrategy.label}
-            </div>
-            <div className="font-mono text-xs text-text-secondary">
-              {selectedStrategy.transactionsAffected.toLocaleString('en-IN')} transactions targeted
-            </div>
+      {/* Error Alert */}
+      {errorMessage && (
+        <div className="p-4 rounded-[16px] bg-risk/10 border border-risk/40 text-risk text-xs flex items-center justify-between gap-3 animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span className="font-sans font-medium">{errorMessage}</span>
           </div>
-
-          <div className="bg-surface border border-border-hairline rounded-[35px] p-6 flex flex-col justify-between gap-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
-              Gross Predicted Yield
-            </span>
-            <CurrencyValue paise={selectedStrategy.predictedRecoveryPaise} size="lg" variant="neutral" />
-            <div className="font-sans text-xs text-text-secondary">
-              Baseline algorithmic recovery rate
-            </div>
-          </div>
-
-          <div className="bg-surface border border-border-hairline rounded-[35px] p-6 flex flex-col justify-between gap-3 relative overflow-hidden">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
-              Projected Net Gain
-            </span>
-            <CurrencyValue paise={selectedStrategy.netRecoveryPaise} size="lg" variant="recovered" />
-            <div className="font-mono text-xs text-recovered">
-              Less API cost: -₹{(selectedStrategy.interventionCostPaise / 100).toLocaleString('en-IN')}
-            </div>
-          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => runSimulation(selectedScenario)}
+            className="h-7 text-xs border-risk/40 hover:bg-risk/20 text-white"
+          >
+            Retry
+          </Button>
         </div>
+      )}
 
-        {/* Strategy Comparison Ledger Table */}
-        <div className="bg-surface rounded-[35px] border border-border-hairline overflow-hidden flex flex-col">
-          {/* Table Toolbar */}
-          <div className="px-6 lg:px-8 py-5 border-b border-border-hairline bg-[#03081A]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="font-sans text-[20px] font-normal text-white">
-                Strategy Evaluation Matrix
-              </h2>
-              <p className="font-sans text-xs text-text-secondary">
-                Select a strategy row to review net algorithmic yield against pending decline queues
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-text-tertiary font-mono text-xs">
-              <span className="material-symbols-outlined text-[16px] text-ai-signal">
-                update
-              </span>
-              <span>Models updated: 14:30 UTC</span>
-            </div>
-          </div>
+      {/* 2. Scenario Library (6 Archetypes) */}
+      <ScenarioSelector
+        selectedScenario={selectedScenario}
+        onSelect={handleSelectScenario}
+        isSimulating={isSimulating}
+      />
 
-          {/* Ledger Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left whitespace-nowrap min-w-[800px]">
-              <thead className="bg-[#03081A] border-b border-border-hairline font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary font-semibold">
-                <tr>
-                  <th className="px-6 py-4">Strategy Model</th>
-                  <th className="px-6 py-4 text-right">Transactions Affected</th>
-                  <th className="px-6 py-4 text-right">Predicted Recovery</th>
-                  <th className="px-6 py-4 text-right">Intervention Cost</th>
-                  <th className="px-6 py-4 text-right text-white">NET Projected Recovery</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-hairline/40">
-                {DEMO_SIMULATOR_STRATEGIES.map((s) => (
-                  <RecoveryStrategyRow
-                    key={s.id}
-                    id={s.id}
-                    icon={s.icon}
-                    label={s.label}
-                    sublabel={s.sublabel}
-                    transactionsAffected={s.transactionsAffected}
-                    predictedRecoveryPaise={s.predictedRecoveryPaise}
-                    interventionCostPaise={s.interventionCostPaise}
-                    netRecoveryPaise={s.netRecoveryPaise}
-                    recommended={s.recommended}
-                    isSelected={selectedId === s.id}
-                    onSelect={setSelectedId}
-                  />
-                ))}
-              </tbody>
-              <tfoot className="bg-[#03081A] border-t border-border-hairline">
-                <tr>
-                  <td
-                    className="px-6 py-5 text-right font-mono text-xs uppercase tracking-wider text-text-tertiary"
-                    colSpan={4}
-                  >
-                    Total Projected Net Gain ({selectedStrategy.label}):
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    <CurrencyValue
-                      paise={selectedStrategy.netRecoveryPaise}
-                      variant="recovered"
-                      size="lg"
-                      className="font-bold"
-                    />
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+      {/* 3. Selected Scenario Context & Controls */}
+      <ScenarioContextCard
+        scenario={selectedScenario}
+        onRunSimulation={() => runSimulation(selectedScenario)}
+        onReset={handleReset}
+        isSimulating={isSimulating}
+      />
+
+      {/* 4. Live Pipeline Visualization */}
+      <SimulationPipeline
+        sessionResult={sessionResult}
+        isSimulating={isSimulating}
+      />
+
+      {/* 5. In-Progress Simulation Skeleton */}
+      {isSimulating && (
+        <Card className="border-border-hairline bg-[#020626]/95 p-8 text-center space-y-4 animate-pulse">
+          <div className="w-12 h-12 rounded-[14px] bg-caution/20 border border-caution/40 flex items-center justify-center text-caution mx-auto">
+            <FlaskConical className="w-6 h-6 animate-spin" />
           </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white font-sans">
+              Executing Deterministic Autonomous Recovery Session...
+            </h3>
+            <p className="text-xs text-text-secondary font-mono mt-1">
+              Observing Failure &rarr; LLM Reasoning &rarr; Policy Verification &rarr; Razorpay Test Dispatch
+            </p>
+          </div>
+          <Skeleton className="h-32 rounded-[14px]" />
+        </Card>
+      )}
+
+      {/* 6. Simulation Results Ledger */}
+      {sessionResult && !isSimulating && (
+        <div className="animate-fadeIn">
+          <SimulationResultCard sessionResult={sessionResult} />
         </div>
-      </div>
-    </main>
+      )}
+
+      {/* 7. Scenario Matrix Comparison Table */}
+      <ScenarioComparisonTable onSelectScenario={handleSelectScenario} />
+    </div>
   );
 };
+
+export default SimulatorScreen;

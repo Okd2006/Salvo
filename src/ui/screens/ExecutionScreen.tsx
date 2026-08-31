@@ -1,152 +1,220 @@
 /**
- * ExecutionScreen — Signature Live Execution Ledger.
+ * src/ui/screens/ExecutionScreen.tsx
  *
- * Visual Concept: Deep-Space Financial Command Center
- *  - 35px architectural enclosures
- *  - 17px status chips
- *  - Real-time pipeline state telemetry (QUEUED → POLICY CHECK → EXECUTING → RECOVERED)
- *  - Strict financial color semantics (Recovered: #00C896, Failed: #FF6B4A)
+ * Salvo Live Recovery Execution Console
+ * Connects directly to POST /api/recover, GET /api/transactions, GET /api/actions, and GET /api/metrics
  */
-import React from 'react';
-import { PageHeader } from '../components/PageHeader.js';
-import { ExecutionTimeline } from '../components/ExecutionTimeline.js';
-import { CurrencyValue } from '../components/CurrencyValue.js';
+import React, { useState, useEffect, useCallback } from 'react';
+import { SalvoApi, SalvoApiError, type OverviewMetrics } from '../lib/api.js';
+import type {
+  ObservableTransaction,
+  RecoverySessionResult,
+  RecoveryActionDocument,
+} from '../../types/index.js';
 import {
-  DEMO_EXECUTION_ROWS,
-  DEMO_ACTIVE_THREADS,
-  DEMO_RECOVERY_RATE,
-} from '../data/demo.js';
+  ExecutionHeader,
+  ExecutionMetricsCards,
+  ExecutionControlCard,
+  ExecutionSessionResultCard,
+} from '../components/execution/index.js';
+import { ExecutionTimeline, type TimelineRow } from '../components/ExecutionTimeline.js';
+import { Card } from '../components/ui/card.js';
+import { Button } from '../components/ui/button.js';
+import { Skeleton } from '../components/ui/skeleton.js';
+import { AlertCircle, Zap } from 'lucide-react';
 
-interface ExecutionScreenProps {
-  onNavigate?: (tab: string) => void;
+export interface ExecutionScreenProps {
+  onNavigate?: (route: string) => void;
+  initialTransactionId?: string;
 }
 
-export const ExecutionScreen: React.FC<ExecutionScreenProps> = () => {
-  const recoveredTotal = DEMO_EXECUTION_ROWS.filter((r) => r.status === 'RECOVERED').reduce(
-    (s, r) => s + r.amountPaise,
-    0
-  );
+export const ExecutionScreen: React.FC<ExecutionScreenProps> = ({
+  initialTransactionId,
+}) => {
+  const [metrics, setMetrics] = useState<OverviewMetrics | null>(null);
+  const [transactions, setTransactions] = useState<ObservableTransaction[]>([]);
+  const [selectedTxn, setSelectedTxn] = useState<ObservableTransaction | null>(null);
+  const [historyActions, setHistoryActions] = useState<RecoveryActionDocument[]>([]);
 
-  const inProgressTotal = DEMO_EXECUTION_ROWS.filter((r) =>
-    ['EXECUTING', 'POLICY_CHECK', 'QUEUED'].includes(r.status)
-  ).reduce((s, r) => s + r.amountPaise, 0);
+  const [sessionResult, setSessionResult] = useState<RecoverySessionResult | null>(null);
+  const [isExecuting, setIsExecuting] = useState<boolean>(false);
+  const [isLoadingInitial, setIsLoadingInitial] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const failedTotal = DEMO_EXECUTION_ROWS.filter((r) => r.status === 'FAILED').reduce(
-    (s, r) => s + r.amountPaise,
-    0
-  );
+  // 1. Fetch initial transactions, metrics, and recent actions
+  const loadConsoleData = useCallback(async () => {
+    setIsLoadingInitial(true);
+    setErrorMessage(null);
+
+    try {
+      const [m, txns, acts] = await Promise.all([
+        SalvoApi.getMetrics().catch(() => null),
+        SalvoApi.getTransactions(30).catch(() => []),
+        SalvoApi.getRecoveryActions(20).catch(() => []),
+      ]);
+
+      if (m) setMetrics(m);
+      setTransactions(txns);
+      setHistoryActions(acts);
+
+      if (txns.length > 0) {
+        const matched = initialTransactionId
+          ? txns.find((t) => t.transactionId === initialTransactionId)
+          : txns[0];
+        setSelectedTxn(matched || txns[0]);
+      }
+    } catch (err: unknown) {
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Failed to connect to Salvo Live Execution Engine.'
+      );
+    } finally {
+      setIsLoadingInitial(false);
+    }
+  }, [initialTransactionId]);
+
+  useEffect(() => {
+    void loadConsoleData();
+  }, [loadConsoleData]);
+
+  // 2. Dispatch live autonomous recovery via POST /api/recover
+  const handleExecuteLive = async () => {
+    if (!selectedTxn || isExecuting) return;
+
+    setIsExecuting(true);
+    setErrorMessage(null);
+    setSessionResult(null);
+
+    try {
+      const res = await SalvoApi.recover(selectedTxn.transactionId);
+      if (res.success && res.recoverySession) {
+        setSessionResult(res.recoverySession);
+
+        // Refresh metrics and recovery actions
+        const [updatedMetrics, updatedActions] = await Promise.all([
+          SalvoApi.getMetrics().catch(() => null),
+          SalvoApi.getRecoveryActions(20).catch(() => []),
+        ]);
+        if (updatedMetrics) setMetrics(updatedMetrics);
+        if (updatedActions) setHistoryActions(updatedActions);
+      } else {
+        setErrorMessage('Execution completed with unexpected status.');
+      }
+    } catch (err: unknown) {
+      if (err instanceof SalvoApiError) {
+        setErrorMessage(`Execution Engine Error: ${err.message}`);
+      } else if (err instanceof Error) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage('Failed to execute autonomous recovery on target transaction.');
+      }
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
+  // Convert actions to TimelineRow format
+  const timelineRows: TimelineRow[] = historyActions.map((act) => {
+    const isSuccess = act.status === 'succeeded';
+    const isBlocked = act.status === 'blocked';
+
+    return {
+      timestamp: act.createdAt
+        ? new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        : 'LIVE',
+      transactionId: act.transactionId,
+      triggerType: act.strategy.replace(/_/g, ' '),
+      interventionCostPaise: act.interventionCostPaise,
+      recoveredPaise: act.recoveredAmountPaise || 0,
+      confidenceScore: act.confidence,
+      status: (isSuccess ? 'RECOVERED' : isBlocked ? 'POLICY BLOCKED' : 'FAILED') as 'RECOVERED' | 'POLICY BLOCKED' | 'FAILED',
+    };
+  });
 
   return (
-    <main className="flex-1 p-6 lg:p-10 flex flex-col gap-8 overflow-y-auto min-w-0 bg-[#03081A] text-white">
-      <div className="max-w-[1280px] w-full mx-auto space-y-8">
-        {/* Screen Header */}
-        <PageHeader
-          eyebrow="Autonomous Execution Feed"
-          eyebrowVariant="ai"
-          title="Live Execution"
-          subtitle="Real-time autonomous transaction recovery operations, Razorpay API executions, and deterministic safety checks."
-          actions={
-            <div className="flex items-center gap-4 bg-surface border border-border-hairline px-5 py-2.5 rounded-[48px]">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-ai-signal animate-pulse" />
-                <span className="font-mono text-xs text-ai-signal font-semibold">LIVE PIPELINE</span>
-              </div>
-              <div className="h-3 w-[1px] bg-border-hairline" />
-              <div className="font-mono text-xs text-text-tertiary">
-                ACTIVE THREADS: <span className="text-white font-medium">{DEMO_ACTIVE_THREADS.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
-          }
-        />
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+      {/* 1. Header */}
+      <ExecutionHeader
+        onRefresh={loadConsoleData}
+        isRefreshing={isLoadingInitial}
+        isExecuting={isExecuting}
+      />
 
-        {/* Real-time Summary Cards (35px Radius) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {/* Recovered Amount */}
-          <div className="bg-surface border border-border-hairline rounded-[35px] p-6 lg:p-8 flex flex-col justify-between gap-3 relative overflow-hidden">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
-                Recovered in Session
-              </span>
-              <span className="material-symbols-outlined text-recovered text-[20px]">
-                check_circle
-              </span>
-            </div>
-            <div>
-              <CurrencyValue paise={recoveredTotal} size="xl" variant="recovered" prefix="+" />
-              <p className="font-sans text-xs text-text-secondary mt-1">
-                Settled through Razorpay smart retries & fallback routes
-              </p>
-            </div>
-            <div className="pt-2 border-t border-border-hairline/60 flex items-center justify-between text-xs font-mono text-text-tertiary">
-              <span>SUCCESS RATE</span>
-              <span className="text-recovered font-medium">{DEMO_RECOVERY_RATE}%</span>
-            </div>
+      {/* Error Alert */}
+      {errorMessage && (
+        <div className="p-4 rounded-[16px] bg-risk/10 border border-risk/40 text-risk text-xs flex items-center justify-between gap-3 animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span className="font-sans font-medium">{errorMessage}</span>
           </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExecuteLive}
+            className="h-7 text-xs border-risk/40 hover:bg-risk/20 text-white"
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
-          {/* In Progress Amount */}
-          <div className="bg-surface border border-border-hairline rounded-[35px] p-6 lg:p-8 flex flex-col justify-between gap-3">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
-                Pipeline In-Flight
-              </span>
-              <span className="material-symbols-outlined text-ai-signal text-[20px] animate-spin">
-                sync
-              </span>
-            </div>
-            <div>
-              <CurrencyValue paise={inProgressTotal} size="xl" variant="neutral" />
-              <p className="font-sans text-xs text-text-secondary mt-1">
-                Queued, undergoing policy verification or gateway retry
-              </p>
-            </div>
-            <div className="pt-2 border-t border-border-hairline/60 flex items-center justify-between text-xs font-mono text-text-tertiary">
-              <span>PIPELINE STAGES</span>
-              <span className="text-white font-medium">3 QUEUED / 1 EXECUTING</span>
-            </div>
-          </div>
+      {/* 2. Real-time Telemetry Metrics */}
+      <ExecutionMetricsCards metrics={metrics} isExecuting={isExecuting} />
 
-          {/* Blocked / Terminal Failed Amount */}
-          <div className="bg-surface border border-border-hairline rounded-[35px] p-6 lg:p-8 flex flex-col justify-between gap-3">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-tertiary">
-                Policy Blocked / Failed
-              </span>
-              <span className="material-symbols-outlined text-risk text-[20px]">
-                block
-              </span>
-            </div>
-            <div>
-              <CurrencyValue paise={failedTotal} size="xl" variant="risk" />
-              <p className="font-sans text-xs text-text-secondary mt-1">
-                Hard declines & security gate policy protections
-              </p>
-            </div>
-            <div className="pt-2 border-t border-border-hairline/60 flex items-center justify-between text-xs font-mono text-text-tertiary">
-              <span>SAFETY GATE VERDICT</span>
-              <span className="text-risk font-medium">1 TERMINAL DECLINE</span>
-            </div>
+      {/* 3. Target Transaction & Dispatch Control */}
+      <ExecutionControlCard
+        transactions={transactions}
+        selectedTxn={selectedTxn}
+        onSelectTxn={setSelectedTxn}
+        onExecute={handleExecuteLive}
+        isExecuting={isExecuting}
+      />
+
+      {/* 4. In-Progress Dispatch Skeleton */}
+      {isExecuting && (
+        <Card className="border-border-hairline bg-[#020626]/95 p-8 text-center space-y-4 animate-pulse">
+          <div className="w-12 h-12 rounded-[14px] bg-primary/20 border border-primary/40 flex items-center justify-center text-primary mx-auto">
+            <Zap className="w-6 h-6 animate-spin" />
           </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white font-sans">
+              Dispatching Autonomous Recovery Loop...
+            </h3>
+            <p className="text-xs text-text-secondary font-mono mt-1">
+              Observing Failure Trace &rarr; LLM Reasoning &rarr; Policy Gate Check &rarr; Razorpay Test Execution &rarr; MongoDB Ledger Audit
+            </p>
+          </div>
+          <Skeleton className="h-28 rounded-[14px]" />
+        </Card>
+      )}
+
+      {/* 5. Execution Session Outcome */}
+      {sessionResult && !isExecuting && (
+        <div className="animate-fadeIn">
+          <ExecutionSessionResultCard sessionResult={sessionResult} />
+        </div>
+      )}
+
+      {/* 6. Live Execution Timeline Ledger */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="font-sans text-base font-bold text-white">
+            Autonomous Execution Ledger
+          </h2>
+          <span className="font-mono text-[11px] text-text-tertiary">
+            LIVE OBSERVABILITY STREAM
+          </span>
         </div>
 
-        {/* Live Execution Timeline (Signature Interaction) */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between px-2">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-ai-signal text-[20px]">
-                table_rows
-              </span>
-              <h2 className="font-sans text-[20px] font-normal text-white">
-                Live Transaction Execution Ledger
-              </h2>
-            </div>
-            <span className="font-mono text-xs text-text-tertiary">
-              AUTO-REFRESHING STREAM
-            </span>
-          </div>
-
-          <ExecutionTimeline rows={DEMO_EXECUTION_ROWS} />
-        </div>
+        {timelineRows.length === 0 ? (
+          <Card className="border-border-hairline bg-[#020626]/95 p-8 text-center text-xs font-mono text-text-tertiary">
+            No recovery actions executed yet. Select a transaction and click &quot;Dispatch Live Recovery&quot;.
+          </Card>
+        ) : (
+          <ExecutionTimeline rows={timelineRows} />
+        )}
       </div>
-    </main>
+    </div>
   );
 };
+
+export default ExecutionScreen;

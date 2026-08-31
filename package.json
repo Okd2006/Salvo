@@ -17,8 +17,9 @@
     "e2e": "tsx scripts/e2e.ts",
     "benchmark": "tsx scripts/e2e.ts",
     "integration:check": "tsx scripts/check_integrations.ts",
-    "test": "tsx --test tests/**/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "test": "tsx --test --test-force-exit tests/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "razorpay:check": "tsx scripts/check_razorpay.ts"
   },
   "dependencies": {
     "@google/genai": "^2.18.0",

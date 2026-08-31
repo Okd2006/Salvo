@@ -38,14 +38,51 @@ function ensureDataDir(): void {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
+let inMemoryTransactions: TransactionDocument[] | null = null;
+let inMemoryActions: Map<string, RecoveryActionDocument> | null = null;
+let inMemoryLogs: Map<string, AuditLogDocument> | null = null;
+
+function loadActionsMap(): Map<string, RecoveryActionDocument> {
+  if (inMemoryActions) return inMemoryActions;
+  const map = new Map<string, RecoveryActionDocument>();
+  if (fs.existsSync(ACTIONS_FILE)) {
+    try {
+      const raw = fs.readFileSync(ACTIONS_FILE, 'utf-8');
+      const list = JSON.parse(raw) as RecoveryActionDocument[];
+      for (const a of list) map.set(a.actionId, a);
+    } catch {
+      // ignore
+    }
+  }
+  inMemoryActions = map;
+  return map;
+}
+
+function loadLogsMap(): Map<string, AuditLogDocument> {
+  if (inMemoryLogs) return inMemoryLogs;
+  const map = new Map<string, AuditLogDocument>();
+  if (fs.existsSync(AUDIT_FILE)) {
+    try {
+      const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
+      const list = JSON.parse(raw) as AuditLogDocument[];
+      for (const l of list) map.set(l.eventId, l);
+    } catch {
+      // ignore
+    }
+  }
+  inMemoryLogs = map;
+  return map;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Transactions Repository
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function saveTransactions(
   transactions: TransactionDocument[]
 ): Promise<{ count: number; source: 'mongodb' | 'file' }> {
   ensureDataDir();
+  inMemoryTransactions = transactions;
 
   if (isMongoConfigured()) {
     try {
@@ -81,50 +118,45 @@ export async function getAllTransactions(): Promise<TransactionDocument[]> {
     }
   }
 
+  if (inMemoryTransactions) {
+    return inMemoryTransactions;
+  }
+
   if (fs.existsSync(TRANSACTIONS_FILE)) {
     const raw = fs.readFileSync(TRANSACTIONS_FILE, 'utf-8');
-    return JSON.parse(raw) as TransactionDocument[];
+    inMemoryTransactions = JSON.parse(raw) as TransactionDocument[];
+    return inMemoryTransactions;
   }
 
   return [];
 }
 
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Recovery Actions Repository (Upsert/Merge Behavior)
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function saveRecoveryActions(
   actions: RecoveryActionDocument[]
 ): Promise<{ count: number; source: 'mongodb' | 'file' }> {
   ensureDataDir();
 
-  // Read existing actions
-  let existingActions: RecoveryActionDocument[] = [];
-  if (fs.existsSync(ACTIONS_FILE)) {
-    try {
-      const raw = fs.readFileSync(ACTIONS_FILE, 'utf-8');
-      existingActions = JSON.parse(raw) as RecoveryActionDocument[];
-    } catch {
-      existingActions = [];
-    }
-  }
-
-  // Merge/upsert by actionId
-  const actionMap = new Map<string, RecoveryActionDocument>();
-  for (const a of existingActions) {
-    actionMap.set(a.actionId, a);
-  }
+  const actionMap = loadActionsMap();
   for (const a of actions) {
     actionMap.set(a.actionId, a);
   }
   const mergedActions = Array.from(actionMap.values());
 
-  if (isMongoConfigured()) {
+  if (isMongoConfigured() && actions.length > 0) {
     try {
       const col = await getRecoveryActionsCollection();
-      for (const act of actions) {
-        await col.updateOne({ actionId: act.actionId }, { $set: act }, { upsert: true });
-      }
+      const ops = actions.map((act) => ({
+        updateOne: {
+          filter: { actionId: act.actionId },
+          update: { $set: act },
+          upsert: true,
+        },
+      }));
+      await col.bulkWrite(ops, { ordered: false });
       fs.writeFileSync(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2), 'utf-8');
       return { count: mergedActions.length, source: 'mongodb' };
     } catch (err) {
@@ -149,50 +181,36 @@ export async function getAllRecoveryActions(): Promise<RecoveryActionDocument[]>
     }
   }
 
-  if (fs.existsSync(ACTIONS_FILE)) {
-    const raw = fs.readFileSync(ACTIONS_FILE, 'utf-8');
-    return JSON.parse(raw) as RecoveryActionDocument[];
-  }
-
-  return [];
+  const actionMap = loadActionsMap();
+  return Array.from(actionMap.values());
 }
 
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Audit Logs Repository (Append/Merge Behavior)
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function saveAuditLogs(
   logs: AuditLogDocument[]
 ): Promise<{ count: number; source: 'mongodb' | 'file' }> {
   ensureDataDir();
 
-  // Read existing logs
-  let existingLogs: AuditLogDocument[] = [];
-  if (fs.existsSync(AUDIT_FILE)) {
-    try {
-      const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
-      existingLogs = JSON.parse(raw) as AuditLogDocument[];
-    } catch {
-      existingLogs = [];
-    }
-  }
-
-  // Merge/append by eventId
-  const logMap = new Map<string, AuditLogDocument>();
-  for (const l of existingLogs) {
-    logMap.set(l.eventId, l);
-  }
+  const logMap = loadLogsMap();
   for (const l of logs) {
     logMap.set(l.eventId, l);
   }
   const mergedLogs = Array.from(logMap.values());
 
-  if (isMongoConfigured()) {
+  if (isMongoConfigured() && logs.length > 0) {
     try {
       const col = await getAuditLogsCollection();
-      for (const log of logs) {
-        await col.updateOne({ eventId: log.eventId }, { $set: log }, { upsert: true });
-      }
+      const ops = logs.map((log) => ({
+        updateOne: {
+          filter: { eventId: log.eventId },
+          update: { $set: log },
+          upsert: true,
+        },
+      }));
+      await col.bulkWrite(ops, { ordered: false });
       fs.writeFileSync(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2), 'utf-8');
       return { count: mergedLogs.length, source: 'mongodb' };
     } catch (err) {
@@ -217,10 +235,6 @@ export async function getAllAuditLogs(): Promise<AuditLogDocument[]> {
     }
   }
 
-  if (fs.existsSync(AUDIT_FILE)) {
-    const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
-    return JSON.parse(raw) as AuditLogDocument[];
-  }
-
-  return [];
+  const logMap = loadLogsMap();
+  return Array.from(logMap.values());
 }

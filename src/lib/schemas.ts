@@ -88,9 +88,9 @@ export const GeminiRawDiagnosisSchema = z.object({
   confidence: z.number().min(0).max(1),
   evidence: z.array(z.string().min(1)).min(1, 'Evidence must contain at least one item.'),
   reasoning: z.string().min(1, 'Reasoning must be provided.'),
-  predictedRecoveryPercentage: z.number().min(0).max(1).optional(),
-  estimatedRecoveryPaise: z.number().int().nonnegative().optional(),
-  recommendedInterventionCostPaise: z.number().int().nonnegative().optional(),
+  predictedRecoveryPercentage: z.number().min(0).max(1).nullable().optional(),
+  estimatedRecoveryPaise: z.number().int().nonnegative().nullable().optional(),
+  recommendedInterventionCostPaise: z.number().int().nonnegative().nullable().optional(),
 });
 
 /**

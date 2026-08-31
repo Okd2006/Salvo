@@ -4,15 +4,27 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
 
-/** Node.js globals — process, console, etc. */
+/** Node.js globals — process, console, Web APIs (fetch, AbortController, etc.) */
 const nodeGlobals = {
   process: 'readonly',
   console: 'readonly',
   setTimeout: 'readonly',
   clearTimeout: 'readonly',
+  setInterval: 'readonly',
+  clearInterval: 'readonly',
+  setImmediate: 'readonly',
+  clearImmediate: 'readonly',
   Buffer: 'readonly',
   __dirname: 'readonly',
   __filename: 'readonly',
+  fetch: 'readonly',
+  Response: 'readonly',
+  Request: 'readonly',
+  Headers: 'readonly',
+  AbortController: 'readonly',
+  AbortSignal: 'readonly',
+  FormData: 'readonly',
+  Blob: 'readonly',
 };
 
 /** Browser DOM globals */
@@ -23,6 +35,12 @@ const browserGlobals = {
   HTMLDivElement: 'readonly',
   HTMLInputElement: 'readonly',
   HTMLCanvasElement: 'readonly',
+  HTMLFormElement: 'readonly',
+  HTMLButtonElement: 'readonly',
+  HTMLHeadingElement: 'readonly',
+  HTMLParagraphElement: 'readonly',
+  HTMLSpanElement: 'readonly',
+  HTMLAnchorElement: 'readonly',
   WebGLRenderingContext: 'readonly',
   IntersectionObserver: 'readonly',
   ResizeObserver: 'readonly',
@@ -30,6 +48,12 @@ const browserGlobals = {
   requestAnimationFrame: 'readonly',
   cancelAnimationFrame: 'readonly',
   fetch: 'readonly',
+  MouseEvent: 'readonly',
+  Event: 'readonly',
+  EventListener: 'readonly',
+  Element: 'readonly',
+  Node: 'readonly',
+  Storage: 'readonly',
 };
 
 /** @type {import('eslint').Linter.Config[]} */
