@@ -86,6 +86,11 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           <Menu className="w-5 h-5" />
         </button>
 
+        {/* Mobile Brand Logo */}
+        <div className="md:hidden flex items-center shrink-0">
+          <img src="/salvo-logo.png" alt="Salvo" className="w-7 h-7 rounded-[8px] object-cover border border-primary/30" />
+        </div>
+
         {/* Breadcrumb Context */}
         <div className="flex items-center gap-2 text-xs font-mono">
           <span className="text-text-tertiary hidden sm:inline">Salvo</span>

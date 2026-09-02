@@ -53,7 +53,18 @@ import type { RecoveryRecommendation, AuditLogDocument, RecoveryStrategy } from 
 
 export async function handleApiRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const parsedUrl = new URL(req.url || '/', 'http://localhost');
-  const pathname = parsedUrl.pathname;
+  let pathname = parsedUrl.pathname;
+  
+  // Normalize catch-all or rewritten query parameters
+  const queryParam = parsedUrl.searchParams.get('all') || parsedUrl.searchParams.get('match') || parsedUrl.searchParams.get('path');
+  if (queryParam && (pathname === '/api/index' || pathname === '/api' || pathname === '/api/[...all]')) {
+    pathname = queryParam.startsWith('/') ? `/api${queryParam}` : `/api/${queryParam}`;
+  }
+  
+  // Normalize pathname to ensure it starts with /api
+  if (!pathname.startsWith('/api') && pathname !== '/') {
+    pathname = `/api${pathname}`;
+  }
   const method = req.method || 'GET';
 
   // Standard JSON and CORS headers

@@ -129,8 +129,8 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({
             onClick={() => handleSelectTab('overview')}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-9 h-9 rounded-[12px] bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0 shadow-lg shadow-primary/10 transition-transform group-hover:scale-105">
-              <Coins className="w-5 h-5 text-primary" />
+            <div className="w-9 h-9 rounded-[12px] bg-[#03081A] border border-primary/40 flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 overflow-hidden transition-transform group-hover:scale-105">
+              <img src="/salvo-logo.png" alt="Salvo Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="font-sans text-[17px] font-bold text-white tracking-tight leading-none flex items-center gap-1.5">

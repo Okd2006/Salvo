@@ -29,13 +29,8 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       {/* Top Header / Brand Logo */}
       <header className="relative z-10 w-full max-w-5xl flex justify-between items-center shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-[14px] bg-primary flex items-center justify-center shadow-lg shadow-primary/20 border border-primary/40">
-            <span
-              className="material-symbols-outlined text-white text-[22px]"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              token
-            </span>
+          <div className="w-10 h-10 rounded-[14px] bg-[#03081A] flex items-center justify-center shadow-lg shadow-primary/30 border border-primary/40 overflow-hidden shrink-0">
+            <img src="/salvo-logo.png" alt="Salvo Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <div className="font-sans text-[20px] font-bold text-white tracking-tight leading-none flex items-center gap-2">
