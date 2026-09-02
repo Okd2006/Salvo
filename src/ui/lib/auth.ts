@@ -67,14 +67,13 @@ interface SimpleStorage {
 const STORAGE_KEY = 'salvo_auth_session_v1';
 
 export const DEFAULT_RAZORPAY_CONNECTION: RazorpayMerchantConnection = {
-  connected: true,
-  merchantId: 'mer_razorpay_test_01',
+  connected: false,
+  merchantId: '',
   environment: 'test',
-  keyIdMasked: 'rzp_test_••••••••1048',
-  connectedAt: '2026-01-15T08:00:00.000Z',
-  status: 'active',
-  accountName: 'Salvo Test Merchant Store',
-  scopes: ['payments:read', 'payment_links:write', 'refunds:read'],
+  keyIdMasked: '',
+  connectedAt: '',
+  status: 'disconnected',
+  scopes: [],
 };
 
 /** Pre-configured demo merchant accounts */

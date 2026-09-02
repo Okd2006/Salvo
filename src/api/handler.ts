@@ -122,25 +122,24 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
 
       const sessionToken = `salvo_g_sso_${Buffer.from(profile.googleSub).toString('base64')}_${Date.now()}`;
       const user = {
-        id: `usr_${profile.googleSub.slice(-10)}`,
+        id: `usr_g_${profile.googleSub.slice(-12)}`,
         googleSub: profile.googleSub,
         email: profile.email,
         name: profile.name,
         avatarUrl: profile.avatarUrl,
         role: 'merchant',
-        organization: 'Global Payment Ops',
+        organization: profile.email.split('@')[1]?.split('.')[0] || 'Recovery Workspace',
         authProvider: 'google',
         createdAt: new Date().toISOString(),
         lastLoginAt: new Date().toISOString(),
         razorpayConnection: {
-          connected: true,
-          merchantId: 'mer_razorpay_test_01',
+          connected: false,
+          merchantId: '',
           environment: 'test',
-          keyIdMasked: 'rzp_test_••••••••1048',
-          connectedAt: new Date().toISOString(),
-          status: 'active',
-          accountName: 'Connected Razorpay Test Merchant',
-          scopes: ['payments:read', 'payment_links:write', 'refunds:read'],
+          keyIdMasked: '',
+          connectedAt: '',
+          status: 'disconnected',
+          scopes: [],
         },
       };
 
@@ -181,18 +180,22 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
   // GET /api/merchant/status
   if (pathname === '/api/merchant/status' && method === 'GET') {
     const isConfigured = isRazorpayConfigured();
+    const keyId = process.env.RAZORPAY_KEY_ID || '';
+    const keyIdMasked = keyId
+      ? `${keyId.slice(0, 14)}...${keyId.slice(-4)}`
+      : '';
     res.statusCode = 200;
     res.end(
       JSON.stringify({
-        connected: true,
-        merchantId: 'mer_razorpay_test_01',
-        environment: 'test',
-        keyIdMasked: 'rzp_test_••••••••1048',
-        connectedAt: '2026-01-15T08:00:00.000Z',
-        lastSynchronizedAt: new Date().toISOString(),
-        status: 'active',
-        accountName: 'Salvo Test Merchant Store',
-        scopes: ['payments:read', 'payment_links:write', 'refunds:read'],
+        connected: isConfigured,
+        merchantId: isConfigured ? 'configured_via_api_keys' : '',
+        environment: (process.env.RAZORPAY_MODE || 'test'),
+        keyIdMasked,
+        connectedAt: isConfigured ? '2026-01-01T00:00:00.000Z' : '',
+        lastSynchronizedAt: isConfigured ? new Date().toISOString() : null,
+        status: isConfigured ? 'active' : 'disconnected',
+        accountName: isConfigured ? 'Razorpay Test Merchant' : undefined,
+        scopes: isConfigured ? ['payments:read', 'payment_links:write', 'refunds:read'] : [],
         isConfigured,
       })
     );

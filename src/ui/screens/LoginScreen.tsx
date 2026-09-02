@@ -19,7 +19,10 @@ export interface LoginScreenProps {
   onNavigate: (route: string) => void;
 }
 
-const GOOGLE_CLIENT_ID = '346117149964-esibm2q0vanhfpgni2lbl7qp6vivhg82.apps.googleusercontent.com';
+// Google Client ID (public - safe in browser, loaded from Vite env)
+const GOOGLE_CLIENT_ID =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_CLIENT_ID) ||
+  '346117149964-esibm2q0vanhfpgni2lbl7qp6vivhg82.apps.googleusercontent.com';
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   const { login, loginWithGoogle, setSession } = useAuth();
@@ -69,18 +72,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             window.history.replaceState({}, document.title, window.location.pathname);
             onNavigate('dashboard');
           } else {
-            loginWithGoogle().then(() => {
-              window.history.replaceState({}, document.title, window.location.pathname);
-              onNavigate('dashboard');
-            });
+            setErrorMessage('Google sign-in verification failed. Please try again.');
           }
         })
-        .catch(() => {
-          // Graceful fallback to verified operator session
-          loginWithGoogle().then(() => {
-            window.history.replaceState({}, document.title, window.location.pathname);
-            onNavigate('dashboard');
-          });
+        .catch((err: unknown) => {
+          const msg = err instanceof Error ? err.message : 'Google sign-in failed.';
+          setErrorMessage(`Sign-in error: ${msg}`);
         })
         .finally(() => {
           setIsVerifyingGoogleCode(false);

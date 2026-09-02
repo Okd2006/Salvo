@@ -175,6 +175,7 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
   const [systemHealthy, setSystemHealthy] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [isUsingDemoData, setIsUsingDemoData] = useState<boolean>(true);
 
   const fetchDashboardData = useCallback(async (isSilentRefresh = false) => {
     if (isSilentRefresh) {
@@ -182,10 +183,13 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
     }
 
     try {
+      let metricsFromApi: OverviewMetrics | null = null;
+      let txnsFromApi: ObservableTransaction[] | null = null;
+
       const [dashboardMetrics, healthRes, txnsRes] = await Promise.all([
-        SalvoApi.getDashboard().catch(() => DEFAULT_OVERVIEW_METRICS),
+        SalvoApi.getDashboard().then((m) => { metricsFromApi = m; return m; }).catch(() => DEFAULT_OVERVIEW_METRICS),
         SalvoApi.getHealth().catch(() => ({ status: 'healthy', razorpayConfigured: true, timestamp: new Date().toISOString() })),
-        SalvoApi.getTransactions(10).catch(() => DEFAULT_TRANSACTIONS),
+        SalvoApi.getTransactions(10).then((t) => { txnsFromApi = t; return t; }).catch(() => DEFAULT_TRANSACTIONS),
       ]);
 
       if (dashboardMetrics) {
@@ -195,6 +199,8 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
       if (txnsRes && txnsRes.length > 0) {
         setTransactions(txnsRes);
       }
+      // Only mark as real data if the API actually returned something
+      setIsUsingDemoData(metricsFromApi === null && txnsFromApi === null);
       setLastUpdated(new Date());
     } catch {
       // Retain active metrics on network fluctuations
@@ -226,6 +232,16 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
         isRefreshing={isRefreshing}
         onRefresh={() => fetchDashboardData(true)}
       />
+
+      {/* Demo Data Notice */}
+      {isUsingDemoData && (
+        <div className="px-4 py-2.5 rounded-[12px] bg-amber-500/10 border border-amber-500/30 flex items-center gap-2.5 text-xs font-sans text-amber-400">
+          <span className="material-symbols-outlined text-[16px] shrink-0">science</span>
+          <span>
+            <strong>DEMO DATA</strong> — Connect Razorpay below to view your real payment intelligence. These metrics are illustrative only.
+          </span>
+        </div>
+      )}
 
       {/* 2. Razorpay Merchant Connection Card */}
       <RazorpayConnectionCard />
