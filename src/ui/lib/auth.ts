@@ -170,6 +170,10 @@ class AuthService {
     };
   }
 
+  public setSession(session: AuthSession): void {
+    this.saveSessionToStorage(session);
+  }
+
   public getSession(): AuthSession | null {
     if (this.activeSession && this.activeSession.expiresAt <= Date.now()) {
       this.logout();

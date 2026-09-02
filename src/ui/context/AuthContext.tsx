@@ -26,6 +26,7 @@ interface AuthContextType {
   resetPassword: (request: PasswordResetRequest) => Promise<AuthResult>;
   connectRazorpay: (merchantId?: string) => Promise<RazorpayMerchantConnection>;
   disconnectRazorpay: () => Promise<void>;
+  setSession: (session: AuthSession) => void;
   logout: () => void;
 }
 
@@ -90,6 +91,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSession(SalvoAuth.getSession());
   }, []);
 
+  const setSessionHandler = useCallback((newSession: AuthSession) => {
+    SalvoAuth.setSession(newSession);
+    setSession(newSession);
+  }, []);
+
   const logout = useCallback(() => {
     SalvoAuth.logout();
     setSession(null);
@@ -107,9 +113,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resetPassword,
       connectRazorpay,
       disconnectRazorpay,
+      setSession: setSessionHandler,
       logout,
     }),
-    [session, isLoading, login, register, loginWithGoogle, resetPassword, connectRazorpay, disconnectRazorpay, logout]
+    [session, isLoading, login, register, loginWithGoogle, resetPassword, connectRazorpay, disconnectRazorpay, setSessionHandler, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

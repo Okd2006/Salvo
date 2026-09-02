@@ -1,10 +1,10 @@
 /**
  * src/ui/screens/LoginScreen.tsx
  *
- * Salvo Competitive-Programming / Fintech Login Interface
- * Built with Watermelon UI / Shadcn-compatible components.
+ * Salvo Autonomous Payment Operations & Revenue Recovery Intelligence Login Interface.
+ * Supports Email/Password authentication and real server-side Google OAuth 2.0 / OIDC.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthLayout } from '../components/AuthLayout.js';
 import { useAuth } from '../context/AuthContext.js';
 import { Button } from '../components/ui/button.js';
@@ -12,13 +12,15 @@ import { Input } from '../components/ui/input.js';
 import { Checkbox } from '../components/ui/checkbox.js';
 import { Separator } from '../components/ui/separator.js';
 import { Badge } from '../components/ui/badge.js';
+import { SalvoApi } from '../lib/api.js';
+import type { AuthSession } from '../lib/auth.js';
 
 export interface LoginScreenProps {
   onNavigate: (route: string) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, setSession } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +29,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [isVerifyingGoogleCode, setIsVerifyingGoogleCode] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Field validation tracking
@@ -36,6 +39,43 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const isPasswordValid = password.length > 0;
   const isFormValid = isEmailValid && isPasswordValid;
+
+  // Handle Google OAuth callback (?code=... in URL)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = searchParams.get('code');
+
+    if (code) {
+      setIsVerifyingGoogleCode(true);
+      setErrorMessage(null);
+
+      const redirectUri = `${window.location.origin}/login`;
+
+      SalvoApi.exchangeGoogleCode(code, redirectUri)
+        .then((res) => {
+          if (res.success && res.session) {
+            setSession(res.session as AuthSession);
+            // Clean URL query parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
+            onNavigate('dashboard');
+          } else {
+            setErrorMessage('Google authentication verification failed. Please try again.');
+          }
+        })
+        .catch((err: unknown) => {
+          setErrorMessage(
+            err instanceof Error
+              ? err.message
+              : 'Failed to verify Google identity with server.'
+          );
+        })
+        .finally(() => {
+          setIsVerifyingGoogleCode(false);
+        });
+    }
+  }, [onNavigate, setSession]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,30 +107,32 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   };
 
   const handleGoogleLogin = async () => {
-    if (isGoogleSubmitting || isSubmitting) return;
+    if (isGoogleSubmitting || isSubmitting || isVerifyingGoogleCode) return;
     setIsGoogleSubmitting(true);
     setErrorMessage(null);
 
     try {
+      const redirectUri = `${window.location.origin}/login`;
+      const res = await SalvoApi.getGoogleOAuthUrl(redirectUri);
+
+      if (res.configured && res.authUrl) {
+        // Redirect browser directly to Google OAuth Consent / Sign-in
+        window.location.href = res.authUrl;
+        return;
+      }
+
+      // If Google Cloud client ID is not configured in .env, log into authorized operator
       const result = await loginWithGoogle();
       if (result.success) {
         onNavigate('dashboard');
       } else {
-        setErrorMessage(result.error || 'Google SSO authentication failed.');
+        setErrorMessage(result.error || 'Google authentication failed.');
       }
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Google SSO error.');
+      setErrorMessage(err instanceof Error ? err.message : 'Google authentication error.');
     } finally {
       setIsGoogleSubmitting(false);
     }
-  };
-
-  const setDemoCredentials = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setEmailTouched(true);
-    setPasswordTouched(true);
-    setErrorMessage(null);
   };
 
   return (
@@ -100,7 +142,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         <div className="flex justify-center mb-3">
           <Badge variant="cyan" className="gap-1.5 px-3 py-1">
             <span className="w-1.5 h-1.5 rounded-full bg-ai-signal animate-pulse" />
-            <span>AUTHENTICATED PLATFORM</span>
+            <span>ENTERPRISE RECOVERY PLATFORM</span>
           </Badge>
         </div>
 
@@ -108,50 +150,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
           Sign in to Salvo
         </h1>
         <p className="font-sans text-sm text-text-secondary mt-1.5">
-          Access algorithmic challenges, recovery telemetry & leaderboards.
+          Autonomous Payment Operations & Revenue Recovery Intelligence.
         </p>
       </div>
 
-      {/* Developer Quick-Workspace Access Pills */}
-      <div className="mb-5 p-3 rounded-[16px] bg-[#03081A]/90 border border-border-hairline">
-        <div className="flex items-center justify-between text-[10px] font-mono text-text-tertiary uppercase tracking-wider mb-2">
-          <span>Quick Workspace Access</span>
-          <span className="text-recovered font-semibold">Ready</span>
+      {/* Google Identity Verifying Banner */}
+      {isVerifyingGoogleCode && (
+        <div className="mb-5 p-3.5 rounded-[14px] bg-primary/10 border border-primary/40 text-primary text-xs flex items-center gap-2.5 animate-fadeIn">
+          <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin shrink-0" />
+          <span className="font-sans font-medium">Verifying Google Identity & creating session...</span>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setDemoCredentials('admin@salvorecovery.ai', 'Salvo@2026!')}
-            className="text-left p-2 rounded-[10px] bg-surface hover:bg-surface-elevated border border-border-hairline text-xs transition-all group"
-          >
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span className="text-white font-medium group-hover:text-primary transition-colors">
-                Sarah Chen
-              </span>
-            </div>
-            <span className="text-[10px] text-text-tertiary font-mono block mt-0.5 truncate">
-              Admin • Core
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setDemoCredentials('merchant@razorpay-partner.in', 'Salvo@2026!')}
-            className="text-left p-2 rounded-[10px] bg-surface hover:bg-surface-elevated border border-border-hairline text-xs transition-all group"
-          >
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-ai-signal" />
-              <span className="text-white font-medium group-hover:text-primary transition-colors">
-                Vikram M.
-              </span>
-            </div>
-            <span className="text-[10px] text-text-tertiary font-mono block mt-0.5 truncate">
-              Merchant • Partner
-            </span>
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Error Banner */}
       {errorMessage && (
@@ -180,7 +189,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
               type="email"
               autoComplete="email"
               autoFocus
-              placeholder="operator@company.com"
+              placeholder="work@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => setEmailTouched(true)}
@@ -218,7 +227,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
               id="login-password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
-              placeholder="••••••••••••"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={() => setPasswordTouched(true)}
@@ -281,8 +290,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         type="button"
         variant="secondary"
         onClick={handleGoogleLogin}
-        isLoading={isGoogleSubmitting}
-        disabled={isGoogleSubmitting || isSubmitting}
+        isLoading={isGoogleSubmitting || isVerifyingGoogleCode}
+        disabled={isGoogleSubmitting || isSubmitting || isVerifyingGoogleCode}
         className="w-full gap-3 rounded-[48px] border-border-hairline hover:border-border-secondary"
       >
         <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">

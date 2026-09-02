@@ -117,7 +117,7 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({ onNa
                   type="email"
                   autoComplete="email"
                   autoFocus
-                  placeholder="name@company.com"
+                  placeholder="Enter your registered email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => setEmailTouched(true)}

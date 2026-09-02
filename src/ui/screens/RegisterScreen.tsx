@@ -158,7 +158,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
             type="text"
             autoComplete="name"
             autoFocus
-            placeholder="e.g. Alex Morgan"
+            placeholder="Your full name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={() => setNameTouched(true)}
@@ -185,7 +185,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
             id="reg-email"
             type="email"
             autoComplete="email"
-            placeholder="name@company.com"
+            placeholder="work@company.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setEmailTouched(true)}
@@ -220,7 +220,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
               id="reg-password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="new-password"
-              placeholder="Min. 8 characters"
+              placeholder="Create a strong password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={() => setPasswordTouched(true)}
@@ -278,7 +278,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
             id="reg-confirm"
             type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
-            placeholder="Re-enter password"
+            placeholder="Confirm password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             onBlur={() => setConfirmTouched(true)}
