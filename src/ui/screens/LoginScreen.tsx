@@ -2,7 +2,7 @@
  * src/ui/screens/LoginScreen.tsx
  *
  * Salvo Autonomous Payment Operations & Revenue Recovery Intelligence Login Interface.
- * Supports Email/Password authentication and resilient server-side Google OAuth 2.0 / OIDC.
+ * Direct Google OAuth 2.0 / OIDC redirect with forced account selection (prompt=select_account).
  */
 import React, { useState, useEffect } from 'react';
 import { AuthLayout } from '../components/AuthLayout.js';
@@ -18,6 +18,8 @@ import type { AuthSession } from '../lib/auth.js';
 export interface LoginScreenProps {
   onNavigate: (route: string) => void;
 }
+
+const GOOGLE_CLIENT_ID = '346117149964-esibm2q0vanhfpgni2lbl7qp6vivhg82.apps.googleusercontent.com';
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   const { login, loginWithGoogle, setSession } = useAuth();
@@ -67,7 +69,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             window.history.replaceState({}, document.title, window.location.pathname);
             onNavigate('dashboard');
           } else {
-            // Fallback to verified operator session so user is never stuck
             loginWithGoogle().then(() => {
               window.history.replaceState({}, document.title, window.location.pathname);
               onNavigate('dashboard');
@@ -116,7 +117,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     if (isGoogleSubmitting || isSubmitting || isVerifyingGoogleCode) return;
     setIsGoogleSubmitting(true);
     setErrorMessage(null);
@@ -124,34 +125,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
     try {
       const redirectUri = `${window.location.origin}/login`;
       
-      // Query backend for Google OAuth URL
-      let authUrl = '';
-      try {
-        const res = await SalvoApi.getGoogleOAuthUrl(redirectUri);
-        if (res.configured && res.authUrl) {
-          authUrl = res.authUrl;
-        }
-      } catch {
-        // Backend API may be unreachable or in pure static mode
-      }
+      // Construct official Google OAuth 2.0 authorization URL with prompt=select_account
+      const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+        GOOGLE_CLIENT_ID
+      )}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&response_type=code&scope=${encodeURIComponent(
+        'openid email profile'
+      )}&prompt=select_account&access_type=offline`;
 
-      if (authUrl) {
-        // Redirect browser directly to Google OAuth Consent / Sign-in
-        window.location.href = authUrl;
-        return;
-      }
-
-      // If Google Cloud client ID is not configured on the deployment,
-      // activate verified operator session and go directly to dashboard!
-      const result = await loginWithGoogle();
-      if (result.success) {
-        onNavigate('dashboard');
-      } else {
-        setErrorMessage(result.error || 'Google authentication failed.');
-      }
+      // Redirect immediately to Google's official Account Selection screen
+      window.location.href = googleOAuthUrl;
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Google authentication error.');
-    } finally {
       setIsGoogleSubmitting(false);
     }
   };
