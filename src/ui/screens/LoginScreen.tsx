@@ -55,7 +55,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
 
     if (errorParam) {
       setErrorMessage('Google authentication was cancelled or access was denied.');
-      window.history.replaceState({}, document.title, window.location.pathname);
+      window.history.replaceState({}, document.title, '/login');
       return;
     }
 
@@ -69,21 +69,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         .then((res) => {
           if (res.success && res.session) {
             setSession(res.session as AuthSession);
-            window.history.replaceState({}, document.title, window.location.pathname);
-            onNavigate('dashboard');
+            // Clear URL params and navigate to dashboard
+            window.history.replaceState({}, document.title, '/dashboard');
+            // Force navigation after state update
+            setTimeout(() => {
+              onNavigate('dashboard');
+            }, 100);
           } else {
             setErrorMessage('Google sign-in verification failed. Please try again.');
+            window.history.replaceState({}, document.title, '/login');
           }
         })
         .catch((err: unknown) => {
           const msg = err instanceof Error ? err.message : 'Google sign-in failed.';
           setErrorMessage(`Sign-in error: ${msg}`);
+          window.history.replaceState({}, document.title, '/login');
         })
         .finally(() => {
           setIsVerifyingGoogleCode(false);
         });
     }
-  }, [onNavigate, setSession, loginWithGoogle]);
+  }, [onNavigate, setSession]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
