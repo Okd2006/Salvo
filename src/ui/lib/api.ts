@@ -86,11 +86,27 @@ export class SalvoApiError extends Error {
 }
 
 const getApiBaseUrl = (): string => {
+  // Priority 1: Vite environment variable (for production builds)
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL as string;
+  }
+  
+  // Priority 2: Global override (for testing)
   if (typeof globalThis !== 'undefined') {
     const custom = (globalThis as unknown as { __SALVO_API_URL__?: string }).__SALVO_API_URL__;
     if (custom) return custom;
   }
-  return '';
+  
+  // Priority 3: Default to same origin in production, localhost in dev
+  if (typeof window !== 'undefined') {
+    // If deployed (not localhost), API calls go to same domain (assumes backend on same host)
+    if (!window.location.hostname.includes('localhost')) {
+      return window.location.origin;
+    }
+  }
+  
+  // Priority 4: Development default
+  return 'http://localhost:3001';
 };
 
 export interface ApiRequestOptions {
