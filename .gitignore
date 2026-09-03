@@ -12,4 +12,8 @@ evaluation-results.json
 .stitch-mcp/
 stitch_output/
 stitch_src/
-.env.example
+stitch_html/
+stitch_images/
+benchmark-report.json
+diagnose-results.json
+e2e-results.json

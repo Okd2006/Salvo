@@ -114,7 +114,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     if (isGoogleSubmitting || isSubmitting || isVerifyingGoogleCode) return;
     setIsGoogleSubmitting(true);
     setErrorMessage(null);
@@ -122,17 +122,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
     try {
       const redirectUri = `${window.location.origin}/login`;
       
-      // Construct official Google OAuth 2.0 authorization URL with prompt=select_account
-      const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
-        GOOGLE_CLIENT_ID
-      )}&redirect_uri=${encodeURIComponent(
-        redirectUri
-      )}&response_type=code&scope=${encodeURIComponent(
-        'openid email profile'
-      )}&prompt=select_account&access_type=offline`;
+      // Fetch server-side Google OAuth URL to ensure backend configuration is used
+      const { authUrl, configured } = await SalvoApi.getGoogleOAuthUrl(redirectUri, 'salvo_google_auth_state');
+      
+      if (!configured) {
+        console.warn('Google OAuth not fully configured on server, using fallback sandbox mode');
+      }
 
-      // Redirect immediately to Google's official Account Selection screen
-      window.location.href = googleOAuthUrl;
+      // Redirect to Google's official Account Selection screen
+      window.location.href = authUrl;
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Google authentication error.');
       setIsGoogleSubmitting(false);

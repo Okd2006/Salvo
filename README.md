@@ -159,25 +159,85 @@ cp .env.example .env
 
 ## 6. Execution Commands
 
+### Development
 ```bash
-# 1. Run Automated Unit Test Suite (51 unit tests)
+# Start frontend dev server (Vite on port 3000)
+npm run dev
+
+# Start backend API server (Node on port 3001)
+npm run dev:server
+
+# Both servers must run concurrently for full OAuth flow
+```
+
+### Testing & Validation
+```bash
+# Run automated unit test suite
 npm run test
 
-# 2. Seed 1,350 Synthetic Transactions
-npm run seed
-
-# 3. Run Gemini AI Batch Diagnosis (e.g. 10 development transactions)
-DIAGNOSIS_LIMIT=10 npm run diagnose
-
-# 4. Run Full Batch Revenue Evaluation
-npm run evaluate
-
-# 5. TypeScript Typecheck
+# TypeScript type checking
 npm run typecheck
 
-# 6. ESLint Code Quality Verification
+# ESLint code quality verification
 npm run lint
-
-# 7. Production Bundle Build
-npm run build
 ```
+
+### Data & AI Operations
+```bash
+# Seed 1,350 synthetic transactions to MongoDB
+npm run seed
+
+# Run Gemini AI batch diagnosis (development subset)
+DIAGNOSIS_LIMIT=10 npm run diagnose
+
+# Run full batch revenue evaluation
+npm run evaluate
+```
+
+### Production Build
+```bash
+# Build production bundle
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+---
+
+## 7. Google OAuth Setup
+
+To enable Google OAuth authentication:
+
+1. **Google Cloud Console** → APIs & Services → Credentials
+2. Create **OAuth 2.0 Web Application** credential
+3. Add **Authorized redirect URIs**:
+   - `http://localhost:3000/login` (local development)
+   - `https://your-production-domain.com/login` (production)
+4. Copy **Client ID** and **Client Secret** to `.env`:
+   ```bash
+   GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=GOCSPX-your_secret
+   VITE_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
+   ```
+
+**Note:** The frontend uses `VITE_GOOGLE_CLIENT_ID` (public), while the backend uses both ID and secret (private) for token exchange.
+
+---
+
+## 8. Deployment (Vercel)
+
+This project is configured for Vercel deployment:
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Production deployment
+vercel --prod
+```
+
+**Environment Variables:** Add all `.env` variables to Vercel project settings, except don't expose `GOOGLE_CLIENT_SECRET` publicly.
