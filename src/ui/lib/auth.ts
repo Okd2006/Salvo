@@ -76,8 +76,31 @@ export const DEFAULT_RAZORPAY_CONNECTION: RazorpayMerchantConnection = {
   scopes: [],
 };
 
+/** Demo Razorpay merchant connection with realistic data */
+const DEMO_RAZORPAY_CONNECTION: RazorpayMerchantConnection = {
+  connected: true,
+  merchantId: 'mer_razorpay_buildathon_2026',
+  environment: 'test',
+  keyIdMasked: 'rzp_test_••••••••Demo2026',
+  connectedAt: '2026-08-15T10:00:00.000Z',
+  status: 'active',
+  accountName: 'Salvo Demo Merchant Account',
+  scopes: ['payments:read', 'payment_links:write', 'refunds:read', 'refunds:write'],
+};
+
 /** Pre-configured demo merchant accounts */
 const DEMO_USERS: User[] = [
+  {
+    id: 'usr_demo_buildathon_2026',
+    email: 'demo@salvo.buildathon',
+    name: 'Demo Merchant',
+    role: 'merchant',
+    organization: 'Salvo AI Revenue Recovery - Buildathon Demo',
+    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&fit=crop&q=80',
+    authProvider: 'email',
+    createdAt: '2026-08-01T00:00:00.000Z',
+    razorpayConnection: DEMO_RAZORPAY_CONNECTION,
+  },
   {
     id: 'usr_salvo_admin_01',
     email: 'admin@salvorecovery.ai',
@@ -101,6 +124,12 @@ const DEMO_USERS: User[] = [
     razorpayConnection: DEFAULT_RAZORPAY_CONNECTION,
   },
 ];
+
+// Demo credentials for quick access
+export const DEMO_CREDENTIALS = {
+  email: 'demo@salvo.buildathon',
+  password: 'demo2026',
+};
 
 class AuthService {
   private activeSession: AuthSession | null = null;
@@ -275,29 +304,12 @@ class AuthService {
     return { success: true, user, session };
   }
 
+  /**
+   * @deprecated Google OAuth removed for buildathon submission - use demo login instead
+   */
   public async loginWithGoogle(): Promise<AuthResult> {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-
-    const user: User = {
-      id: 'usr_google_sso_01',
-      email: 'alex.morgan@payment-ops.com',
-      name: 'Alex Morgan',
-      role: 'merchant',
-      organization: 'Global Payments Ops',
-      avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&fit=crop&q=80',
-      authProvider: 'google',
-      createdAt: new Date().toISOString(),
-      razorpayConnection: DEFAULT_RAZORPAY_CONNECTION,
-    };
-
-    const session: AuthSession = {
-      user,
-      token: `salvo_g_sso_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`,
-      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    };
-
-    this.saveSessionToStorage(session);
-    return { success: true, user, session };
+    // Redirect to demo login for buildathon
+    return this.loginDemo();
   }
 
   public async connectRazorpayMerchant(merchantId: string = 'mer_razorpay_test_01'): Promise<RazorpayMerchantConnection> {

@@ -2,9 +2,9 @@
  * src/ui/screens/LoginScreen.tsx
  *
  * Salvo Autonomous Payment Operations & Revenue Recovery Intelligence Login Interface.
- * Direct Google OAuth 2.0 / OIDC redirect with forced account selection (prompt=select_account).
+ * Demo mode for Razorpay AI Buildathon 2026 submission.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AuthLayout } from '../components/AuthLayout.js';
 import { useAuth } from '../context/AuthContext.js';
 import { Button } from '../components/ui/button.js';
@@ -12,20 +12,14 @@ import { Input } from '../components/ui/input.js';
 import { Checkbox } from '../components/ui/checkbox.js';
 import { Separator } from '../components/ui/separator.js';
 import { Badge } from '../components/ui/badge.js';
-import { SalvoApi } from '../lib/api.js';
-import type { AuthSession } from '../lib/auth.js';
+import { DEMO_CREDENTIALS } from '../lib/auth.js';
 
 export interface LoginScreenProps {
   onNavigate: (route: string) => void;
 }
 
-// Google Client ID (public - safe in browser, loaded from Vite env)
-const GOOGLE_CLIENT_ID =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_CLIENT_ID) ||
-  '346117149964-esibm2q0vanhfpgni2lbl7qp6vivhg82.apps.googleusercontent.com';
-
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
-  const { login, loginWithGoogle, setSession } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,8 +27,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   const [rememberMe, setRememberMe] = useState(true);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
-  const [isVerifyingGoogleCode, setIsVerifyingGoogleCode] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Field validation tracking
@@ -45,51 +37,29 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   const isPasswordValid = password.length > 0;
   const isFormValid = isEmailValid && isPasswordValid;
 
-  // Handle Google OAuth callback (?code=... or ?error=... in URL)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const searchParams = new URLSearchParams(window.location.search);
-    const code = searchParams.get('code');
-    const errorParam = searchParams.get('error');
-
-    if (errorParam) {
-      setErrorMessage('Google authentication was cancelled or access was denied.');
-      window.history.replaceState({}, document.title, '/login');
-      return;
+  // Auto-fill demo credentials for easy jury access
+  const handleDemoLogin = async () => {
+    setErrorMessage(null);
+    setIsSubmitting(true);
+    
+    try {
+      const result = await login({ 
+        email: DEMO_CREDENTIALS.email, 
+        password: DEMO_CREDENTIALS.password, 
+        rememberMe: true 
+      });
+      if (result.success) {
+        onNavigate('overview');
+      } else {
+        setErrorMessage(result.error || 'Demo login failed.');
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Demo login failed.';
+      setErrorMessage(msg);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (code) {
-      setIsVerifyingGoogleCode(true);
-      setErrorMessage(null);
-
-      const redirectUri = `${window.location.origin}/login`;
-
-      SalvoApi.exchangeGoogleCode(code, redirectUri)
-        .then((res) => {
-          if (res.success && res.session) {
-            setSession(res.session as AuthSession);
-            // Clear URL params and navigate to dashboard
-            window.history.replaceState({}, document.title, '/dashboard');
-            // Force navigation after state update
-            setTimeout(() => {
-              onNavigate('dashboard');
-            }, 100);
-          } else {
-            setErrorMessage('Google sign-in verification failed. Please try again.');
-            window.history.replaceState({}, document.title, '/login');
-          }
-        })
-        .catch((err: unknown) => {
-          const msg = err instanceof Error ? err.message : 'Google sign-in failed.';
-          setErrorMessage(`Sign-in error: ${msg}`);
-          window.history.replaceState({}, document.title, '/login');
-        })
-        .finally(() => {
-          setIsVerifyingGoogleCode(false);
-        });
-    }
-  }, [onNavigate, setSession]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +79,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
       });
 
       if (result.success) {
-        onNavigate('dashboard');
+        onNavigate('overview');
       } else {
         setErrorMessage(result.error || 'Authentication failed. Invalid email or password.');
       }
@@ -120,28 +90,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    if (isGoogleSubmitting || isSubmitting || isVerifyingGoogleCode) return;
-    setIsGoogleSubmitting(true);
-    setErrorMessage(null);
 
-    try {
-      const redirectUri = `${window.location.origin}/login`;
-      
-      // Fetch server-side Google OAuth URL to ensure backend configuration is used
-      const { authUrl, configured } = await SalvoApi.getGoogleOAuthUrl(redirectUri, 'salvo_google_auth_state');
-      
-      if (!configured) {
-        console.warn('Google OAuth not fully configured on server, using fallback sandbox mode');
-      }
-
-      // Redirect to Google's official Account Selection screen
-      window.location.href = authUrl;
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Google authentication error.');
-      setIsGoogleSubmitting(false);
-    }
-  };
 
   return (
     <AuthLayout>
@@ -296,50 +245,32 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
       <div className="relative my-6">
         <Separator />
         <div className="relative -mt-2.5 flex justify-center text-[10px] uppercase font-mono">
-          <span className="bg-[#020626] px-3 text-text-tertiary">OR</span>
+          <span className="bg-[#020626] px-3 text-text-tertiary">Quick Demo Access</span>
         </div>
       </div>
 
-      {/* Continue with Google */}
+      {/* Demo Login Button - Buildathon Jury Access */}
       <Button
         type="button"
-        variant="secondary"
-        onClick={handleGoogleLogin}
-        isLoading={isGoogleSubmitting || isVerifyingGoogleCode}
-        disabled={isGoogleSubmitting || isSubmitting || isVerifyingGoogleCode}
-        className="w-full gap-3 rounded-[48px] border-border-hairline hover:border-border-secondary"
+        variant="glow"
+        onClick={handleDemoLogin}
+        disabled={isSubmitting}
+        className="w-full gap-3 rounded-[48px]"
       >
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-          <path
-            fill="#EA4335"
-            d="M12 5c1.7 0 3 .7 3.7 1.4l2.8-2.8C16.8 2.1 14.6 1.3 12 1.3 7.5 1.3 3.7 3.8 1.9 7.5l3.4 2.6C6.2 7.1 8.8 5 12 5z"
-          />
-          <path
-            fill="#4285F4"
-            d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
-          />
-          <path
-            fill="#FBBC05"
-            d="M5.3 14.9c-.3-.8-.4-1.8-.4-2.9s.1-2 .4-2.9L1.9 6.5C.7 8.9 0 10.4 0 12s.7 3.1 1.9 5.5l3.4-2.6z"
-          />
-          <path
-            fill="#34A853"
-            d="M12 23.7c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.2 0-5.8-2.1-6.7-5.1L1.9 16.5C3.7 20.2 7.5 23.7 12 23.7z"
-          />
-        </svg>
-        <span>Continue with Google SSO</span>
+        <span className="material-symbols-outlined text-[20px]">rocket_launch</span>
+        <span>Demo Login (Buildathon Jury)</span>
       </Button>
 
-      {/* Switch to Register */}
-      <div className="mt-6 text-center text-xs font-sans text-text-secondary">
-        <span>Don't have an account? </span>
-        <button
-          type="button"
-          onClick={() => onNavigate('register')}
-          className="text-primary hover:text-primary-hover font-medium underline underline-offset-4 transition-colors focus:outline-none"
-        >
-          Create account
-        </button>
+      {/* Demo Credentials Info */}
+      <div className="mt-4 px-4 py-3 rounded-[12px] bg-primary/10 border border-primary/30">
+        <div className="flex items-start gap-2.5">
+          <span className="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">info</span>
+          <div className="text-[11px] font-sans text-text-secondary space-y-1">
+            <p className="text-primary font-semibold">Demo Credentials:</p>
+            <p className="font-mono">Email: {DEMO_CREDENTIALS.email}</p>
+            <p className="font-mono">Password: {DEMO_CREDENTIALS.password}</p>
+          </div>
+        </div>
       </div>
     </AuthLayout>
   );

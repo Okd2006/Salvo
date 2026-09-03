@@ -12,7 +12,7 @@ export interface RegisterScreenProps {
 }
 
 export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
-  const { register, loginWithGoogle } = useAuth();
+  const { register } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,7 +22,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Field validation states
@@ -98,24 +97,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
     }
   };
 
-  const handleGoogleLogin = async () => {
-    if (isGoogleSubmitting || isSubmitting) return;
-    setIsGoogleSubmitting(true);
-    setErrorMessage(null);
 
-    try {
-      const result = await loginWithGoogle();
-      if (result.success) {
-        onNavigate('overview');
-      } else {
-        setErrorMessage(result.error || 'Google SSO registration failed.');
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Google authentication error.');
-    } finally {
-      setIsGoogleSubmitting(false);
-    }
-  };
 
   return (
     <AuthLayout>
