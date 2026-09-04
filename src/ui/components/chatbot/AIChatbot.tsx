@@ -1,7 +1,7 @@
 /**
  * src/ui/components/chatbot/AIChatbot.tsx
  *
- * Salvo AI Assistant - Professional Chat Interface powered by Gemini LLM
+ * Salvo AI Assistant - Professional Chat Interface
  * Real AI responses via POST /api/chat endpoint
  * Solid, non-transparent design with high contrast for readability
  */
@@ -27,7 +27,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I\'m your Salvo AI Assistant, powered by Gemini 2.0. I can help you with:\n\n• **Dashboard Navigation** - Overview, Diagnosis, Simulator, Execution, Audit, Launch screens\n• **Recovery Strategies** - Smart Retry, Payment Links, Method Switch, Reminders\n• **AI Diagnosis** - How the 4-stage pipeline works (Observe → Diagnose → Policy → Execute)\n• **Metrics & KPIs** - Recovery Rate, ROI, Success Rate, Revenue at Risk\n• **Policy Rules** - Amount thresholds, risk scores, confidence levels\n• **Razorpay Integration** - Connection setup, payment sync, webhooks\n\nAsk me anything about the platform!',
+      content: 'Hello! I\'m your Salvo AI Assistant. I can help you with:\n\n• **Dashboard Navigation** - Overview, Diagnosis, Simulator, Execution, Audit, Launch screens\n• **Recovery Strategies** - Smart Retry, Payment Links, Method Switch, Reminders\n• **AI Diagnosis** - How the 4-stage pipeline works (Observe → Diagnose → Policy → Execute)\n• **Metrics & KPIs** - Recovery Rate, ROI, Success Rate, Revenue at Risk\n• **Policy Rules** - Amount thresholds, risk scores, confidence levels\n• **Razorpay Integration** - Connection setup, payment sync, webhooks\n\nAsk me anything about the platform!',
       timestamp: new Date(),
     },
   ]);
@@ -81,7 +81,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response || data.error || 'I encountered an error processing your request. Please try again.',
+        content: data.response || 'I encountered an error processing your request. Please try again.',
         timestamp: new Date(),
       };
 
@@ -235,7 +235,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
               </Button>
             </div>
             <p className="text-[11px] text-text-tertiary text-center mt-3 font-mono">
-              Press <kbd className="px-1.5 py-0.5 bg-surface-elevated rounded text-[10px]">Enter</kbd> to send • Powered by Gemini 2.0
+              Press <kbd className="px-1.5 py-0.5 bg-surface-elevated rounded text-[10px]">Enter</kbd> to send
             </p>
           </div>
         </div>
