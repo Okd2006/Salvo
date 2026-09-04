@@ -15,6 +15,10 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __repo_dir = path.dirname(fileURLToPath(import.meta.url));
+const __repo_project_data = path.resolve(__repo_dir, '../../data');
 import type {
   TransactionDocument,
   RecoveryActionDocument,
@@ -27,7 +31,11 @@ import {
   getAuditLogsCollection,
 } from './mongo.js';
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
+const DATA_DIR = process.env.SALVO_DATA_DIR
+  ? path.resolve(process.env.SALVO_DATA_DIR)
+  : (fs.existsSync(__repo_project_data)
+      ? __repo_project_data
+      : path.resolve(process.cwd(), 'data'));
 const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
 const ACTIONS_FILE = path.join(DATA_DIR, 'recovery_actions.json');
 const AUDIT_FILE = path.join(DATA_DIR, 'audit_logs.json');

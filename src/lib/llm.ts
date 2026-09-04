@@ -256,19 +256,34 @@ export async function executeStructuredDiagnosis(
  */
 export async function executeMerchantExplanation(
   prompt: string,
-  systemInstruction?: string
+  systemInstruction?: string,
+  options?: {
+    messages?: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+  }
 ): Promise<string> {
   const provider = getLLMProvider();
 
   try {
     if (provider === 'groq') {
-      return await executeGroqExplanation(prompt, systemInstruction);
+      return await executeGroqExplanation(prompt, systemInstruction, options?.messages ? { messages: options.messages } : undefined);
     }
     if (provider === 'gemini') {
       return await executeGeminiExplanation(prompt, systemInstruction);
     }
     return await executeOpenRouterExplanation(prompt, systemInstruction);
   } catch (err) {
+    // If primary provider fails and another provider is configured, attempt fallback
+    if (provider === 'groq') {
+      try {
+        const { isGeminiConfigured, executeMerchantExplanation: executeGeminiExp } = await import('./gemini.js');
+        if (isGeminiConfigured()) {
+          return await executeGeminiExp(prompt, systemInstruction);
+        }
+      } catch {
+        // Fallback provider attempt failed, proceed to error classification
+      }
+    }
+
     if (
       err instanceof GroqConfigError ||
       err instanceof OpenRouterConfigError ||

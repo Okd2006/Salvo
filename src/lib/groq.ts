@@ -270,7 +270,8 @@ export async function executeGroqDiagnosis(
       if (
         err instanceof GroqConfigError ||
         err instanceof GroqAuthError ||
-        err instanceof GroqValidationError
+        err instanceof GroqValidationError ||
+        err instanceof GroqModelNotFoundError
       ) {
         throw err; // Non-retryable
       }
@@ -280,82 +281,148 @@ export async function executeGroqDiagnosis(
 }
 
 /**
- * Generate a merchant-facing explanation using Groq.
+ * Chat Message Payload
+ */
+export interface ChatMessagePayload {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+/**
+ * Generate a merchant-facing explanation or conversational response using Groq.
+ * Features automatic model fallback (openai/gpt-oss-20b, openai/gpt-oss-120b, qwen/qwen3.6-27b).
  */
 export async function executeGroqExplanation(
   prompt: string,
   systemInstruction?: string,
-  options?: { apiKey?: string; model?: string; baseUrl?: string }
+  options?: {
+    apiKey?: string;
+    model?: string;
+    baseUrl?: string;
+    messages?: ChatMessagePayload[];
+  }
 ): Promise<string> {
   const apiKey = options?.apiKey || getGroqApiKey();
-  const model = options?.model || getGroqModel();
+  const requestedModel = options?.model || getGroqModel();
   const baseUrl = (options?.baseUrl || GROQ_CONFIG.baseUrl).replace(/\/+$/, '');
 
-  return withBoundedRetry(async (attempt) => {
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      controller.abort();
-    }, GROQ_CONFIG.timeoutMs);
+  const candidateModels = [
+    requestedModel,
+    'openai/gpt-oss-20b',
+    'openai/gpt-oss-120b',
+    'qwen/qwen3.6-27b',
+  ].filter((m, idx, arr) => arr.indexOf(m) === idx);
 
+  let lastError: unknown = null;
+
+  for (const model of candidateModels) {
     try {
-      const messages: Array<{ role: 'system' | 'user'; content: string }> = [];
-      if (systemInstruction) {
-        messages.push({ role: 'system', content: systemInstruction });
-      }
-      messages.push({ role: 'user', content: prompt });
+      return await withBoundedRetry(async (attempt) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => {
+          controller.abort();
+        }, GROQ_CONFIG.timeoutMs);
 
-      let response: Response;
-      try {
-        response = await fetch(`${baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model,
-            messages,
-            temperature: 0.3,
-            max_tokens: 512,
-          }),
-          signal: controller.signal,
-        });
-      } catch (fetchErr) {
-        if ((fetchErr as Error).name === 'AbortError') {
-          throw new GroqTimeoutError(
-            `Groq explanation timed out after ${GROQ_CONFIG.timeoutMs}ms (attempt ${attempt})`
-          );
-        }
-        throw new GroqNetworkError(
-          `Groq explanation connection error: ${(fetchErr as Error).message}`
-        );
-      } finally {
-        clearTimeout(timer);
-      }
+        try {
+          const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
+          if (systemInstruction) {
+            messages.push({ role: 'system', content: systemInstruction });
+          }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        if (response.status === 401 || response.status === 403) {
-          throw new GroqAuthError(`Groq auth failed (HTTP ${response.status}): ${errorText}`);
-        }
-        if (response.status === 429) {
-          throw new GroqRateLimitError(`Groq rate limit (HTTP 429): ${errorText}`);
-        }
-        throw new GroqApiError(`Groq API error (HTTP ${response.status}): ${errorText}`, response.status);
-      }
+          if (options?.messages && options.messages.length > 0) {
+            for (const msg of options.messages) {
+              if (msg.role === 'system' && systemInstruction) continue;
+              messages.push({ role: msg.role, content: msg.content });
+            }
+            if (prompt && (!messages.length || messages[messages.length - 1].content !== prompt)) {
+              messages.push({ role: 'user', content: prompt });
+            }
+          } else if (prompt) {
+            messages.push({ role: 'user', content: prompt });
+          }
 
-      const data: any = await response.json();
-      return (data?.choices?.[0]?.message?.content || '').trim();
-    } finally {
-      clearTimeout(timer);
+          let response: Response;
+          try {
+            response = await fetch(`${baseUrl}/chat/completions`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+              },
+              body: JSON.stringify({
+                model,
+                messages,
+                temperature: 0.3,
+                max_tokens: 1024,
+              }),
+              signal: controller.signal,
+            });
+          } catch (fetchErr) {
+            if ((fetchErr as Error).name === 'AbortError') {
+              throw new GroqTimeoutError(
+                `Groq explanation timed out after ${GROQ_CONFIG.timeoutMs}ms (attempt ${attempt})`
+              );
+            }
+            throw new GroqNetworkError(
+              `Groq explanation connection error: ${(fetchErr as Error).message}`
+            );
+          } finally {
+            clearTimeout(timer);
+          }
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            if (response.status === 401 || response.status === 403) {
+              throw new GroqAuthError(`Groq auth failed (HTTP ${response.status}): ${errorText}`);
+            }
+            if (
+              response.status === 404 ||
+              errorText.includes('model_not_found') ||
+              errorText.includes('does not exist')
+            ) {
+              throw new GroqModelNotFoundError(
+                `Groq model ${model} not found (HTTP 404): ${errorText}`
+              );
+            }
+            if (response.status === 429) {
+              throw new GroqRateLimitError(`Groq rate limit (HTTP 429): ${errorText}`);
+            }
+            throw new GroqApiError(
+              `Groq API error (HTTP ${response.status}): ${errorText}`,
+              response.status
+            );
+          }
+
+          const data: any = await response.json();
+          const content = data?.choices?.[0]?.message?.content;
+          if (typeof content === 'string' && content.trim()) {
+            return content.trim();
+          }
+          throw new GroqValidationError('Groq returned an empty explanation response.');
+        } finally {
+          clearTimeout(timer);
+        }
+      }, `Groq Explanation (${model})`);
+    } catch (err) {
+      lastError = err;
+      if (err instanceof GroqAuthError) {
+        throw err;
+      }
+      if (err instanceof GroqModelNotFoundError && model !== candidateModels[candidateModels.length - 1]) {
+        console.warn(`[Groq] Model ${model} unavailable, falling back to next candidate...`);
+        continue;
+      }
+      if (model !== candidateModels[candidateModels.length - 1]) {
+        console.warn(`[Groq] Request with ${model} failed, falling back:`, (err as Error).message);
+        continue;
+      }
+      throw err;
     }
-  }, 'Groq Explanation');
+  }
+
+  throw lastError || new GroqError('Failed to generate Groq explanation with any candidate model.');
 }
 
-/**
- * Bounded Retry Helper for Groq
- * Max 2 attempts. Retries only transient network, 429 rate limit, timeout, and 5xx server errors.
- */
 async function withBoundedRetry<T>(
   fn: (attempt: number) => Promise<T>,
   operationLabel: string
@@ -452,5 +519,12 @@ export class GroqApiError extends GroqError {
     super(message);
     this.name = 'GroqApiError';
     this.statusCode = statusCode;
+  }
+}
+
+export class GroqModelNotFoundError extends GroqError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'GroqModelNotFoundError';
   }
 }
