@@ -35,7 +35,7 @@ export const DashboardKpiGrid: React.FC<DashboardKpiGridProps> = ({ metrics }) =
       subtext: (
         <div className="flex items-center gap-1.5 text-xs text-text-secondary font-mono">
           <span>Net:</span>
-          <CurrencyValue paise={metrics.netRecoveredPaise} size="sm" variant="default" />
+          <CurrencyValue paise={metrics.netRecoveredPaise} size="sm" variant="neutral" />
           <span className="text-text-tertiary">after costs</span>
         </div>
       ),

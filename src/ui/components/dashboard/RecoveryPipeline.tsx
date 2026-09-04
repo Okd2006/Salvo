@@ -76,7 +76,7 @@ export const RecoveryPipeline: React.FC<RecoveryPipelineProps> = ({ metrics }) =
       title: 'Revenue Saved',
       count: recoveredCount,
       subtext: (
-        <CurrencyValue paise={metrics.grossRecoveredPaise} size="xs" variant="recovered" />
+        <CurrencyValue paise={metrics.grossRecoveredPaise} size="sm" variant="recovered" />
       ),
       icon: CheckCircle2,
       color: 'text-recovered',

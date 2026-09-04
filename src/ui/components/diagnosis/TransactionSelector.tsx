@@ -1,3 +1,4 @@
+import { Badge } from '../ui/badge.js';
 /**
  * src/ui/components/diagnosis/TransactionSelector.tsx
  *
@@ -7,7 +8,6 @@ import React from 'react';
 import { Search, Receipt } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card.js';
 import { CurrencyValue } from '../CurrencyValue.js';
-import { StatusBadge } from '../StatusBadge.js';
 import type { ObservableTransaction } from '../../../types/index.js';
 
 export interface TransactionSelectorProps {
@@ -83,14 +83,14 @@ export const TransactionSelector: React.FC<TransactionSelectorProps> = ({
                   <span className="font-mono text-xs font-semibold text-white">
                     {txn.transactionId}
                   </span>
-                  <CurrencyValue paise={txn.amountPaise} size="xs" variant="default" />
+                  <CurrencyValue paise={txn.amountPaise} size="sm" variant="neutral" />
                 </div>
 
                 <div className="flex items-center justify-between text-[10.5px] font-mono">
                   <span className="text-text-tertiary">
                     {txn.failureCode} • {txn.paymentMethod.toUpperCase()}
                   </span>
-                  <StatusBadge status={txn.failureCategory} size="sm" />
+                  <Badge variant="default">{txn.failureCategory}</Badge>
                 </div>
               </div>
             );

@@ -7,7 +7,11 @@ import React from 'react';
 import { BrainCircuit, Sliders, Zap, ScrollText } from 'lucide-react';
 
 export interface QuickActionsProps {
-  onNavigate: (route: string) => void;
+  onNavigate?: (route: string) => void;
+  onSimulateClick?: () => void;
+  onDiagnosisClick?: () => void;
+  onLiveFeedClick?: () => void;
+  onAuditLedgerClick?: () => void;
 }
 
 export const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
@@ -58,7 +62,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
           <button
             key={act.id}
             type="button"
-            onClick={() => onNavigate(act.route)}
+            onClick={() => onNavigate?.(act.route)}
             className={`p-4 rounded-[18px] bg-[#020626] border border-border-hairline text-left transition-all ${act.bg} hover:bg-surface-elevated/80 group flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between mb-2">

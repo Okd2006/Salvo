@@ -1,3 +1,4 @@
+import { Badge } from '../ui/badge.js';
 /**
  * src/ui/components/dashboard/RecentTransactions.tsx
  *
@@ -7,12 +8,13 @@ import React from 'react';
 import { ArrowRight, Receipt } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card.js';
 import { CurrencyValue } from '../CurrencyValue.js';
-import { StatusBadge } from '../StatusBadge.js';
 import type { ObservableTransaction } from '../../../types/index.js';
 
 export interface RecentTransactionsProps {
   transactions: ObservableTransaction[];
   onNavigate?: (route: string) => void;
+  onSelectTransaction?: (transactionId: string) => void;
+  onViewAllClick?: () => void;
 }
 
 export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
@@ -75,12 +77,12 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                   </td>
 
                   <td className="py-3.5 px-4 text-right">
-                    <CurrencyValue paise={txn.amountPaise} size="sm" variant="default" />
+                    <CurrencyValue paise={txn.amountPaise} size="sm" variant="neutral" />
                   </td>
 
                   <td className="py-3.5 px-4 font-mono text-text-secondary text-[11px]">
                     <span className="uppercase">{txn.paymentMethod}</span>
-                    <span className="text-text-tertiary"> / {txn.gateway}</span>
+                    <span className="text-text-tertiary"> / {txn.paymentMethod.toUpperCase()}</span>
                   </td>
 
                   <td className="py-3.5 px-4">
@@ -90,7 +92,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                   </td>
 
                   <td className="py-3.5 px-4">
-                    <StatusBadge status={txn.failureCategory} size="sm" />
+                    <Badge variant="default">{txn.failureCategory}</Badge>
                   </td>
 
                   <td className="py-3.5 px-6 text-right">

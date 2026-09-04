@@ -17,7 +17,8 @@ import {
   ExecutionControlCard,
   ExecutionSessionResultCard,
 } from '../components/execution/index.js';
-import { ExecutionTimeline, type TimelineRow } from '../components/ExecutionTimeline.js';
+import { ExecutionTimeline } from '../components/ExecutionTimeline.js';
+import type { ExecutionRow } from '../components/ExecutionTimeline.js';
 import { Card } from '../components/ui/card.js';
 import { Button } from '../components/ui/button.js';
 import { Skeleton } from '../components/ui/skeleton.js';
@@ -48,7 +49,7 @@ export const ExecutionScreen: React.FC<ExecutionScreenProps> = ({
 
     try {
       const [m, txns, acts] = await Promise.all([
-        SalvoApi.getMetrics().catch(() => null),
+        SalvoApi.getDashboard().catch(() => null),
         SalvoApi.getTransactions(30).catch(() => []),
         SalvoApi.getRecoveryActions(20).catch(() => []),
       ]);
@@ -59,7 +60,7 @@ export const ExecutionScreen: React.FC<ExecutionScreenProps> = ({
 
       if (txns.length > 0) {
         const matched = initialTransactionId
-          ? txns.find((t) => t.transactionId === initialTransactionId)
+          ? txns.find((t: ObservableTransaction) => t.transactionId === initialTransactionId)
           : txns[0];
         setSelectedTxn(matched || txns[0]);
       }
@@ -91,7 +92,7 @@ export const ExecutionScreen: React.FC<ExecutionScreenProps> = ({
 
         // Refresh metrics and recovery actions
         const [updatedMetrics, updatedActions] = await Promise.all([
-          SalvoApi.getMetrics().catch(() => null),
+          SalvoApi.getDashboard().catch(() => null),
           SalvoApi.getRecoveryActions(20).catch(() => []),
         ]);
         if (updatedMetrics) setMetrics(updatedMetrics);
@@ -113,20 +114,17 @@ export const ExecutionScreen: React.FC<ExecutionScreenProps> = ({
   };
 
   // Convert actions to TimelineRow format
-  const timelineRows: TimelineRow[] = historyActions.map((act) => {
-    const isSuccess = act.status === 'succeeded';
-    const isBlocked = act.status === 'blocked';
+  const timelineRows: ExecutionRow[] = historyActions.map((act) => {
+    const isSuccess = act.executionStatus === 'succeeded';
+    const isBlocked = act.executionStatus === 'blocked';
 
     return {
       timestamp: act.createdAt
         ? new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         : 'LIVE',
-      transactionId: act.transactionId,
-      triggerType: act.strategy.replace(/_/g, ' '),
-      interventionCostPaise: act.interventionCostPaise,
-      recoveredPaise: act.recoveredAmountPaise || 0,
-      confidenceScore: act.confidence,
-      status: (isSuccess ? 'RECOVERED' : isBlocked ? 'POLICY BLOCKED' : 'FAILED') as 'RECOVERED' | 'POLICY BLOCKED' | 'FAILED',
+      txnId: act.transactionId,
+      amountPaise: act.actualRecoveryPaise || 0,
+      status: (isSuccess ? 'RECOVERED' : isBlocked ? 'POLICY_CHECK' : 'FAILED') as ExecutionRow['status'],
     };
   });
 

@@ -1,3 +1,4 @@
+/* global HTMLTextAreaElement */
 /**
  * src/ui/components/chatbot/AIChatbot.tsx
  *

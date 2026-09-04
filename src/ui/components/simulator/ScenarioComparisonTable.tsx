@@ -57,7 +57,7 @@ export const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = (
                 </td>
 
                 <td className="py-3.5 px-4 text-right">
-                  <CurrencyValue paise={sc.amountPaise} size="xs" variant="default" />
+                  <CurrencyValue paise={sc.amountPaise} size="sm" variant="neutral" />
                 </td>
 
                 <td className="py-3.5 px-4">

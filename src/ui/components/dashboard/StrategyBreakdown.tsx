@@ -8,11 +8,21 @@ import { Sliders, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card.js';
 import { CurrencyValue } from '../CurrencyValue.js';
 import { formatPercent } from '../../../lib/currency.js';
+
+const STRATEGY_META: Record<string, { label: string; icon: string }> = {
+  smart_retry: { label: 'Smart Retry Engine', icon: 'autorenew' },
+  payment_link: { label: 'Omni-Channel Payment Link', icon: 'link' },
+  payment_method_switch: { label: 'Payment Method Switch', icon: 'sync_alt' },
+  reminder: { label: 'Customer Timely Reminder', icon: 'notifications_active' },
+  no_action: { label: 'Policy Block / No Action', icon: 'block' },
+};
+
 import type { OverviewMetrics } from '../../lib/api.js';
 
 export interface StrategyBreakdownProps {
   strategies: OverviewMetrics['strategies'];
   onNavigate?: (route: string) => void;
+  onSimulateStrategy?: () => void;
 }
 
 export const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({
@@ -58,18 +68,18 @@ export const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({
           <tbody className="divide-y divide-border-hairline/50 font-sans text-xs">
             {strategies.map((s) => (
               <tr
-                key={s.id}
+                key={s.strategy}
                 onClick={() => onNavigate?.('diagnosis')}
                 className="hover:bg-surface-elevated transition-colors cursor-pointer group"
               >
                 <td className="py-3.5 px-6">
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded-[8px] bg-[#03081A] border border-border-hairline flex items-center justify-center text-primary group-hover:border-primary transition-colors">
-                      <span className="material-symbols-outlined text-[16px]">{s.icon}</span>
+                      <span className="material-symbols-outlined text-[16px]">{STRATEGY_META[s.strategy]?.icon || "token"}</span>
                     </div>
                     <div>
                       <span className="font-semibold text-white group-hover:text-primary transition-colors block">
-                        {s.label}
+                        {STRATEGY_META[s.strategy]?.label || s.strategy.replace(/_/g, " ")}
                       </span>
                       <span className="font-mono text-[10px] text-text-tertiary">
                         strategy: {s.strategy}

@@ -12,6 +12,7 @@
  */
 import React from 'react';
 import type { ExecutionRow } from '../data/demo.js';
+export type { ExecutionRow };
 import { StatusBadge } from './StatusBadge.js';
 import { CurrencyValue } from './CurrencyValue.js';
 

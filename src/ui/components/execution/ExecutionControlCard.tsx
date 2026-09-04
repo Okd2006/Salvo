@@ -46,7 +46,7 @@ export const ExecutionControlCard: React.FC<ExecutionControlCardProps> = ({
             onClick={onExecute}
             disabled={!selectedTxn || isExecuting}
             variant="glow"
-            size="sm"
+            
             className="gap-2 rounded-[12px] font-semibold text-xs h-9 px-5 shrink-0"
           >
             {isExecuting ? (
@@ -89,7 +89,7 @@ export const ExecutionControlCard: React.FC<ExecutionControlCardProps> = ({
               <span className="font-mono text-[10px] uppercase text-text-tertiary block">
                 Amount at Risk
               </span>
-              <CurrencyValue paise={selectedTxn.amountPaise} size="sm" variant="default" />
+              <CurrencyValue paise={selectedTxn.amountPaise}  variant="neutral" />
             </div>
 
             <div>
@@ -106,7 +106,7 @@ export const ExecutionControlCard: React.FC<ExecutionControlCardProps> = ({
                 Gateway & Method
               </span>
               <span className="font-mono text-xs font-semibold text-text-secondary uppercase block">
-                {selectedTxn.gateway} • {selectedTxn.paymentMethod}
+                {(selectedTxn as any).gateway} • {selectedTxn.paymentMethod}
               </span>
             </div>
 
@@ -114,7 +114,7 @@ export const ExecutionControlCard: React.FC<ExecutionControlCardProps> = ({
               <span className="font-mono text-[10px] uppercase text-text-tertiary block">
                 Decline Vector
               </span>
-              <StatusBadge status={selectedTxn.failureCategory} size="sm" />
+              <StatusBadge status={selectedTxn.failureCategory}  />
             </div>
           </div>
         )}

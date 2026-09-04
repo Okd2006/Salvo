@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * src/lib/api.ts / src/ui/lib/api.ts
  *
@@ -15,7 +16,7 @@ import type {
   RecoverySessionResult,
   AuditLogDocument,
   RecoveryActionDocument,
-} from '../types/index.js';
+} from '../../types/index.js';
 
 export interface OverviewMetrics {
   grossRecoveredPaise: number;

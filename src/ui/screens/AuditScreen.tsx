@@ -20,7 +20,8 @@ import { Button } from '../components/ui/button.js';
 import { Skeleton } from '../components/ui/skeleton.js';
 import { AlertCircle } from 'lucide-react';
 
-export const AuditScreen: React.FC = () => {
+export interface AuditScreenProps { onNavigate?: (route: string) => void; }
+export const AuditScreen: React.FC<AuditScreenProps> = ({ _onNavigate }) => {
   const [logs, setLogs] = useState<AuditLogDocument[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

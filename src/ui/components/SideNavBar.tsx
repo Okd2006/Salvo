@@ -15,8 +15,7 @@ import {
   LogOut,
   X,
   Shield,
-  Coins,
-} from 'lucide-react';
+  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { Badge } from './ui/badge.js';
 import { Avatar } from './ui/avatar.js';

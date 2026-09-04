@@ -156,7 +156,7 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
 
               <div className="pt-2.5 border-t border-border-hairline/60 flex items-center justify-between text-[11px] font-mono">
                 <span className="text-text-tertiary truncate">{sc.errorCode}</span>
-                <CurrencyValue paise={sc.amountPaise} size="xs" variant="default" />
+                <CurrencyValue paise={sc.amountPaise} size="sm" variant="neutral" />
               </div>
             </div>
           );

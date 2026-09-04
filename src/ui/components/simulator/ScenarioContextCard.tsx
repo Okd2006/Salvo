@@ -79,7 +79,7 @@ export const ScenarioContextCard: React.FC<ScenarioContextCardProps> = ({
             <span className="font-mono text-[10px] uppercase text-text-tertiary block">
               Simulated Amount
             </span>
-            <CurrencyValue paise={def.amountPaise} size="sm" variant="default" />
+            <CurrencyValue paise={def.amountPaise} size="sm" variant="neutral" />
           </div>
 
           <div>

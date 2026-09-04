@@ -1,3 +1,4 @@
+import { Badge } from '../ui/badge.js';
 /**
  * src/ui/components/diagnosis/TransactionContextCard.tsx
  *
@@ -7,7 +8,6 @@ import React from 'react';
 import { Play, ShieldAlert, CreditCard, Network } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card.js';
 import { CurrencyValue } from '../CurrencyValue.js';
-import { StatusBadge } from '../StatusBadge.js';
 import { Button } from '../ui/button.js';
 import type { ObservableTransaction } from '../../../types/index.js';
 
@@ -31,7 +31,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
               <CardTitle className="text-base font-bold font-mono text-white">
                 {transaction.transactionId}
               </CardTitle>
-              <StatusBadge status={transaction.failureCategory} size="sm" />
+              <Badge variant="default">{transaction.failureCategory}</Badge>
             </div>
             <div className="text-xs font-mono text-text-tertiary mt-0.5">
               Observed Failure Trace • Ground-Truth Isolated
@@ -62,7 +62,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
             <span className="font-mono text-[10.5px] uppercase tracking-wider text-text-tertiary block">
               Gross Amount
             </span>
-            <CurrencyValue paise={transaction.amountPaise} size="md" variant="default" />
+            <CurrencyValue paise={transaction.amountPaise} size="md" variant="neutral" />
           </div>
 
           <div className="space-y-1">
@@ -71,7 +71,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
             </span>
             <div className="font-mono text-xs font-semibold text-white uppercase flex items-center gap-1">
               <Network className="w-3 h-3 text-ai-signal" />
-              <span>{transaction.gateway}</span>
+              <span>{transaction.paymentMethod.toUpperCase()}</span>
             </div>
           </div>
 
@@ -108,7 +108,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
               </span>
             </div>
             <div className="font-sans text-xs text-text-secondary mt-0.5">
-              {transaction.failureMessage || 'Issuer or gateway decline code observed.'}
+              {transaction.failureDescription || 'Issuer or gateway decline code observed.'}
             </div>
           </div>
         </div>

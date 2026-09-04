@@ -307,9 +307,45 @@ class AuthService {
   /**
    * @deprecated Google OAuth removed for buildathon submission - use demo login instead
    */
+  /**
+   * Google OAuth 2.0 Integration
+   * Requests server authorization URL and navigates browser to Google consent screen.
+   */
   public async loginWithGoogle(): Promise<AuthResult> {
-    // Redirect to demo login for buildathon
-    return this.loginDemo();
+    try {
+      const redirectUri = `${window.location.origin}/login`;
+      const response = await fetch(`/api/auth/google/url?redirectUri=${encodeURIComponent(redirectUri)}`);
+      const data = await response.json();
+      if (data.authUrl) {
+        window.location.href = data.authUrl;
+        return { success: true };
+      }
+      return { success: false, error: 'Google OAuth is not configured on backend.' };
+    } catch (err) {
+      return { success: false, error: (err as Error).message };
+    }
+  }
+
+  /**
+   * Complete Google OAuth 2.0 Code Exchange
+   */
+  public async handleGoogleCallback(code: string): Promise<AuthResult> {
+    try {
+      const redirectUri = `${window.location.origin}/login`;
+      const response = await fetch('/api/auth/google/callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, redirectUri }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success || !data.session) {
+        return { success: false, error: data.error || 'Google authentication failed.' };
+      }
+      this.setSession(data.session);
+      return { success: true, session: data.session };
+    } catch (err) {
+      return { success: false, error: (err as Error).message };
+    }
   }
 
   public async connectRazorpayMerchant(merchantId: string = 'mer_razorpay_test_01'): Promise<RazorpayMerchantConnection> {
