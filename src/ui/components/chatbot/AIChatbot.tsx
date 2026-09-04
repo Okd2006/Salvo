@@ -1,12 +1,12 @@
 /**
  * src/ui/components/chatbot/AIChatbot.tsx
  *
- * Salvo AI Assistant - Floating Chatbot Widget powered by Gemini/Groq LLM
+ * Salvo AI Assistant - Professional Chat Interface powered by Gemini LLM
  * Real AI responses via POST /api/chat endpoint
- * Institutional design: no cartoonish elements, deep-space command center aesthetic
+ * Solid, non-transparent design with high contrast for readability
  */
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '../ui/button.js';
 import { cn } from '../../lib/utils.js';
 
@@ -27,7 +27,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I\'m your Salvo AI Assistant, powered by advanced AI. I can help you understand recovery strategies, diagnose transactions, navigate the platform, and answer any questions you have. How can I assist you today?',
+      content: 'Hello! I\'m your Salvo AI Assistant, powered by Gemini AI. I can help you:\n\n• Understand recovery strategies and best practices\n• Analyze failed transactions and suggest solutions\n• Navigate platform features and workflows\n• Answer questions about payment recovery\n\nHow can I assist you today?',
       timestamp: new Date(),
     },
   ]);
@@ -72,12 +72,16 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
         body: JSON.stringify({ message: userInput }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response || data.error || 'I encountered an error. Please try again.',
+        content: data.response || data.error || 'I encountered an error processing your request. Please try again.',
         timestamp: new Date(),
       };
 
@@ -87,13 +91,24 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I apologize, but I\'m having trouble connecting to the AI service. Please check your connection and try again.',
+        content: '❌ I apologize, but I\'m having trouble connecting to the AI service. Please check your connection and try again.\n\nError: ' + (error instanceof Error ? error.message : 'Unknown error'),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleReset = () => {
+    setMessages([
+      {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: 'Hello! I\'m your Salvo AI Assistant, powered by Gemini AI. I can help you:\n\n• Understand recovery strategies and best practices\n• Analyze failed transactions and suggest solutions\n• Navigate platform features and workflows\n• Answer questions about payment recovery\n\nHow can I assist you today?',
+        timestamp: new Date(),
+      },
+    ]);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -152,7 +167,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#0a0f1e]">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -163,56 +178,64 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
               >
                 <div
                   className={cn(
-                    'max-w-[85%] rounded-[16px] px-4 py-3 text-sm whitespace-pre-line',
+                    'max-w-[80%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line',
                     message.role === 'user'
-                      ? 'bg-primary text-white ml-8'
-                      : 'bg-surface-elevated text-text-primary border border-border-hairline mr-8'
+                      ? 'bg-gradient-to-br from-primary to-primary/90 text-white shadow-lg shadow-primary/20'
+                      : 'bg-[#151d2f] text-gray-100 border-2 border-[#1e2839] shadow-lg'
                   )}
                 >
                   {message.content}
+                  <div className={cn(
+                    'text-[10px] mt-2 font-mono',
+                    message.role === 'user' ? 'text-primary-foreground/70' : 'text-text-tertiary'
+                  )}>
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
                 </div>
               </div>
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="max-w-[85%] rounded-[16px] px-4 py-3 bg-surface-elevated border border-border-hairline flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 text-ai-signal animate-spin" />
-                  <span className="text-sm text-text-secondary">Thinking...</span>
+                <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-[#151d2f] border-2 border-[#1e2839] flex items-center gap-3 shadow-lg">
+                  <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                  <span className="text-sm text-gray-300 font-medium">AI is thinking...</span>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 border-t border-border-hairline">
-            <div className="flex items-center gap-2">
+          {/* Input Area */}
+          <div className="p-4 border-t-2 border-border-hairline bg-gradient-to-r from-[#0f1628] to-[#0d1220]">
+            <div className="flex items-end gap-2">
               <input
                 ref={inputRef}
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me anything..."
+                placeholder="Type your message..."
                 disabled={isLoading}
                 className={cn(
-                  'flex-1 h-10 px-4 rounded-[12px]',
-                  'bg-surface-elevated border border-border-hairline',
+                  'flex-1 min-h-[44px] px-4 py-3 rounded-xl',
+                  'bg-[#151d2f] border-2 border-[#1e2839]',
                   'text-sm text-white placeholder:text-text-tertiary',
                   'focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary',
-                  'disabled:opacity-50 disabled:cursor-not-allowed transition-all'
+                  'disabled:opacity-50 disabled:cursor-not-allowed transition-all',
+                  'hover:border-[#2a3548]'
                 )}
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() || isLoading}
                 size="icon"
-                className="h-10 w-10 shrink-0"
+                className="h-11 w-11 shrink-0 rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30"
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-5 w-5" />
               </Button>
             </div>
-            <p className="text-xs text-text-tertiary text-center mt-2 font-mono">
-              Powered by AI • Press Enter to send
+            <p className="text-[11px] text-text-tertiary text-center mt-3 font-mono">
+              Press <kbd className="px-1.5 py-0.5 bg-surface-elevated rounded text-[10px]">Enter</kbd> to send • Powered by Gemini 2.0
             </p>
           </div>
         </div>
