@@ -118,14 +118,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         </p>
       </div>
 
-      {/* Google Identity Verifying Banner */}
-      {isVerifyingGoogleCode && (
-        <div className="mb-5 p-3.5 rounded-[14px] bg-primary/10 border border-primary/40 text-primary text-xs flex items-center gap-2.5 animate-fadeIn">
-          <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin shrink-0" />
-          <span className="font-sans font-medium">Verifying Google Identity & creating session...</span>
-        </div>
-      )}
-
       {/* Error Banner */}
       {errorMessage && (
         <div
