@@ -52,6 +52,23 @@ import { formatPaise } from '../lib/currency.js';
 import { isRazorpayConfigured } from '../lib/razorpay.js';
 import type { RecoveryRecommendation, AuditLogDocument, RecoveryStrategy } from '../types/index.js';
 
+function extractSessionToken(req: IncomingMessage): string | null {
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.slice(7).trim();
+  }
+  const cookieHeader = req.headers['cookie'];
+  if (cookieHeader) {
+    const cookies = cookieHeader.split(';').map((c) => c.trim());
+    for (const c of cookies) {
+      if (c.startsWith('salvo_session=')) {
+        return decodeURIComponent(c.slice('salvo_session='.length));
+      }
+    }
+  }
+  return null;
+}
+
 export async function handleApiRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const parsedUrl = new URL(req.url || '/', 'http://localhost');
   let pathname = parsedUrl.pathname;
@@ -144,6 +161,16 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
         },
       };
 
+      const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+      const cookieFlags = [
+        `salvo_session=${encodeURIComponent(sessionToken)}`,
+        'Path=/',
+        'HttpOnly',
+        'SameSite=Lax',
+        'Max-Age=604800',
+        ...(isProd ? ['Secure'] : []),
+      ].join('; ');
+      res.setHeader('Set-Cookie', cookieFlags);
       res.statusCode = 200;
       res.end(
         JSON.stringify({
@@ -666,6 +693,8 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
       // Extract and verify session identity (never trust client to forge merchant identity)
       const authHeader = req.headers.authorization || '';
       let operatorIdentity = 'Default Merchant Workspace';
+      const token = extractSessionToken(req);
+      if (token) { operatorIdentity = `Authenticated Operator (${token.slice(0, 16)}...)`; }
       if (authHeader.startsWith('Bearer ')) {
         const token = authHeader.slice(7).trim();
         if (token.startsWith('salvo_g_sso_')) {
@@ -745,9 +774,15 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
         return `  - Action ID: ${a.actionId} | Txn: ${a.transactionId} | Strategy: ${a.strategy} | Status: ${a.executionStatus} | Recovered: ${formatPaise(a.actualRecoveryPaise || 0)}`;
       }).join('\n') || '  - None recorded';
 
-      // Build system prompt with LIVE real data
+      // Build system prompt with strictly grounded benchmark dataset and Razorpay Test Mode context
       const systemPrompt = `You are Salvo AI Assistant, the intelligent autonomous payment recovery assistant for the Salvo platform built for the Razorpay AI Buildathon 2026.
 You are assisting an operator in: ${operatorIdentity}.
+
+CRITICAL DATASET GROUNDING & HONESTY INVARIANT:
+- The metrics and transactions below are derived from the official Salvo Buildathon Benchmark Dataset (1,350 transactions, 208 payment failures, deterministic seed 'salvo-buildathon-v1') alongside the active Razorpay Test Gateway.
+- You must ALWAYS explicitly ground your financial figures in this benchmark dataset. Say "Based on the current Salvo benchmark dataset..." or "According to current benchmark data...".
+- NEVER state or imply to the operator that these figures are live merchant revenues drawn from a production bank account.
+- Explain that this benchmark models realistic Indian payment failure distributions (HDFC/ICICI bank switch timeouts, UPI PSP throttling, insufficient balance, card expiry) to evaluate autonomous recovery yields.
 
 PLATFORM MISSION & ARCHITECTURE:
 Salvo autonomously detects, diagnoses, and recovers failed and abandoned payment transactions in real time.
@@ -757,8 +792,8 @@ It executes a strict 4-stage pipeline:
 3. Policy Gate: Deterministic safety invariants evaluated BEFORE any action executes.
 4. Execute: Autonomous recovery execution (Smart Retry, Payment Link, Method Switch, Reminder) and ledger recording.
 
-LIVE DATA & REAL APPLICATION METRICS:
-Use these EXACT verified figures from the merchant's live dataset. DO NOT fabricate or invent numbers:
+VERIFIED DATASET BENCHMARK METRICS:
+Use these EXACT verified figures from the current benchmark dataset. DO NOT fabricate or invent numbers:
 - Total Monitored Transactions: ${allTxns.length}
 - Successful Payments: ${totalSuccessCount} (Gross Collected: ${formatPaise(grossCollectedPaise)})
 - Failed / Abandoned Payments: ${totalFailedCount}

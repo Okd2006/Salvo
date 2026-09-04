@@ -38,16 +38,14 @@ const INITIAL_MESSAGE: Message = {
   role: 'assistant',
   content: `Hello! I'm your **Salvo Autonomous Recovery AI Assistant**.
 
-I am connected to your live merchant telemetry and payment operations engine. I can help you with:
+I am grounded in your **Salvo Buildathon Benchmark Dataset** and **Razorpay Test Gateway**. I can help you analyze:
 
-• **Revenue at Risk** — Live failed payment volume and breakdown
-• **Failure Root Causes** — Real error codes and gateway drop-offs
-• **Recovery Pipeline** — Observe → Diagnose → Policy Gate → Execute
-• **Policy Gates** — Safety invariants (amount, risk ≤ 0.40, confidence ≥ 65%, max 3 attempts)
-• **Recovery Strategies** — Smart Retry, Payment Links, Method Switch, and Reminders
-• **Razorpay Integration** — Live webhooks, sync state, and test keys
+• **Revenue at Risk** – Failed payment volume, recoverable amounts & patterns
+• **Failure Root Causes** – Gateway timeouts, bank switch drop-offs & card declines
+• **Autonomous Recovery** – Smart Retry, Payment Link & Method Switch yields
+• **Safety Invariants** – Policy Gate block logs & cryptographic audit trails
 
-What insights or recovery actions would you like to review?`,
+Ask me anything about your benchmark transactions or recovery operations!`,
   timestamp: new Date(),
 };
 

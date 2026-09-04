@@ -34,7 +34,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             SALVO // RECOVERY CONTROL
           </span>
           <span className="text-border-secondary">•</span>
-          <span className="font-mono text-[11px] text-text-tertiary">RAZORPAY TESTNET</span>
+          <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-semibold">BUILDATHON BENCHMARK</span>
+          <span className="text-border-secondary">•</span>
+          <span className="font-mono text-[11px] text-text-tertiary">RAZORPAY TEST MODE</span>
         </div>
         <h1 className="font-sans text-2xl sm:text-3xl font-bold text-white tracking-tight">
           Payment Recovery Command Center
