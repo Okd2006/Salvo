@@ -27,7 +27,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I\'m your Salvo AI Assistant, powered by Gemini AI. I can help you:\n\n• Understand recovery strategies and best practices\n• Analyze failed transactions and suggest solutions\n• Navigate platform features and workflows\n• Answer questions about payment recovery\n\nHow can I assist you today?',
+      content: 'Hello! I\'m your Salvo AI Assistant, powered by Gemini 2.0. I can help you with:\n\n• **Dashboard Navigation** - Overview, Diagnosis, Simulator, Execution, Audit, Launch screens\n• **Recovery Strategies** - Smart Retry, Payment Links, Method Switch, Reminders\n• **AI Diagnosis** - How the 4-stage pipeline works (Observe → Diagnose → Policy → Execute)\n• **Metrics & KPIs** - Recovery Rate, ROI, Success Rate, Revenue at Risk\n• **Policy Rules** - Amount thresholds, risk scores, confidence levels\n• **Razorpay Integration** - Connection setup, payment sync, webhooks\n\nAsk me anything about the platform!',
       timestamp: new Date(),
     },
   ]);
@@ -91,7 +91,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '❌ I apologize, but I\'m having trouble connecting to the AI service. Please check your connection and try again.\n\nError: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        content: '❌ I apologize, but I encountered an error processing your request.\n\n**Common issues:**\n• AI service temporarily unavailable\n• Network connectivity problem\n• API rate limit reached\n\nPlease try again in a moment. If the issue persists, check the console for details.\n\n**Technical error:** ' + (error instanceof Error ? error.message : 'Unknown error'),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
