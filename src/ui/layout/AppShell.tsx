@@ -2,11 +2,12 @@
  * src/ui/layout/AppShell.tsx
  *
  * Salvo Reusable Authenticated Shell Layout
- * Combines SideNavBar + TopAppBar + Scrollable Viewport without double scrollbars.
+ * Combines SideNavBar + TopAppBar + Scrollable Viewport + AI Chatbot without double scrollbars.
  */
 import React, { useState } from 'react';
 import { SideNavBar, NavTab } from '../components/SideNavBar.js';
 import { TopAppBar } from '../components/TopAppBar.js';
+import { AIChatbot } from '../components/chatbot/index.js';
 
 export interface AppShellProps {
   activeTab: NavTab;
@@ -46,6 +47,9 @@ export const AppShell: React.FC<AppShellProps> = ({
           {children}
         </main>
       </div>
+
+      {/* Floating AI Chatbot - Available globally */}
+      <AIChatbot />
     </div>
   );
 };

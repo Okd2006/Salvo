@@ -35,14 +35,14 @@ export const DashboardKpiGrid: React.FC<DashboardKpiGridProps> = ({ metrics }) =
       subtext: (
         <div className="flex items-center gap-1.5 text-xs text-text-secondary font-mono">
           <span>Net:</span>
-          <CurrencyValue paise={metrics.netRecoveredRevenuePaise} size="sm" variant="default" />
+          <CurrencyValue paise={metrics.netRecoveredPaise} size="sm" variant="default" />
           <span className="text-text-tertiary">after costs</span>
         </div>
       ),
       icon: TrendingUp,
       iconColor: 'text-recovered',
       accentBorder: 'hover:border-recovered/40',
-      badge: `${metrics.recoveryYield.toFixed(1)}% Yield`,
+      badge: `${(metrics.recoveryYield * 100).toFixed(1)}% Yield`,
       badgeVariant: 'bg-recovered/15 text-recovered border-recovered/30',
     },
     {
@@ -50,7 +50,7 @@ export const DashboardKpiGrid: React.FC<DashboardKpiGridProps> = ({ metrics }) =
       label: 'Recovery Rate',
       primaryContent: (
         <div className="font-mono text-2xl sm:text-3xl font-bold text-white tracking-tight">
-          {metrics.recoveryRate.toFixed(1)}%
+          {(metrics.netRecoveryRate * 100).toFixed(1)}%
         </div>
       ),
       subtext: (
@@ -69,13 +69,13 @@ export const DashboardKpiGrid: React.FC<DashboardKpiGridProps> = ({ metrics }) =
       label: 'Monitored Failures',
       primaryContent: (
         <div className="font-mono text-2xl sm:text-3xl font-bold text-white tracking-tight">
-          {metrics.totalTransactions.toLocaleString('en-IN')}
+          {metrics.totalMonitored.toLocaleString('en-IN')}
         </div>
       ),
       subtext: (
         <div className="flex items-center gap-1.5 text-xs text-text-secondary font-mono">
           <span>Total Pool:</span>
-          <CurrencyValue paise={metrics.totalFailedRevenuePaise} size="sm" variant="risk" />
+          <CurrencyValue paise={metrics.totalFailedPaise} size="sm" variant="risk" />
         </div>
       ),
       icon: AlertCircle,
@@ -89,7 +89,7 @@ export const DashboardKpiGrid: React.FC<DashboardKpiGridProps> = ({ metrics }) =
       label: 'AI Diagnoses & Confidence',
       primaryContent: (
         <div className="font-mono text-2xl sm:text-3xl font-bold text-white tracking-tight">
-          {(metrics.averageConfidence * 100).toFixed(1)}%
+          {(metrics.avgConfidence * 100).toFixed(1)}%
         </div>
       ),
       subtext: (
@@ -127,7 +127,7 @@ export const DashboardKpiGrid: React.FC<DashboardKpiGridProps> = ({ metrics }) =
       label: 'Audit & Telemetry',
       primaryContent: (
         <div className="font-mono text-2xl sm:text-3xl font-bold text-white tracking-tight">
-          {metrics.auditLogCount.toLocaleString('en-IN')}
+          {metrics.auditEventsCount.toLocaleString('en-IN')}
         </div>
       ),
       subtext: (

@@ -15,7 +15,7 @@ export interface RecoveryPipelineProps {
 }
 
 export const RecoveryPipeline: React.FC<RecoveryPipelineProps> = ({ metrics }) => {
-  const total = metrics.totalTransactions || 1;
+  const total = metrics.totalMonitored || 1;
   const diagnosedCount = total;
   const approvedCount = Math.max(0, total - metrics.policyBlocks);
   const executedCount = approvedCount;
@@ -39,7 +39,7 @@ export const RecoveryPipeline: React.FC<RecoveryPipelineProps> = ({ metrics }) =
       label: '2. DIAGNOSED',
       title: 'AI Root Cause',
       count: diagnosedCount,
-      subtext: `${(metrics.averageConfidence * 100).toFixed(0)}% Avg Confidence`,
+      subtext: `${(metrics.avgConfidence * 100).toFixed(0)}% Avg Confidence`,
       icon: BrainCircuit,
       color: 'text-primary',
       bg: 'bg-primary/10',
@@ -82,7 +82,7 @@ export const RecoveryPipeline: React.FC<RecoveryPipelineProps> = ({ metrics }) =
       color: 'text-recovered',
       bg: 'bg-recovered/10',
       border: 'border-recovered/30',
-      rate: `${metrics.recoveryRate.toFixed(1)}% Yield`,
+      rate: `${(metrics.netRecoveryRate * 100).toFixed(1)}% Yield`,
     },
   ];
 
@@ -100,7 +100,7 @@ export const RecoveryPipeline: React.FC<RecoveryPipelineProps> = ({ metrics }) =
             </CardDescription>
           </div>
           <div className="font-mono text-xs text-recovered bg-recovered/10 px-2.5 py-1 rounded-[8px] border border-recovered/30 font-semibold self-start sm:self-auto">
-            {metrics.recoveryRate.toFixed(1)}% End-to-End Conversion
+            {(metrics.netRecoveryRate * 100).toFixed(1)}% End-to-End Conversion
           </div>
         </div>
       </CardHeader>

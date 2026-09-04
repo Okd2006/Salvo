@@ -643,6 +643,83 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
     return;
   }
 
+  // POST /api/chat - AI Chatbot endpoint powered by Groq
+  if (pathname === '/api/chat' && method === 'POST') {
+    try {
+      const body = await parseJsonBody<{ message?: string }>(req);
+      if (!body.message || typeof body.message !== 'string') {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Missing or invalid message in request body.' }));
+        return;
+      }
+
+      // Use Groq for chat responses
+      const { executeGroqExplanation, isGroqConfigured } = await import('../lib/groq.js');
+      const { getLLMProvider, isLLMConfigured } = await import('../lib/llm.js');
+      
+      if (!isLLMConfigured()) {
+        res.statusCode = 503;
+        res.end(JSON.stringify({ 
+          error: 'LLM provider not configured. Please set up API keys in .env file.',
+          response: 'I apologize, but I am currently not configured properly. Please check the API keys in your environment settings.'
+        }));
+        return;
+      }
+
+      const provider = getLLMProvider();
+      const systemPrompt = `You are Salvo AI Assistant, an intelligent helper for the Salvo Revenue Recovery Platform.
+
+You help users understand and navigate the platform's features:
+
+**Key Features:**
+1. **Recovery Strategies**: 5 intelligent strategies (Payment Link, Communication, Alternative Payment, Incentive-Based, Manual Review)
+2. **AI Diagnosis Engine**: 4-step ML-powered diagnosis (observe, diagnose, policy gate, execute)
+3. **Dashboard Screens**: Overview, Diagnosis, Simulator, Execution, Audit, Launch
+4. **Metrics & KPIs**: Revenue at Risk, Recovery Rate, Success Rate, Failed Transactions
+5. **Policy Engine**: 4 deterministic gates (Amount Threshold, Risk Score, Confidence, Attempt Count)
+6. **Razorpay Integration**: Real-time payment monitoring and webhook ingestion
+7. **Audit Logs**: Immutable compliance trail with ISO timestamps
+
+**Your Personality:**
+- Professional, institutional tone (deep-space command center aesthetic)
+- Concise but helpful responses
+- Use technical terminology when appropriate
+- Provide actionable guidance
+- Never cartoonish or overly casual
+
+Answer user questions clearly and guide them to the relevant features. If asked about navigation, direct them to the appropriate screen. Keep responses focused and under 150 words unless more detail is needed.`;
+
+      let response: string;
+      
+      if (provider === 'groq' && isGroqConfigured()) {
+        response = await executeGroqExplanation(body.message, systemPrompt);
+      } else {
+        // Fallback to other providers
+        const { executeMerchantExplanation: executeGeminiExplanation, isGeminiConfigured } = await import('../lib/gemini.js');
+        const { executeOpenRouterExplanation, isOpenRouterConfigured } = await import('../lib/openrouter.js');
+        
+        if (provider === 'gemini' && isGeminiConfigured()) {
+          response = await executeGeminiExplanation(body.message, systemPrompt);
+        } else if (provider === 'openrouter' && isOpenRouterConfigured()) {
+          response = await executeOpenRouterExplanation(body.message, systemPrompt);
+        } else {
+          throw new Error('No LLM provider available');
+        }
+      }
+
+      res.statusCode = 200;
+      res.end(JSON.stringify({ response, provider }));
+    } catch (err) {
+      console.error('[API /api/chat] Error:', err);
+      res.statusCode = 500;
+      res.end(JSON.stringify({ 
+        error: (err as Error).message,
+        response: 'I encountered an error processing your request. Please try again or contact support if the issue persists.'
+      }));
+    }
+    return;
+  }
+
   // POST /api/demo/recovery
   if (pathname === '/api/demo/recovery' && method === 'POST') {
     try {
