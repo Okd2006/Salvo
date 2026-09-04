@@ -87,26 +87,24 @@ export class SalvoApiError extends Error {
 }
 
 const getApiBaseUrl = (): string => {
-  // Priority 1: Vite environment variable (for production builds)
+  // Priority 1: Vite environment variable (for custom backend URLs)
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL as string;
+    return (import.meta.env.VITE_API_URL as string).replace(/\/+$/, '');
   }
   
-  // Priority 2: Global override (for testing)
+  // Priority 2: Global override (for testing/mocking)
   if (typeof globalThis !== 'undefined') {
     const custom = (globalThis as unknown as { __SALVO_API_URL__?: string }).__SALVO_API_URL__;
-    if (custom) return custom;
+    if (custom) return custom.replace(/\/+$/, '');
   }
   
-  // Priority 3: Default to same origin in production, localhost in dev
+  // Priority 3: Browser runtime — always use relative paths for same-origin routing
+  // Guarantees zero CORS errors, zero port conflicts, and seamless local & Vercel execution
   if (typeof window !== 'undefined') {
-    // If deployed (not localhost), API calls go to same domain (assumes backend on same host)
-    if (!window.location.hostname.includes('localhost')) {
-      return window.location.origin;
-    }
+    return '';
   }
   
-  // Priority 4: Development default
+  // Priority 4: Server-side fallback default
   return 'http://localhost:3001';
 };
 
@@ -187,8 +185,8 @@ export const SalvoApi = {
   /**
    * Fetch observable transaction list (ground truth stripped)
    */
-  async getTransactions(limit: number = 50, query?: string): Promise<ObservableTransaction[]> {
-    const qs = buildQueryString({ limit, q: query });
+  async getTransactions(limit: number = 50, query?: string, status?: string): Promise<ObservableTransaction[]> {
+    const qs = buildQueryString({ limit, q: query, status });
     return requestJson<ObservableTransaction[]>(`/api/transactions${qs}`);
   },
 

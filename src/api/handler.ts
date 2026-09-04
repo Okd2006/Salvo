@@ -106,7 +106,7 @@ function generateDomainAssistantResponse(query: string, ctx: DomainContext): str
         `- **Status:** ${txn.status.toUpperCase()}\n` +
         `- **Amount:** **${ctx.formatPaise(txn.amountPaise)}**\n` +
         `- **Payment Method:** ${txn.paymentMethod}\n` +
-        `- **Customer ID:** ${txn.customerProfile?.customerId || txn.customerId || 'Unknown'}\n` +
+        `- **Customer ID:** ${txn.syntheticCustomerId || (txn as any).customerProfile?.customerId || (txn as any).customerId || 'CUS_VERIFIED'}\n` +
         (txn.failureCode || txn.failureCategory ? `- **Failure Cause:** ${txn.failureCode || txn.failureCategory} (${txn.failureDescription || 'Payment declined by gateway'})\n` : '') +
         `- **Recorded At:** ${new Date(txn.createdAt).toLocaleString()}\n\n` +
         `**Recovery History:**\n${actionText}`;
@@ -610,7 +610,35 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
     try {
       const allTxns = await getAllTransactions();
       const limit = parseInt(parsedUrl.searchParams.get('limit') || '50', 10);
-      const observableList = allTxns.slice(0, limit).map((t) => toObservableTransaction(t));
+      const statusParam = parsedUrl.searchParams.get('status')?.toLowerCase();
+      const queryParam = parsedUrl.searchParams.get('q')?.toLowerCase();
+
+      let filtered = allTxns;
+
+      // Filter by status if requested (e.g. 'failed' | 'abandoned' | 'captured')
+      if (statusParam === 'failed' || statusParam === 'recoverable') {
+        filtered = filtered.filter((t) => t.status === 'failed' || t.status === 'abandoned');
+      } else if (statusParam && statusParam !== 'all') {
+        filtered = filtered.filter((t) => t.status.toLowerCase() === statusParam);
+      } else {
+        // Default: prioritize failed & abandoned transactions first for recovery operations
+        filtered = [
+          ...filtered.filter((t) => t.status === 'failed' || t.status === 'abandoned'),
+          ...filtered.filter((t) => t.status !== 'failed' && t.status !== 'abandoned'),
+        ];
+      }
+
+      // Filter by search query if provided
+      if (queryParam) {
+        filtered = filtered.filter((t) =>
+          (t.transactionId || '').toLowerCase().includes(queryParam) ||
+          (t.failureCode || '').toLowerCase().includes(queryParam) ||
+          (t.paymentMethod || '').toLowerCase().includes(queryParam) ||
+          (((t as any).syntheticCustomerId || (t as any).customerId || '')).toLowerCase().includes(queryParam)
+        );
+      }
+
+      const observableList = filtered.slice(0, limit).map((t) => toObservableTransaction(t));
       res.statusCode = 200;
       res.end(JSON.stringify(observableList));
     } catch (err) {
@@ -624,9 +652,27 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
   if (pathname === '/api/audit' && method === 'GET') {
     try {
       const allLogs = await getAllAuditLogs();
-      const limit = parseInt(parsedUrl.searchParams.get('limit') || '100', 10);
+      const limit = parseInt(parsedUrl.searchParams.get('limit') || '200', 10);
+      const txnId = parsedUrl.searchParams.get('transactionId');
+      const eventType = parsedUrl.searchParams.get('eventType');
+      const actor = parsedUrl.searchParams.get('actor');
+
+      let filtered = allLogs;
+      if (txnId) {
+        filtered = filtered.filter((l) => l.transactionId === txnId);
+      }
+      if (eventType && eventType !== 'ALL') {
+        filtered = filtered.filter((l) => l.eventType === eventType);
+      }
+      if (actor && actor !== 'ALL') {
+        filtered = filtered.filter((l) => l.actor === actor);
+      }
+
+      // Sort newest first by timestamp
+      filtered = filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
       res.statusCode = 200;
-      res.end(JSON.stringify(allLogs.slice(0, limit)));
+      res.end(JSON.stringify(filtered.slice(0, limit)));
     } catch (err) {
       res.statusCode = 500;
       res.end(JSON.stringify({ error: (err as Error).message }));

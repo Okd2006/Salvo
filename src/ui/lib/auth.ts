@@ -92,10 +92,10 @@ const DEMO_RAZORPAY_CONNECTION: RazorpayMerchantConnection = {
 const DEMO_USERS: User[] = [
   {
     id: 'usr_demo_buildathon_2026',
-    email: 'demo@salvo.buildathon',
-    name: 'Demo Merchant',
+    email: 'omkrrish@salvo.buildathon',
+    name: 'Omkrrish',
     role: 'merchant',
-    organization: 'Salvo AI Revenue Recovery - Buildathon Demo',
+    organization: 'Salvo Payment Operations',
     avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&fit=crop&q=80',
     authProvider: 'email',
     createdAt: '2026-08-01T00:00:00.000Z',
@@ -127,7 +127,7 @@ const DEMO_USERS: User[] = [
 
 // Demo credentials for quick access
 export const DEMO_CREDENTIALS = {
-  email: 'demo@salvo.buildathon',
+  email: 'omkrrish@salvo.buildathon',
   password: 'demo2026',
 };
 

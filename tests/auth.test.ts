@@ -55,7 +55,7 @@ test('4. Auth: Register validates name, email, password length, and terms', asyn
 
   // Short password (< 8)
   const res2 = await SalvoAuth.register({
-    name: 'Alex Morgan',
+    name: 'Omkrrish',
     email: 'new@partner.io',
     password: 'short',
     agreeToTerms: true,
@@ -65,7 +65,7 @@ test('4. Auth: Register validates name, email, password length, and terms', asyn
 
   // Disagreed terms
   const res3 = await SalvoAuth.register({
-    name: 'Alex Morgan',
+    name: 'Omkrrish',
     email: 'new@partner.io',
     password: 'ValidPassword123!',
     agreeToTerms: false,
@@ -75,14 +75,14 @@ test('4. Auth: Register validates name, email, password length, and terms', asyn
 
   // Valid registration
   const res4 = await SalvoAuth.register({
-    name: 'Alex Morgan',
-    email: 'alex@partner.io',
+    name: 'Omkrrish',
+    email: 'omkrrish@partner.io',
     password: 'ValidPassword123!',
     agreeToTerms: true,
   });
   assert.equal(res4.success, true);
-  assert.equal(res4.user?.name, 'Alex Morgan');
-  assert.equal(res4.user?.email, 'alex@partner.io');
+  assert.equal(res4.user?.name, 'Omkrrish');
+  assert.equal(res4.user?.email, 'omkrrish@partner.io');
   assert.equal(res4.user?.authProvider, 'email');
   assert.equal(SalvoAuth.isAuthenticated(), true);
 });

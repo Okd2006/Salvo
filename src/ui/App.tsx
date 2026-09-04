@@ -12,19 +12,21 @@ import { DiagnosisScreen } from './screens/DiagnosisScreen.js';
 import { SimulatorScreen } from './screens/SimulatorScreen.js';
 import { AuditScreen } from './screens/AuditScreen.js';
 import { ExecutionScreen } from './screens/ExecutionScreen.js';
+import { PrivacyPolicyScreen } from './screens/PrivacyPolicyScreen.js';
+import { TermsConditionsScreen } from './screens/TermsConditionsScreen.js';
 
 import { LoginScreen } from './screens/LoginScreen.js';
 import { RegisterScreen } from './screens/RegisterScreen.js';
 import { ForgotPasswordScreen } from './screens/ForgotPasswordScreen.js';
 
-type AppRoute = NavTab | 'login' | 'register' | 'forgot-password' | 'dashboard';
+export type AppRoute = NavTab | 'login' | 'register' | 'forgot-password' | 'dashboard' | 'privacy' | 'terms';
 
 const MainShell: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(() => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname.replace(/^\//, '').toLowerCase();
-      if (path === 'login' || path === 'register' || path === 'forgot-password') {
+      if (path === 'login' || path === 'register' || path === 'forgot-password' || path === 'privacy' || path === 'terms') {
         return path;
       }
       if (path === 'dashboard') return 'overview';
@@ -74,6 +76,27 @@ const MainShell: React.FC = () => {
           <div className="w-3 h-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           <span>Verifying Workspace Security...</span>
         </div>
+      </div>
+    );
+  }
+
+  // Public Legal Screens (Available without authentication)
+  if (currentRoute === 'privacy') {
+    return (
+      <div className="min-h-screen bg-[#03081A] text-white flex flex-col justify-between">
+        <main className="py-8">
+          <PrivacyPolicyScreen onNavigate={handleNavigate} />
+        </main>
+      </div>
+    );
+  }
+
+  if (currentRoute === 'terms') {
+    return (
+      <div className="min-h-screen bg-[#03081A] text-white flex flex-col justify-between">
+        <main className="py-8">
+          <TermsConditionsScreen onNavigate={handleNavigate} />
+        </main>
       </div>
     );
   }

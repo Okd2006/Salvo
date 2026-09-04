@@ -52,8 +52,8 @@ export async function exchangeGoogleCodeForProfile(
   if (!isGoogleOAuthConfigured()) {
     return {
       googleSub: `g_sub_${code.replace(/[^a-zA-Z0-9]/g, '').slice(0, 16) || 'sandbox_operator_01'}`,
-      email: 'alex.morgan@payment-ops.com',
-      name: 'Alex Morgan',
+      email: 'omkrrish@payment-ops.com',
+      name: 'Omkrrish',
       avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&fit=crop&q=80',
     };
   }

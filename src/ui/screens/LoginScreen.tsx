@@ -246,7 +246,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             size="lg"
             isLoading={isSubmitting}
             disabled={isSubmitting || (emailTouched && !isFormValid)}
-            className="w-full gap-2 text-sm font-semibold rounded-[48px]"
+            className="w-full gap-2 text-sm font-semibold rounded-xl"
           >
             <span>Sign in</span>
             <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -262,7 +262,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
           SalvoAuth.loginWithGoogle();
         }}
         disabled={isSubmitting}
-        className="w-full bg-[#03081A] hover:bg-[#03081A]/80 border border-border-hairline hover:border-border-secondary text-white font-sans text-sm font-medium py-2.5 px-4 rounded-[48px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+        className="w-full bg-[#03081A] hover:bg-[#03081A]/80 border border-border-hairline hover:border-border-secondary text-white font-sans text-sm font-medium py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
       >
         <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
           <path fill="#EA4335" d="M12 5c1.7 0 3 .7 3.7 1.4l2.8-2.8C16.8 2.1 14.6 1.3 12 1.3 7.5 1.3 3.7 3.8 1.9 7.5l3.4 2.6C6.2 7.1 8.8 5 12 5z" />
@@ -287,7 +287,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         variant="glow"
         onClick={handleDemoLogin}
         disabled={isSubmitting}
-        className="w-full gap-3 rounded-[48px]"
+        className="w-full gap-3 rounded-xl"
       >
         <span className="material-symbols-outlined text-[20px]">rocket_launch</span>
         <span>Demo Login (Buildathon Jury)</span>
@@ -303,6 +303,25 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             <p className="font-mono">Password: {DEMO_CREDENTIALS.password}</p>
           </div>
         </div>
+      </div>
+
+      {/* Privacy Policy & Terms Links */}
+      <div className="mt-6 pt-4 border-t border-border-hairline/40 flex items-center justify-center gap-4 text-xs font-sans text-text-tertiary">
+        <button
+          type="button"
+          onClick={() => onNavigate('privacy')}
+          className="hover:text-primary transition-colors focus:outline-none"
+        >
+          Privacy Policy
+        </button>
+        <span>•</span>
+        <button
+          type="button"
+          onClick={() => onNavigate('terms')}
+          className="hover:text-primary transition-colors focus:outline-none"
+        >
+          Terms & Conditions
+        </button>
       </div>
     </AuthLayout>
   );

@@ -52,7 +52,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({
     setIsLoadingTxns(true);
     setErrorMessage(null);
     try {
-      const txns = await SalvoApi.getTransactions(30);
+      const txns = await SalvoApi.getTransactions(50, undefined, 'failed');
       setTransactions(txns);
 
       if (txns.length > 0) {

@@ -241,6 +241,31 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
                   <span>Dashboard Overview</span>
                 </button>
 
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    onNavigate?.('privacy');
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-[10px] text-xs font-sans text-text-secondary hover:bg-surface-elevated hover:text-white transition-colors text-left"
+                >
+                  <ShieldCheck className="w-4 h-4 text-ai-signal" />
+                  <span>Privacy Policy</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    onNavigate?.('terms');
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-[10px] text-xs font-sans text-text-secondary hover:bg-surface-elevated hover:text-white transition-colors text-left"
+                >
+                  <ExternalLink className="w-4 h-4 text-ai-signal" />
+                  <span>Terms & Conditions</span>
+                </button>
+
                 <Separator className="my-1" />
 
                 <button

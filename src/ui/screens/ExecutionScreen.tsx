@@ -50,7 +50,7 @@ export const ExecutionScreen: React.FC<ExecutionScreenProps> = ({
     try {
       const [m, txns, acts] = await Promise.all([
         SalvoApi.getDashboard().catch(() => null),
-        SalvoApi.getTransactions(30).catch(() => []),
+        SalvoApi.getTransactions(50, undefined, 'failed').catch(() => []),
         SalvoApi.getRecoveryActions(20).catch(() => []),
       ]);
 

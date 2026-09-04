@@ -281,8 +281,8 @@ class AuthService {
 
     const user: User = {
       id: 'usr_google_sso_01',
-      email: 'alex.morgan@payment-ops.com',
-      name: 'Alex Morgan',
+      email: 'omkrrish@payment-ops.com',
+      name: 'Omkrrish',
       role: 'merchant',
       organization: 'Global Payments Ops',
       avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&fit=crop&q=80',
