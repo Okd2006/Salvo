@@ -254,24 +254,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         </div>
       </form>
 
-            {/* Continue with Google SSO */}
-      <button
-        type="button"
-        onClick={() => {
-          setIsSubmitting(true);
-          SalvoAuth.loginWithGoogle();
-        }}
-        disabled={isSubmitting}
-        className="w-full bg-[#03081A] hover:bg-[#03081A]/80 border border-border-hairline hover:border-border-secondary text-white font-sans text-sm font-medium py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
-      >
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-          <path fill="#EA4335" d="M12 5c1.7 0 3 .7 3.7 1.4l2.8-2.8C16.8 2.1 14.6 1.3 12 1.3 7.5 1.3 3.7 3.8 1.9 7.5l3.4 2.6C6.2 7.1 8.8 5 12 5z" />
-          <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z" />
-          <path fill="#FBBC05" d="M5.3 14.9c-.3-.8-.4-1.8-.4-2.9s.1-2 .4-2.9L1.9 6.5C.7 8.9 0 10.4 0 12s.7 3.1 1.9 5.5l3.4-2.6z" />
-          <path fill="#34A853" d="M12 23.7c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.2 0-5.8-2.1-6.7-5.1L1.9 16.5C3.7 20.2 7.5 23.7 12 23.7z" />
-        </svg>
-        <span>Continue with Google</span>
-      </button>
+            
 
       {/* Divider */}
       <div className="relative my-6">

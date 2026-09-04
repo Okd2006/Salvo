@@ -327,47 +327,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) =>
         </div>
       </form>
 
-      {/* Divider */}
-      <div className="relative my-5">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="w-full border-t border-border-hairline" />
-        </div>
-        <div className="relative flex justify-center text-[11px] uppercase font-mono">
-          <span className="bg-[#020626] px-3 text-text-tertiary">OR</span>
-        </div>
-      </div>
-
-      {/* Continue with Google SSO */}
-      <button
-        type="button"
-        onClick={handleGoogleLogin}
-        disabled={isGoogleSubmitting || isSubmitting}
-        className="w-full bg-[#03081A] hover:bg-[#03081A]/80 border border-border-hairline hover:border-border-secondary text-white font-sans text-sm font-medium py-2.5 px-4 rounded-[48px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isGoogleSubmitting ? (
-          <div className="w-4 h-4 rounded-full border-2 border-text-tertiary border-t-white animate-spin" />
-        ) : (
-          <svg className="w-4 h-4" viewBox="0 0 24 24">
-            <path
-              fill="#EA4335"
-              d="M12 5c1.7 0 3 .7 3.7 1.4l2.8-2.8C16.8 2.1 14.6 1.3 12 1.3 7.5 1.3 3.7 3.8 1.9 7.5l3.4 2.6C6.2 7.1 8.8 5 12 5z"
-            />
-            <path
-              fill="#4285F4"
-              d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.3 14.9c-.3-.8-.4-1.8-.4-2.9s.1-2 .4-2.9L1.9 6.5C.7 8.9 0 10.4 0 12s.7 3.1 1.9 5.5l3.4-2.6z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 23.7c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.2 0-5.8-2.1-6.7-5.1L1.9 16.5C3.7 20.2 7.5 23.7 12 23.7z"
-            />
-          </svg>
-        )}
-        <span>Sign up with Google</span>
-      </button>
+      
 
       {/* Switch to Sign In */}
       <div className="mt-5 text-center text-xs font-sans text-text-secondary">
