@@ -320,7 +320,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400 font-mono">
-                  Institutional Payment Recovery {providerTag ? `(${providerTag.toUpperCase()})` : ''}
+                  Institutional Payment Recovery {providerTag ? (providerTag === 'salvo-domain-engine' ? '(SALVO ENGINE)' : `(${providerTag.toUpperCase()})`) : ''}
                 </p>
               </div>
             </div>

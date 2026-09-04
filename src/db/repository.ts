@@ -26,6 +26,7 @@ import type {
 } from '../types/index.js';
 import {
   isMongoConfigured,
+  isMongoAvailable,
   getTransactionsCollection,
   getRecoveryActionsCollection,
   getAuditLogsCollection,
@@ -92,7 +93,7 @@ export async function saveTransactions(
   ensureDataDir();
   inMemoryTransactions = transactions;
 
-  if (isMongoConfigured()) {
+  if (isMongoAvailable()) {
     try {
       const col = await getTransactionsCollection();
       await col.deleteMany({});
@@ -114,7 +115,7 @@ export async function saveTransactions(
 }
 
 export async function getAllTransactions(): Promise<TransactionDocument[]> {
-  if (isMongoConfigured()) {
+  if (isMongoAvailable()) {
     try {
       const col = await getTransactionsCollection();
       const docs = await col.find({}).toArray();
@@ -177,7 +178,7 @@ export async function saveRecoveryActions(
 }
 
 export async function getAllRecoveryActions(): Promise<RecoveryActionDocument[]> {
-  if (isMongoConfigured()) {
+  if (isMongoAvailable()) {
     try {
       const col = await getRecoveryActionsCollection();
       const docs = await col.find({}).toArray();
@@ -231,7 +232,7 @@ export async function saveAuditLogs(
 }
 
 export async function getAllAuditLogs(): Promise<AuditLogDocument[]> {
-  if (isMongoConfigured()) {
+  if (isMongoAvailable()) {
     try {
       const col = await getAuditLogsCollection();
       const docs = await col.find({}).sort({ timestamp: -1 }).toArray();

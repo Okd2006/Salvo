@@ -28,7 +28,7 @@ export const GROQ_CONFIG = {
   temperature: 0.1,
   maxTokens: 1024,
   maxRetries: 2,
-  timeoutMs: 25000,
+  timeoutMs: 12000,
 } as const;
 
 /**
@@ -394,9 +394,16 @@ export async function executeGroqExplanation(
           }
 
           const data: any = await response.json();
-          const content = data?.choices?.[0]?.message?.content;
-          if (typeof content === 'string' && content.trim()) {
-            return content.trim();
+          let content = data?.choices?.[0]?.message?.content;
+          if (typeof content === 'string') {
+            content = content.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+            if (content) {
+              return content;
+            }
+          }
+          const reasoning = data?.choices?.[0]?.message?.reasoning;
+          if (typeof reasoning === 'string' && reasoning.trim()) {
+            return reasoning.trim();
           }
           throw new GroqValidationError('Groq returned an empty explanation response.');
         } finally {

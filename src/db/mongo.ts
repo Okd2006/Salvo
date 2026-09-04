@@ -4,7 +4,7 @@
  * MongoDB Atlas Connection Abstraction for Salvo
  *
  * Provides connection pooling, lazy client instantiation, typed collection helpers,
- * and graceful fallback/check capabilities.
+ * and graceful circuit-breaker fallback for deterministic offline execution.
  */
 
 import { MongoClient, type Db, type Collection } from 'mongodb';
@@ -16,6 +16,8 @@ import type {
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
+let mongoFailureCooldownUntil = 0;
+const MONGO_COOLDOWN_MS = 60_000; // 1 minute circuit breaker cooldown on connection failure
 
 /**
  * Check whether a valid MongoDB URI is provided in the environment.
@@ -23,6 +25,15 @@ let cachedDb: Db | null = null;
 export function isMongoConfigured(): boolean {
   const uri = process.env.MONGODB_URI;
   return Boolean(uri && uri.trim() !== '' && !uri.includes('<') && !uri.includes('>'));
+}
+
+/**
+ * Check whether MongoDB is configured AND currently healthy (circuit breaker open).
+ */
+export function isMongoAvailable(): boolean {
+  if (!isMongoConfigured()) return false;
+  if (Date.now() < mongoFailureCooldownUntil) return false;
+  return true;
 }
 
 /**
@@ -36,6 +47,10 @@ export async function getMongoClient(): Promise<MongoClient> {
     );
   }
 
+  if (Date.now() < mongoFailureCooldownUntil) {
+    throw new Error('MongoDB is temporarily in failure cooldown. Using local repository.');
+  }
+
   if (cachedClient) {
     return cachedClient;
   }
@@ -43,14 +58,21 @@ export async function getMongoClient(): Promise<MongoClient> {
   const client = new MongoClient(uri, {
     maxPoolSize: 10,
     minPoolSize: 1,
-    serverSelectionTimeoutMS: 5000,
-    connectTimeoutMS: 10000,
-    socketTimeoutMS: 15000,
+    serverSelectionTimeoutMS: 2000,
+    connectTimeoutMS: 2500,
+    socketTimeoutMS: 5000,
   });
 
-  await client.connect();
-  cachedClient = client;
-  return cachedClient;
+  try {
+    await client.connect();
+    cachedClient = client;
+    mongoFailureCooldownUntil = 0;
+    return cachedClient;
+  } catch (err) {
+    mongoFailureCooldownUntil = Date.now() + MONGO_COOLDOWN_MS;
+    try { await client.close(); } catch { /* ignore cleanup error */ }
+    throw err;
+  }
 }
 
 /**
@@ -68,7 +90,7 @@ export async function getDb(): Promise<Db> {
 }
 
 /**
- * Typed helper for the `transactions` collection.
+ * Typed helper for the \	ransactions\ collection.
  */
 export async function getTransactionsCollection(): Promise<Collection<TransactionDocument>> {
   const db = await getDb();
@@ -76,7 +98,7 @@ export async function getTransactionsCollection(): Promise<Collection<Transactio
 }
 
 /**
- * Typed helper for the `recovery_actions` collection.
+ * Typed helper for the ecovery_actions\ collection.
  */
 export async function getRecoveryActionsCollection(): Promise<Collection<RecoveryActionDocument>> {
   const db = await getDb();
@@ -84,7 +106,7 @@ export async function getRecoveryActionsCollection(): Promise<Collection<Recover
 }
 
 /**
- * Typed helper for the `audit_logs` collection.
+ * Typed helper for the \udit_logs\ collection.
  */
 export async function getAuditLogsCollection(): Promise<Collection<AuditLogDocument>> {
   const db = await getDb();
