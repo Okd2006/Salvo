@@ -29,13 +29,12 @@ export const TransactionSelector: React.FC<TransactionSelectorProps> = ({
   const filtered = transactions.filter((t) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
-    return (
-      t.transactionId.toLowerCase().includes(q) ||
-      t.failureCode.toLowerCase().includes(q) ||
-      t.failureCategory.toLowerCase().includes(q) ||
-      t.paymentMethod.toLowerCase().includes(q) ||
-      (t.syntheticCustomerId && t.syntheticCustomerId.toLowerCase().includes(q))
-    );
+    const txnId = (t.transactionId || '').toLowerCase();
+    const fCode = (t.failureCode || t.errorCode || '').toLowerCase();
+    const fCat = (t.failureCategory || '').toLowerCase();
+    const pMethod = (t.paymentMethod || t.method || '').toLowerCase();
+    const cId = (t.syntheticCustomerId || t.customerId || '').toLowerCase();
+    return txnId.includes(q) || fCode.includes(q) || fCat.includes(q) || pMethod.includes(q) || cId.includes(q);
   });
 
   return (
@@ -109,13 +108,13 @@ export const TransactionSelector: React.FC<TransactionSelectorProps> = ({
                 {/* Middle Row: Failure Code & Category Badge */}
                 <div className="flex items-center justify-between gap-2 text-[11px] mb-1.5">
                   <span className="font-mono text-text-secondary truncate text-[10.5px]">
-                    {txn.failureCode}
+                    {txn.failureCode || (txn as any).errorCode || "FAILURE"}
                   </span>
                   <Badge
                     variant={txn.failureCategory === 'technical' ? 'cyan' : txn.failureCategory === 'temporary' ? 'warning' : 'destructive'}
                     className="text-[9px] px-1.5 py-0 uppercase shrink-0"
                   >
-                    {txn.failureCategory}
+                    {txn.failureCategory || "technical"}
                   </Badge>
                 </div>
 
@@ -125,7 +124,7 @@ export const TransactionSelector: React.FC<TransactionSelectorProps> = ({
                     <UserCheck className="w-3 h-3 text-text-tertiary" />
                     {customerId}
                   </span>
-                  <span>{txn.paymentMethod.toUpperCase()}</span>
+                  <span>{((txn.paymentMethod || (txn as any).method || "card") as string).toUpperCase()}</span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-2.5 h-2.5 text-text-tertiary" />
                     {formattedTime}

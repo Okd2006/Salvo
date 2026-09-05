@@ -64,8 +64,8 @@ export const AuditScreen: React.FC<AuditScreenProps> = ({ onNavigate: _onNavigat
       // Search query filter (matches transactionId or eventId)
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchesTxn = log.transactionId.toLowerCase().includes(q);
-        const matchesEventId = log.eventId.toLowerCase().includes(q);
+        const matchesTxn = (log.transactionId || "").toLowerCase().includes(q);
+        const matchesEventId = (log.eventId || "").toLowerCase().includes(q);
         if (!matchesTxn && !matchesEventId) return false;
       }
 

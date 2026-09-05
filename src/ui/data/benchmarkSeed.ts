@@ -76,8 +76,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10939100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:20:09.785Z",
     "customerHistory": {
@@ -97,8 +97,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10253600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:26:09.785Z",
     "customerHistory": {
@@ -118,8 +118,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 202500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:30:09.785Z",
     "customerHistory": {
@@ -139,8 +139,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1614000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:42:09.786Z",
     "customerHistory": {
@@ -160,8 +160,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 103100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:48:09.786Z",
     "customerHistory": {
@@ -181,8 +181,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 3408700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:11:09.786Z",
     "customerHistory": {
@@ -202,8 +202,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 808700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:14:09.786Z",
     "customerHistory": {
@@ -223,8 +223,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 11613700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:15:09.786Z",
     "customerHistory": {
@@ -244,8 +244,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 222600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:19:09.786Z",
     "customerHistory": {
@@ -265,8 +265,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 941000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:22:09.787Z",
     "customerHistory": {
@@ -286,8 +286,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 155100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:26:09.787Z",
     "customerHistory": {
@@ -307,8 +307,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 438500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:32:09.787Z",
     "customerHistory": {
@@ -328,8 +328,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1036900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:33:09.787Z",
     "customerHistory": {
@@ -349,8 +349,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1024900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:34:09.787Z",
     "customerHistory": {
@@ -370,8 +370,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 940500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:39:09.787Z",
     "customerHistory": {
@@ -391,8 +391,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 63500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:42:09.787Z",
     "customerHistory": {
@@ -412,8 +412,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9126900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:51:09.787Z",
     "customerHistory": {
@@ -433,8 +433,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8755200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:57:09.787Z",
     "customerHistory": {
@@ -454,8 +454,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1066500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:58:09.787Z",
     "customerHistory": {
@@ -475,8 +475,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 309800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:12:09.787Z",
     "customerHistory": {
@@ -496,8 +496,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 475000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:15:09.787Z",
     "customerHistory": {
@@ -517,8 +517,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10303200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:24:09.787Z",
     "customerHistory": {
@@ -538,8 +538,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1705500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:34:09.788Z",
     "customerHistory": {
@@ -559,8 +559,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1325900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:37:09.788Z",
     "customerHistory": {
@@ -580,8 +580,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 588800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:06:09.788Z",
     "customerHistory": {
@@ -601,8 +601,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 60200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:08:09.788Z",
     "customerHistory": {
@@ -622,8 +622,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 780100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:13:09.788Z",
     "customerHistory": {
@@ -643,8 +643,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 61000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:23:09.788Z",
     "customerHistory": {
@@ -664,8 +664,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 711900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:30:09.789Z",
     "customerHistory": {
@@ -685,8 +685,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 3916300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:35:09.789Z",
     "customerHistory": {
@@ -706,8 +706,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 246600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:37:09.789Z",
     "customerHistory": {
@@ -727,8 +727,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 183800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:38:09.789Z",
     "customerHistory": {
@@ -748,8 +748,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 506500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:39:09.789Z",
     "customerHistory": {
@@ -769,8 +769,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 101500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:49:09.789Z",
     "customerHistory": {
@@ -790,8 +790,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9419100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:53:09.789Z",
     "customerHistory": {
@@ -811,8 +811,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10222300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:56:09.789Z",
     "customerHistory": {
@@ -832,8 +832,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 55400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:03:09.789Z",
     "customerHistory": {
@@ -853,8 +853,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 773600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:05:09.789Z",
     "customerHistory": {
@@ -874,8 +874,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 458900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:09:09.789Z",
     "customerHistory": {
@@ -895,8 +895,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9759600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:13:09.789Z",
     "customerHistory": {
@@ -916,8 +916,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 994300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:18:09.789Z",
     "customerHistory": {
@@ -937,8 +937,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1349900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:21:09.789Z",
     "customerHistory": {
@@ -958,8 +958,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 32800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:23:09.789Z",
     "customerHistory": {
@@ -979,8 +979,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 109900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:26:09.789Z",
     "customerHistory": {
@@ -1000,8 +1000,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8063400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:34:09.790Z",
     "customerHistory": {
@@ -1021,8 +1021,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 450400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:41:09.790Z",
     "customerHistory": {
@@ -1042,8 +1042,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 188200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:44:09.790Z",
     "customerHistory": {
@@ -1063,8 +1063,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8997000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:45:09.790Z",
     "customerHistory": {
@@ -1084,8 +1084,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 866300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:46:09.790Z",
     "customerHistory": {
@@ -1105,8 +1105,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 4205800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:47:09.790Z",
     "customerHistory": {
@@ -1126,8 +1126,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 61200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:53:09.790Z",
     "customerHistory": {
@@ -1147,8 +1147,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 383700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:56:09.790Z",
     "customerHistory": {
@@ -1168,8 +1168,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 70000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:00:09.790Z",
     "customerHistory": {
@@ -1189,8 +1189,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 121700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:03:09.790Z",
     "customerHistory": {
@@ -1210,8 +1210,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 31900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:08:09.790Z",
     "customerHistory": {
@@ -1231,8 +1231,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1223000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:18:09.790Z",
     "customerHistory": {
@@ -1252,8 +1252,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 224800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:19:09.790Z",
     "customerHistory": {
@@ -1273,8 +1273,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 606400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:23:09.790Z",
     "customerHistory": {
@@ -1294,8 +1294,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 2479000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:37:09.790Z",
     "customerHistory": {
@@ -1315,8 +1315,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1765200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:44:09.790Z",
     "customerHistory": {
@@ -1336,8 +1336,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 148900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:46:09.790Z",
     "customerHistory": {
@@ -1357,8 +1357,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 161200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:47:09.790Z",
     "customerHistory": {
@@ -1378,8 +1378,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1417500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T13:55:09.790Z",
     "customerHistory": {
@@ -1399,8 +1399,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 214200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T14:03:09.790Z",
     "customerHistory": {
@@ -1420,8 +1420,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1319100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T14:05:09.790Z",
     "customerHistory": {
@@ -1441,8 +1441,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 30900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T14:06:09.791Z",
     "customerHistory": {
@@ -1462,8 +1462,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 150700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T14:11:09.791Z",
     "customerHistory": {
@@ -1483,8 +1483,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 97100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T14:24:09.791Z",
     "customerHistory": {
@@ -1504,8 +1504,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9559600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T14:49:09.791Z",
     "customerHistory": {
@@ -1525,8 +1525,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 174500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:02:09.791Z",
     "customerHistory": {
@@ -1546,8 +1546,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 173200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:04:09.791Z",
     "customerHistory": {
@@ -1567,8 +1567,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 168500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:07:09.791Z",
     "customerHistory": {
@@ -1588,8 +1588,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9715700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:18:09.791Z",
     "customerHistory": {
@@ -1609,8 +1609,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1598400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:20:09.791Z",
     "customerHistory": {
@@ -1630,8 +1630,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 147100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:37:09.791Z",
     "customerHistory": {
@@ -1651,8 +1651,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1483200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:45:09.791Z",
     "customerHistory": {
@@ -1672,8 +1672,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1605100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:50:09.792Z",
     "customerHistory": {
@@ -1693,8 +1693,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 403600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:51:09.792Z",
     "customerHistory": {
@@ -1714,8 +1714,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 950000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:55:09.792Z",
     "customerHistory": {
@@ -1735,8 +1735,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 135800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T15:59:09.792Z",
     "customerHistory": {
@@ -1756,8 +1756,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 814100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:10:09.792Z",
     "customerHistory": {
@@ -1777,8 +1777,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 3621800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:11:09.792Z",
     "customerHistory": {
@@ -1798,8 +1798,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 187000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:29:09.792Z",
     "customerHistory": {
@@ -1819,8 +1819,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 503400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:30:09.792Z",
     "customerHistory": {
@@ -1840,8 +1840,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 646500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:43:09.792Z",
     "customerHistory": {
@@ -1861,8 +1861,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 466000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:44:09.792Z",
     "customerHistory": {
@@ -1882,8 +1882,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 243500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T16:54:09.792Z",
     "customerHistory": {
@@ -1903,8 +1903,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 180100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:00:09.792Z",
     "customerHistory": {
@@ -1924,8 +1924,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 51100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:01:09.792Z",
     "customerHistory": {
@@ -1945,8 +1945,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8440700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:16:09.792Z",
     "customerHistory": {
@@ -1966,8 +1966,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 11854700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:17:09.792Z",
     "customerHistory": {
@@ -1987,8 +1987,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8699600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:20:09.792Z",
     "customerHistory": {
@@ -2008,8 +2008,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10729300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:23:09.792Z",
     "customerHistory": {
@@ -2029,8 +2029,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 116300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:24:09.792Z",
     "customerHistory": {
@@ -2050,8 +2050,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 165400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:25:09.793Z",
     "customerHistory": {
@@ -2071,8 +2071,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8366000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:30:09.793Z",
     "customerHistory": {
@@ -2092,8 +2092,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1575900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:34:09.793Z",
     "customerHistory": {
@@ -2113,8 +2113,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 73100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:36:09.793Z",
     "customerHistory": {
@@ -2134,8 +2134,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1639600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:40:09.793Z",
     "customerHistory": {
@@ -2155,8 +2155,8 @@ export const BENCHMARK_FAILED_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 794000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T17:42:09.793Z",
     "customerHistory": {
@@ -2179,8 +2179,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10939100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:20:09.785Z",
     "customerHistory": {
@@ -2200,8 +2200,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10253600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:26:09.785Z",
     "customerHistory": {
@@ -2221,8 +2221,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 202500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:30:09.785Z",
     "customerHistory": {
@@ -2242,8 +2242,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1614000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:42:09.786Z",
     "customerHistory": {
@@ -2263,8 +2263,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 103100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:48:09.786Z",
     "customerHistory": {
@@ -2284,8 +2284,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 3408700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:11:09.786Z",
     "customerHistory": {
@@ -2305,8 +2305,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 808700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:14:09.786Z",
     "customerHistory": {
@@ -2326,8 +2326,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 11613700,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:15:09.786Z",
     "customerHistory": {
@@ -2347,8 +2347,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 222600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:19:09.786Z",
     "customerHistory": {
@@ -2368,8 +2368,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 941000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:22:09.787Z",
     "customerHistory": {
@@ -2389,8 +2389,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 155100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:26:09.787Z",
     "customerHistory": {
@@ -2410,8 +2410,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 438500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:32:09.787Z",
     "customerHistory": {
@@ -2431,8 +2431,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1036900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:33:09.787Z",
     "customerHistory": {
@@ -2452,8 +2452,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1024900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:34:09.787Z",
     "customerHistory": {
@@ -2473,8 +2473,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 940500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:39:09.787Z",
     "customerHistory": {
@@ -2494,8 +2494,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 63500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:42:09.787Z",
     "customerHistory": {
@@ -2515,8 +2515,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9126900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:51:09.787Z",
     "customerHistory": {
@@ -2536,8 +2536,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 8755200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:57:09.787Z",
     "customerHistory": {
@@ -2557,8 +2557,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1066500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T09:58:09.787Z",
     "customerHistory": {
@@ -2578,8 +2578,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 309800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:12:09.787Z",
     "customerHistory": {
@@ -2599,8 +2599,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 475000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:15:09.787Z",
     "customerHistory": {
@@ -2620,8 +2620,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10303200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:24:09.787Z",
     "customerHistory": {
@@ -2641,8 +2641,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1705500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:34:09.788Z",
     "customerHistory": {
@@ -2662,8 +2662,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1325900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T10:37:09.788Z",
     "customerHistory": {
@@ -2683,8 +2683,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 588800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:06:09.788Z",
     "customerHistory": {
@@ -2704,8 +2704,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 60200,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:08:09.788Z",
     "customerHistory": {
@@ -2725,8 +2725,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 780100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:13:09.788Z",
     "customerHistory": {
@@ -2746,8 +2746,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 61000,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:23:09.788Z",
     "customerHistory": {
@@ -2767,8 +2767,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 711900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:30:09.789Z",
     "customerHistory": {
@@ -2788,8 +2788,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 3916300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:35:09.789Z",
     "customerHistory": {
@@ -2809,8 +2809,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 246600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:37:09.789Z",
     "customerHistory": {
@@ -2830,8 +2830,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 183800,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:38:09.789Z",
     "customerHistory": {
@@ -2851,8 +2851,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 506500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:39:09.789Z",
     "customerHistory": {
@@ -2872,8 +2872,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 101500,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:49:09.789Z",
     "customerHistory": {
@@ -2893,8 +2893,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9419100,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:53:09.789Z",
     "customerHistory": {
@@ -2914,8 +2914,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10222300,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T11:56:09.789Z",
     "customerHistory": {
@@ -2935,8 +2935,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 55400,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:03:09.789Z",
     "customerHistory": {
@@ -2956,8 +2956,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 773600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:05:09.789Z",
     "customerHistory": {
@@ -2977,8 +2977,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 458900,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:09:09.789Z",
     "customerHistory": {
@@ -2998,8 +2998,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 9759600,
     "currency": "INR",
     "status": "failed",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T12:13:09.789Z",
     "customerHistory": {
@@ -3019,8 +3019,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1711600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:13:09.783Z",
     "customerHistory": {
@@ -3040,8 +3040,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 111400,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:14:09.784Z",
     "customerHistory": {
@@ -3061,8 +3061,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 66300,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:15:09.785Z",
     "customerHistory": {
@@ -3082,8 +3082,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 10401800,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:16:09.785Z",
     "customerHistory": {
@@ -3103,8 +3103,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 191400,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:17:09.785Z",
     "customerHistory": {
@@ -3124,8 +3124,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 100000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:18:09.785Z",
     "customerHistory": {
@@ -3145,8 +3145,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 114600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:19:09.785Z",
     "customerHistory": {
@@ -3166,8 +3166,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 679500,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:21:09.785Z",
     "customerHistory": {
@@ -3187,8 +3187,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1312700,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:22:09.785Z",
     "customerHistory": {
@@ -3208,8 +3208,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 29200,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:23:09.785Z",
     "customerHistory": {
@@ -3229,8 +3229,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 6938600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:24:09.785Z",
     "customerHistory": {
@@ -3250,8 +3250,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 87000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:25:09.785Z",
     "customerHistory": {
@@ -3271,8 +3271,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1072000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:27:09.785Z",
     "customerHistory": {
@@ -3292,8 +3292,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 52500,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:28:09.785Z",
     "customerHistory": {
@@ -3313,8 +3313,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 188200,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:29:09.785Z",
     "customerHistory": {
@@ -3334,8 +3334,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 926600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:31:09.785Z",
     "customerHistory": {
@@ -3355,8 +3355,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 6528500,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:32:09.785Z",
     "customerHistory": {
@@ -3376,8 +3376,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 185100,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:33:09.785Z",
     "customerHistory": {
@@ -3397,8 +3397,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 200000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:34:09.785Z",
     "customerHistory": {
@@ -3418,8 +3418,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 939300,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:35:09.785Z",
     "customerHistory": {
@@ -3439,8 +3439,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 117800,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:36:09.785Z",
     "customerHistory": {
@@ -3460,8 +3460,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 72900,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:37:09.786Z",
     "customerHistory": {
@@ -3481,8 +3481,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 148400,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:38:09.786Z",
     "customerHistory": {
@@ -3502,8 +3502,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1021300,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:39:09.786Z",
     "customerHistory": {
@@ -3523,8 +3523,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 395600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:40:09.786Z",
     "customerHistory": {
@@ -3544,8 +3544,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 213400,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:41:09.786Z",
     "customerHistory": {
@@ -3565,8 +3565,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 209400,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:43:09.786Z",
     "customerHistory": {
@@ -3586,8 +3586,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 5077400,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:44:09.786Z",
     "customerHistory": {
@@ -3607,8 +3607,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1754600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:45:09.786Z",
     "customerHistory": {
@@ -3628,8 +3628,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1505000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:46:09.786Z",
     "customerHistory": {
@@ -3649,8 +3649,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1675600,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:47:09.786Z",
     "customerHistory": {
@@ -3670,8 +3670,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 1648800,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:49:09.786Z",
     "customerHistory": {
@@ -3691,8 +3691,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 87000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:50:09.786Z",
     "customerHistory": {
@@ -3712,8 +3712,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 166900,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:51:09.786Z",
     "customerHistory": {
@@ -3733,8 +3733,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 85200,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:52:09.786Z",
     "customerHistory": {
@@ -3754,8 +3754,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 125300,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:53:09.786Z",
     "customerHistory": {
@@ -3775,8 +3775,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 121100,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:54:09.786Z",
     "customerHistory": {
@@ -3796,8 +3796,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 244900,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:55:09.786Z",
     "customerHistory": {
@@ -3817,8 +3817,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 98800,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:56:09.786Z",
     "customerHistory": {
@@ -3838,8 +3838,8 @@ export const BENCHMARK_ALL_TRANSACTIONS: ObservableTransaction[] = [
     "amountPaise": 99000,
     "currency": "INR",
     "status": "captured",
-    "method": "card",
-    "errorCode": "BANK_TIMEOUT",
+    "method": "card", "paymentMethod": "card",
+    "errorCode": "BANK_TIMEOUT", "failureCode": "BANK_TIMEOUT", "failureCategory": "technical",
     "errorDescription": "Issuer bank timeout during transaction processing",
     "createdAt": "2026-08-25T08:57:09.786Z",
     "customerHistory": {
@@ -3968,7 +3968,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:22.817Z"
@@ -4039,7 +4039,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:22.835Z"
@@ -4110,7 +4110,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:22.849Z"
@@ -4268,7 +4268,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:22.889Z"
@@ -4339,7 +4339,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:22.907Z"
@@ -4410,7 +4410,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:22.923Z"
@@ -4682,7 +4682,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim_llback_smar_1",
-      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
       "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
     },
     "timestamp": "2026-08-24T05:50:22.996Z"
@@ -4908,7 +4908,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:23.064Z"
@@ -4979,7 +4979,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:23.084Z"
@@ -5050,7 +5050,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-24T05:50:23.103Z"
@@ -5405,7 +5405,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim_llback_smar_1",
-      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
       "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
     },
     "timestamp": "2026-08-25T06:27:32.316Z"
@@ -5707,7 +5707,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-25T06:31:09.882Z"
@@ -5778,7 +5778,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-25T06:31:50.092Z"
@@ -5849,7 +5849,7 @@ export const BENCHMARK_AUDIT_LOGS: AuditLogDocument[] = [
       "success": false,
       "recoveredAmountPaise": 0,
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     },
     "timestamp": "2026-08-25T06:32:30.388Z"
@@ -6094,7 +6094,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_02_fallback_57a2ae47:1",
-    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
     "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required.",
     "executionResult": {
       "success": false,
@@ -6106,7 +6106,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.741Z",
       "providerReference": "rzp_test_sim_llback_smar_1",
-      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
       "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
     }
   },
@@ -6943,7 +6943,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_6513d9fd:1",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -6955,7 +6955,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.817Z",
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -7048,7 +7048,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_41e09597_2:2",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -7060,7 +7060,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.835Z",
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -7153,7 +7153,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_219ecabb_3:3",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -7165,7 +7165,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.849Z",
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -7445,7 +7445,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_02ef03d7:1",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -7457,7 +7457,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.889Z",
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -7550,7 +7550,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_0a0ebfc2_2:2",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -7562,7 +7562,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.907Z",
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -7655,7 +7655,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_8fabe502_3:3",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -7667,7 +7667,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.923Z",
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -8055,7 +8055,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_02_fallback_a33b209d:1",
-    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
     "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required.",
     "executionResult": {
       "success": false,
@@ -8067,7 +8067,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:22.996Z",
       "providerReference": "rzp_test_sim_llback_smar_1",
-      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
       "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
     }
   },
@@ -8527,7 +8527,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_9078867c:1",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -8539,7 +8539,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:23.064Z",
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -8632,7 +8632,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_80d53bce_2:2",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -8644,7 +8644,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:23.084Z",
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -8737,7 +8737,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_485f59e1_3:3",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -8749,7 +8749,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-24T05:50:23.103Z",
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -9236,7 +9236,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_02_fallback_087ba93a:1",
-    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
     "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required.",
     "executionResult": {
       "success": false,
@@ -9248,7 +9248,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:27:32.316Z",
       "providerReference": "rzp_test_sim_llback_smar_1",
-      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
       "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
     }
   },
@@ -9892,7 +9892,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_196fb38a:1",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -9904,7 +9904,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:31:09.882Z",
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -9997,7 +9997,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_98f93c84_2:2",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -10009,7 +10009,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:31:50.092Z",
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -10102,7 +10102,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_4fea466c_3:3",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -10114,7 +10114,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:32:30.388Z",
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -10404,7 +10404,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_1787639666201:1",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -10416,7 +10416,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:34:51.304Z",
       "providerReference": "rzp_test_sim__3fail_paym_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -10509,7 +10509,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_30af252d_2:2",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -10521,7 +10521,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:35:31.504Z",
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -10927,7 +10927,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_02_fallback_1787639880071:1",
-    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+    "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
     "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required.",
     "executionResult": {
       "success": false,
@@ -10939,7 +10939,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:38:25.185Z",
       "providerReference": "rzp_test_sim_llback_smar_1",
-      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCode": "SUBOPTIMAL_STRATEGY_DECLINE", "failureCategory": "technical",
       "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
     }
   },
@@ -11405,7 +11405,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_ca6a2dfd:1",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -11417,7 +11417,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:42:11.458Z",
       "providerReference": "rzp_test_sim__3fail_smar_1",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -11510,7 +11510,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_1a5eec94_2:2",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -11522,7 +11522,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:42:51.692Z",
       "providerReference": "rzp_test_sim__3fail_paym_2",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   },
@@ -11615,7 +11615,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "explanation": "All deterministic policy gate safety checks passed successfully."
     },
     "idempotencyKey": "salvo:act_txn_demo_scen_06_3fail_fb_a1883b4a_3:3",
-    "errorCode": "UNRECOVERABLE_DECLINE",
+    "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
     "errorMessage": "Instrument declined permanently by issuer.",
     "executionResult": {
       "success": false,
@@ -11627,7 +11627,7 @@ export const BENCHMARK_RECOVERY_ACTIONS: RecoveryActionDocument[] = [
       "recoveredAmountPaise": 0,
       "executedAt": "2026-08-25T06:43:31.929Z",
       "providerReference": "rzp_test_sim__3fail_paym_3",
-      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorCode": "UNRECOVERABLE_DECLINE", "failureCode": "UNRECOVERABLE_DECLINE", "failureCategory": "technical",
       "errorMessage": "Instrument declined permanently by issuer."
     }
   }

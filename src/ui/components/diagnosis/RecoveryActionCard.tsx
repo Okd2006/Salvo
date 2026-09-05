@@ -40,7 +40,7 @@ export const RecoveryActionCard: React.FC<RecoveryActionCardProps> = ({
 
           <div className="font-sans text-sm font-semibold text-white">
             {isApproved
-              ? `Authorized for Automated ${recommendation.recommendedStrategy.replace(/_/g, ' ').toUpperCase()}`
+              ? `Authorized for Automated ${String(recommendation.recommendedStrategy || (recommendation as any).strategy || "smart_retry").replace(/_/g, " ").toUpperCase()}`
               : 'Policy Gate Check Required Prior to Execution'}
           </div>
         </div>

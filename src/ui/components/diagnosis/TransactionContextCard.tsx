@@ -31,7 +31,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
               <CardTitle className="text-base font-bold font-mono text-white">
                 {transaction.transactionId}
               </CardTitle>
-              <Badge variant="default">{transaction.failureCategory}</Badge>
+              <Badge variant="default">{transaction.failureCategory || (transaction as any).errorCode || "PAYMENT_FAILURE"}</Badge>
             </div>
             <div className="text-xs font-mono text-text-tertiary mt-0.5">
               Observed Failure Trace • Ground-Truth Isolated
@@ -71,7 +71,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
             </span>
             <div className="font-mono text-xs font-semibold text-white uppercase flex items-center gap-1">
               <Network className="w-3 h-3 text-ai-signal" />
-              <span>{transaction.paymentMethod.toUpperCase()}</span>
+              <span>{((transaction.paymentMethod || (transaction as any).method || "card") as string).toUpperCase()}</span>
             </div>
           </div>
 
@@ -81,7 +81,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
             </span>
             <div className="font-mono text-xs font-semibold text-white uppercase flex items-center gap-1">
               <CreditCard className="w-3 h-3 text-primary" />
-              <span>{transaction.paymentMethod}</span>
+              <span>{transaction.paymentMethod || (transaction as any).method || "card"}</span>
             </div>
           </div>
 
@@ -90,7 +90,7 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
               Retry Count
             </span>
             <div className="font-mono text-xs font-semibold text-white">
-              {transaction.retryCount} of 3 attempts
+              {(transaction.retryCount ?? (transaction as any).customerHistory?.previousFailures ?? 1)} of 3 attempts
             </div>
           </div>
         </div>
@@ -101,14 +101,14 @@ export const TransactionContextCard: React.FC<TransactionContextCardProps> = ({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs font-bold text-white">
-                {transaction.failureCode}
+                {transaction.failureCode || (transaction as any).errorCode || "UNKNOWN_CODE"}
               </span>
               <span className="text-[10px] font-mono text-text-tertiary uppercase">
-                ({transaction.failureCategory})
+                ({transaction.failureCategory || "failure"})
               </span>
             </div>
             <div className="font-sans text-xs text-text-secondary mt-0.5">
-              {transaction.failureDescription || 'Issuer or gateway decline code observed.'}
+              {transaction.failureDescription || (transaction as any).errorDescription || 'Issuer or gateway decline code observed.'}
             </div>
           </div>
         </div>

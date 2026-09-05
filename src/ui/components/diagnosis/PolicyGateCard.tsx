@@ -50,6 +50,11 @@ export const PolicyGateCard: React.FC<PolicyGateCardProps> = ({
   }
 
   const isAllowed = policyResult.allowed;
+  const checks = policyResult.checks || (policyResult as any).ruleEvaluations?.map((r: any) => ({
+    name: r.ruleName || r.ruleId,
+    passed: r.passed,
+  })) || [];
+  const reasonCode = policyResult.reasonCode || (policyResult as any).ruleEvaluations?.[0]?.ruleId || (isAllowed ? 'INVARIANTS_PASSED' : 'INVARIANTS_FAILED');
 
   return (
     <Card
@@ -84,18 +89,18 @@ export const PolicyGateCard: React.FC<PolicyGateCardProps> = ({
           }`}
         >
           <span className="font-mono text-[10px] font-semibold block uppercase tracking-wider mb-0.5">
-            Reason Code: {policyResult.reasonCode}
+            Reason Code: {reasonCode}
           </span>
           {policyResult.reason}
         </div>
 
         {/* Invariant Checks List */}
-        {policyResult.checks && policyResult.checks.length > 0 && (
+        {checks.length > 0 && (
           <div className="space-y-1.5 pt-1">
             <span className="font-mono text-[10px] text-text-tertiary uppercase tracking-wider block">
-              Safety Checks ({policyResult.checks.length})
+              Safety Checks ({checks.length})
             </span>
-            {policyResult.checks.map((chk, i) => (
+            {checks.map((chk, i) => (
               <div
                 key={i}
                 className="p-2 rounded-[8px] bg-[#03081A] border border-border-hairline/40 flex items-center justify-between text-xs font-mono"

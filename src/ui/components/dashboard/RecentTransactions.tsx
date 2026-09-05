@@ -82,7 +82,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
 
                   <td className="py-3.5 px-4 font-mono text-text-secondary text-[11px]">
                     <span className="uppercase">{txn.paymentMethod}</span>
-                    <span className="text-text-tertiary"> / {txn.paymentMethod.toUpperCase()}</span>
+                    <span className="text-text-tertiary"> / {((txn.paymentMethod || (txn as any).method || "CARD") as string).toUpperCase()}</span>
                   </td>
 
                   <td className="py-3.5 px-4">

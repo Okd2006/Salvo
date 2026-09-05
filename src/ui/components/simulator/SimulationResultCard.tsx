@@ -63,7 +63,7 @@ export const SimulationResultCard: React.FC<SimulationResultCardProps> = ({
                       isRecovered ? 'text-recovered' : isBlocked ? 'text-risk' : 'text-caution'
                     }
                   >
-                    {isRecovered ? 'RECOVERED' : isBlocked ? 'POLICY BLOCKED' : sessionResult.finalStatus.toUpperCase()}
+                    {isRecovered ? 'RECOVERED' : isBlocked ? 'POLICY BLOCKED' : (sessionResult.finalStatus ? sessionResult.finalStatus.toUpperCase() : "PENDING")}
                   </span>
                 </CardTitle>
                 <div className="text-xs font-mono text-text-tertiary">
@@ -76,7 +76,7 @@ export const SimulationResultCard: React.FC<SimulationResultCardProps> = ({
               variant={isRecovered ? 'success' : isBlocked ? 'destructive' : 'warning'}
               className="text-xs px-2.5 py-1"
             >
-              {isRecovered ? 'RECOVERED' : isBlocked ? 'POLICY BLOCKED' : sessionResult.finalStatus.toUpperCase()}
+              {isRecovered ? 'RECOVERED' : isBlocked ? 'POLICY BLOCKED' : (sessionResult.finalStatus ? sessionResult.finalStatus.toUpperCase() : "PENDING")}
             </Badge>
           </div>
         </CardHeader>
@@ -197,7 +197,7 @@ export const SimulationResultCard: React.FC<SimulationResultCardProps> = ({
                   <div className="space-y-1">
                     <div className="text-white font-medium flex items-center gap-2">
                       <Zap className="w-3.5 h-3.5 text-ai-signal" />
-                      <span>Attempt {idx + 1} • {act.strategy.toUpperCase()}</span>
+                      <span>Attempt {idx + 1} • {(act.strategy ? act.strategy.toUpperCase() : "RETRY")}</span>
                     </div>
                     <div className="text-text-tertiary text-[11px]">
                       Provider Reference: {act.providerReference || 'sim_trace'}
@@ -217,7 +217,7 @@ export const SimulationResultCard: React.FC<SimulationResultCardProps> = ({
                       />
                     </div>
                     <Badge variant={act.success ? 'success' : 'destructive'}>
-                      {act.status.toUpperCase()}
+                      {(act.status ? act.status.toUpperCase() : "SUCCESS")}
                     </Badge>
                   </div>
                 </CardContent>

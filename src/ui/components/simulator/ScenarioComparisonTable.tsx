@@ -62,7 +62,7 @@ export const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = (
 
                 <td className="py-3.5 px-4">
                   <Badge variant={sc.expectedVerdict === 'approved' ? 'success' : 'destructive'} className="text-[9.5px]">
-                    {sc.expectedVerdict.toUpperCase()}
+                    {(sc.expectedVerdict ? sc.expectedVerdict.toUpperCase() : "APPROVED")}
                   </Badge>
                 </td>
 
@@ -76,7 +76,7 @@ export const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = (
                         : 'text-caution'
                     }`}
                   >
-                    {sc.expectedStatus.toUpperCase()}
+                    {(sc.expectedStatus ? sc.expectedStatus.toUpperCase() : "RECOVERED")}
                   </span>
                 </td>
 

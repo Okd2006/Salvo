@@ -59,11 +59,11 @@ export const ExecutionSessionResultCard: React.FC<ExecutionSessionResultCardProp
                     ? 'RECOVERED VIA RAZORPAY'
                     : isBlocked
                     ? 'BLOCKED BY POLICY GATE'
-                    : sessionResult.finalStatus.toUpperCase()}
+                    : (sessionResult.finalStatus ? sessionResult.finalStatus.toUpperCase() : "PENDING")}
                 </span>
               </CardTitle>
               <div className="text-xs font-mono text-text-tertiary">
-                Target: {sessionResult.transactionId} • Strategy: {sessionResult.finalStrategy.toUpperCase()}
+                Target: {sessionResult.transactionId} • Strategy: {(sessionResult.finalStrategy ? sessionResult.finalStrategy.toUpperCase() : "AUTOMATED_RECOVERY")}
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@ export const ExecutionSessionResultCard: React.FC<ExecutionSessionResultCardProp
             variant={isRecovered ? 'success' : isBlocked ? 'destructive' : 'warning'}
             className="text-xs px-2.5 py-1"
           >
-            {isRecovered ? 'RECOVERED' : isBlocked ? 'BLOCKED' : sessionResult.finalStatus.toUpperCase()}
+            {isRecovered ? 'RECOVERED' : isBlocked ? 'BLOCKED' : (sessionResult.finalStatus ? sessionResult.finalStatus.toUpperCase() : "PENDING")}
           </Badge>
         </div>
       </CardHeader>

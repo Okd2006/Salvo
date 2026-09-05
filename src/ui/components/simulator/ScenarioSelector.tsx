@@ -145,7 +145,7 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
                     {sc.title}
                   </span>
                   <Badge variant={sc.badgeColor} className="text-[9px] px-1.5 py-0 shrink-0">
-                    {sc.expectedStatus.toUpperCase()}
+                    {(sc.expectedStatus ? sc.expectedStatus.toUpperCase() : "RECOVERED")}
                   </Badge>
                 </div>
 

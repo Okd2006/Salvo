@@ -92,10 +92,11 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   mode = 'chip',
   className = '',
 }) => {
-  const upperStatus = status.toUpperCase().replace(/\s+/g, '_');
+  const safeStatus = (status || 'UNKNOWN').toString();
+  const upperStatus = safeStatus.toUpperCase().replace(/\s+/g, '_');
   const cfg = CONFIG[upperStatus] ?? {
     icon: 'info',
-    label: status.toUpperCase(),
+    label: safeStatus.toUpperCase(),
     textClass: 'text-text-secondary',
     bgClass: 'bg-surface',
     borderClass: 'border-border-hairline',
