@@ -176,6 +176,228 @@ async function requestJson<T>(path: string, options?: ApiRequestOptions): Promis
   return data as T;
 }
 
+
+export function generateDeterministicDemoResult(scenario: DemoScenarioName): {
+  success: boolean;
+  scenario: DemoScenarioName;
+  recoverySession: RecoverySessionResult;
+} {
+  const now = new Date().toISOString();
+  switch (scenario) {
+    case 'success':
+      return {
+        success: true,
+        scenario,
+        recoverySession: {
+          transactionId: 'txn_demo_scen_01_success',
+          finalStatus: 'recovered',
+          finalStrategy: 'smart_retry',
+          attempts: 1,
+          totalRecoveredPaise: 450000,
+          completedAt: now,
+          policyDecisions: [
+            {
+              allowed: true,
+              reasonCode: 'ALLOWED',
+              reason: 'All 4 deterministic policy invariants passed. Recovery action approved.',
+              ruleEvaluations: [
+                { ruleId: 'INVARIANT-AMT-001', ruleName: 'Amount Invariant (₹10 - ₹50,000)', passed: true, description: 'Amount is within limits' },
+                { ruleId: 'INVARIANT-RSK-002', ruleName: 'Max Risk Score <= 0.40', passed: true, description: 'Risk score 0.05 is safe' },
+                { ruleId: 'INVARIANT-ATT-003', ruleName: 'Max Attempts <= 3', passed: true, description: 'Attempt count 0 is valid' },
+                { ruleId: 'INVARIANT-CNF-004', ruleName: 'Min Confidence >= 0.65', passed: true, description: 'Confidence 0.94 is sufficient' },
+              ],
+            },
+          ],
+          actions: [
+            {
+              actionId: 'act_demo_01',
+              status: 'succeeded',
+              executedAt: now,
+              gatewayReference: 'rzp_demo_recov_01',
+              logs: [
+                'Policy gate approved smart_retry strategy',
+                'Optimal retry delay window calculated (120s)',
+                'Acquiring switch re-routed to HDFC direct gateway rails',
+                'Payment successfully captured (₹4,500.00)',
+              ],
+            },
+          ],
+        },
+      };
+
+    case 'fallback':
+      return {
+        success: true,
+        scenario,
+        recoverySession: {
+          transactionId: 'txn_demo_scen_02_fallback',
+          finalStatus: 'recovered',
+          finalStrategy: 'payment_link',
+          attempts: 2,
+          totalRecoveredPaise: 380000,
+          completedAt: now,
+          policyDecisions: [
+            {
+              allowed: true,
+              reasonCode: 'ALLOWED',
+              reason: 'Policy approved initial retry.',
+              ruleEvaluations: [
+                { ruleId: 'INVARIANT-AMT-001', ruleName: 'Amount Invariant', passed: true, description: 'Within range' },
+                { ruleId: 'INVARIANT-RSK-002', ruleName: 'Risk Score Gate', passed: true, description: 'Risk score 0.08 is safe' },
+              ],
+            },
+            {
+              allowed: true,
+              reasonCode: 'ALLOWED',
+              reason: 'Policy approved fallback recovery via Payment Link.',
+              ruleEvaluations: [
+                { ruleId: 'INVARIANT-AMT-001', ruleName: 'Amount Invariant', passed: true, description: 'Within range' },
+                { ruleId: 'INVARIANT-RSK-002', ruleName: 'Risk Score Gate', passed: true, description: 'Risk score 0.08 is safe' },
+              ],
+            },
+          ],
+          actions: [
+            {
+              actionId: 'act_demo_02_attempt1',
+              status: 'failed',
+              executedAt: now,
+              gatewayReference: 'rzp_demo_attempt1',
+              logs: [
+                'Attempt 1: smart_retry dispatched to issuing bank switch',
+                'Issuer bank declined retry with ISSUER_SWITCH_UNAVAILABLE',
+                'Triggering autonomous fallback escalation engine',
+              ],
+            },
+            {
+              actionId: 'act_demo_02_attempt2',
+              status: 'succeeded',
+              executedAt: now,
+              gatewayReference: 'rzp_demo_plink_99',
+              logs: [
+                'Attempt 2: Fallback to payment_link strategy',
+                'Instant Razorpay Smart Recovery Link generated',
+                'Delivered via verified merchant WhatsApp notification',
+                'Customer completed checkout via UPI fallback (₹3,800.00)',
+              ],
+            },
+          ],
+        },
+      };
+
+    case 'risk_block':
+      return {
+        success: true,
+        scenario,
+        recoverySession: {
+          transactionId: 'txn_demo_scen_03_risk',
+          finalStatus: 'policy_blocked',
+          finalStrategy: 'no_action',
+          attempts: 0,
+          totalRecoveredPaise: 0,
+          completedAt: now,
+          policyDecisions: [
+            {
+              allowed: false,
+              reasonCode: 'RISK_BLOCK',
+              reason: 'Deterministic Policy Gate blocked recovery: Risk score 0.88 exceeds maximum threshold 0.40.',
+              ruleEvaluations: [
+                { ruleId: 'INVARIANT-RSK-002', ruleName: 'Max Risk Score <= 0.40', passed: false, description: 'Risk score 0.88 flagged as suspected velocity fraud' },
+              ],
+            },
+          ],
+          actions: [],
+        },
+      };
+
+    case 'confidence_block':
+      return {
+        success: true,
+        scenario,
+        recoverySession: {
+          transactionId: 'txn_demo_scen_04_confidence',
+          finalStatus: 'policy_blocked',
+          finalStrategy: 'no_action',
+          attempts: 0,
+          totalRecoveredPaise: 0,
+          completedAt: now,
+          policyDecisions: [
+            {
+              allowed: false,
+              reasonCode: 'CONFIDENCE_TOO_LOW',
+              reason: 'Deterministic Policy Gate blocked recovery: Diagnostic confidence 0.45 is below minimum threshold 0.65.',
+              ruleEvaluations: [
+                { ruleId: 'INVARIANT-CNF-004', ruleName: 'Min Confidence >= 0.65', passed: false, description: 'Confidence 0.45 is below threshold' },
+              ],
+            },
+          ],
+          actions: [],
+        },
+      };
+
+    case 'retry_limit':
+      return {
+        success: true,
+        scenario,
+        recoverySession: {
+          transactionId: 'txn_demo_scen_05_retry_limit',
+          finalStatus: 'policy_blocked',
+          finalStrategy: 'no_action',
+          attempts: 0,
+          totalRecoveredPaise: 0,
+          completedAt: now,
+          policyDecisions: [
+            {
+              allowed: false,
+              reasonCode: 'RETRY_LIMIT_EXCEEDED',
+              reason: 'Deterministic Policy Gate blocked recovery: Transaction has already completed 2 prior retry attempts (max 2).',
+              ruleEvaluations: [
+                { ruleId: 'INVARIANT-ATT-003', ruleName: 'Max Autonomous Attempts <= 2', passed: false, description: 'Retry limit reached' },
+              ],
+            },
+          ],
+          actions: [],
+        },
+      };
+
+    case 'max_attempts':
+    default:
+      return {
+        success: true,
+        scenario,
+        recoverySession: {
+          transactionId: 'txn_demo_scen_06_max_attempts',
+          finalStatus: 'failed',
+          finalStrategy: 'smart_retry',
+          attempts: 3,
+          totalRecoveredPaise: 0,
+          completedAt: now,
+          policyDecisions: [
+            {
+              allowed: true,
+              reasonCode: 'ALLOWED',
+              reason: 'Policy approved attempt 1.',
+            },
+            {
+              allowed: true,
+              reasonCode: 'ALLOWED',
+              reason: 'Policy approved attempt 2.',
+            },
+            {
+              allowed: true,
+              reasonCode: 'ALLOWED',
+              reason: 'Policy approved attempt 3.',
+            },
+          ],
+          actions: [
+            { actionId: 'act_demo_06_1', status: 'failed', executedAt: now, gatewayReference: 'rzp_att_1', logs: ['Attempt 1 failed: ISSUER_DECLINED'] },
+            { actionId: 'act_demo_06_2', status: 'failed', executedAt: now, gatewayReference: 'rzp_att_2', logs: ['Attempt 2 failed: ISSUER_DECLINED'] },
+            { actionId: 'act_demo_06_3', status: 'failed', executedAt: now, gatewayReference: 'rzp_att_3', logs: ['Attempt 3 failed: ISSUER_DECLINED', 'Stopped safely at MAX_RECOVERY_ATTEMPTS (3)'] },
+          ],
+        },
+      };
+  }
+}
+
 export const SalvoApi = {
   /**
    * Health check

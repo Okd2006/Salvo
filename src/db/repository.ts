@@ -41,6 +41,17 @@ const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
 const ACTIONS_FILE = path.join(DATA_DIR, 'recovery_actions.json');
 const AUDIT_FILE = path.join(DATA_DIR, 'audit_logs.json');
 
+function safeWriteFile(filePath: string, data: string): boolean {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(filePath, data, 'utf-8');
+    return true;
+  } catch (err) {
+    // Graceful handling for read-only filesystems in serverless runtimes (Vercel, AWS Lambda)
+    return false;
+  }
+}
+
 function ensureDataDir(): void {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -103,14 +114,14 @@ export async function saveTransactions(
         await col.createIndex({ status: 1 });
         await col.createIndex({ failureCategory: 1 });
       }
-      fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2), 'utf-8');
+      safeWriteFile(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2));
       return { count: transactions.length, source: 'mongodb' };
     } catch (err) {
       console.warn(`[repository] MongoDB save transactions failed: ${(err as Error).message}`);
     }
   }
 
-  fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2), 'utf-8');
+  safeWriteFile(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2));
   return { count: transactions.length, source: 'file' };
 }
 
@@ -166,14 +177,14 @@ export async function saveRecoveryActions(
         },
       }));
       await col.bulkWrite(ops, { ordered: false });
-      fs.writeFileSync(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2), 'utf-8');
+      safeWriteFile(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2));
       return { count: mergedActions.length, source: 'mongodb' };
     } catch (err) {
       console.warn(`[repository] MongoDB save recovery actions failed: ${(err as Error).message}`);
     }
   }
 
-  fs.writeFileSync(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2), 'utf-8');
+  safeWriteFile(ACTIONS_FILE, JSON.stringify(mergedActions, null, 2));
   return { count: mergedActions.length, source: 'file' };
 }
 
@@ -220,14 +231,14 @@ export async function saveAuditLogs(
         },
       }));
       await col.bulkWrite(ops, { ordered: false });
-      fs.writeFileSync(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2), 'utf-8');
+      safeWriteFile(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2));
       return { count: mergedLogs.length, source: 'mongodb' };
     } catch (err) {
       console.warn(`[repository] MongoDB save audit logs failed: ${(err as Error).message}`);
     }
   }
 
-  fs.writeFileSync(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2), 'utf-8');
+  safeWriteFile(AUDIT_FILE, JSON.stringify(mergedLogs, null, 2));
   return { count: mergedLogs.length, source: 'file' };
 }
 
