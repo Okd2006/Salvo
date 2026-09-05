@@ -6,6 +6,40 @@ Built for the **Razorpay AI Buildathon**.
 
 ---
 
+## ⚡ Quick Start (Run Locally in 60 Seconds)
+
+Salvo runs **100% out of the box** with zero mandatory API keys or external database setup required. It embeds a verified, deterministic Buildathon benchmark dataset (1,350 transactions, 208 failure traces, 7,264 immutable cryptographic audit events, and autonomous recovery strategies).
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Okd2006/Salvo.git
+cd Salvo
+
+# 2. Install dependencies
+npm install
+
+# 3. (Optional) Set up environment variables for live Groq/Razorpay integrations
+cp .env.example .env
+
+# 4. Launch the platform (Frontend & API middleware automatically mount on port 3000)
+npm run dev
+```
+
+Open **`http://localhost:3000`** in your browser.
+
+```bash
+# Run the complete test suite (114/114 passing tests)
+npm test
+
+# Run TypeScript typecheck
+npm run typecheck
+
+# Build production bundle
+npm run build
+```
+
+---
+
 ## 1. Architecture Overview
 
 Salvo finds revenue lost through failed and abandoned payments, diagnoses why the revenue was lost using Gemini agent reasoning, plans recovery actions, gates every action through deterministic safety policies, executes approved recovery actions through Razorpay APIs, and records an immutable, auditable compliance trail.
