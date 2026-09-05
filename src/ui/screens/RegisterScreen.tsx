@@ -6,19 +6,12 @@
 import React, { useState, useMemo } from 'react';
 import { AuthLayout } from '../components/AuthLayout.js';
 import { useAuth } from '../context/AuthContext.js';
-import { SalvoAuth } from '../lib/auth.js';
 
 export interface RegisterScreenProps {
   onNavigate: (route: string) => void;
 }
 
 export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
-
-  const handleGoogleLogin = async () => {
-    setIsGoogleSubmitting(true);
-    await SalvoAuth.loginWithGoogle();
-  };
   const { register } = useAuth();
 
   const [name, setName] = useState('');

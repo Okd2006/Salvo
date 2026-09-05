@@ -56,6 +56,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({
       setTransactions(txns);
 
       if (txns.length > 0) {
+        setErrorMessage(null);
         // Match initialTransactionId or default to first
         const matched = initialTransactionId
           ? txns.find((t) => t.transactionId === initialTransactionId)
@@ -63,9 +64,12 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({
         setSelectedTxn(matched || txns[0]);
       }
     } catch (err: unknown) {
-      setErrorMessage(
-        err instanceof Error ? err.message : 'Failed to load observable transactions'
-      );
+      // If transactions already populated from fallback, do not show error
+      if (transactions.length === 0) {
+        setErrorMessage(
+          err instanceof Error ? err.message : 'Failed to load observable transactions'
+        );
+      }
     } finally {
       setIsLoadingTxns(false);
     }

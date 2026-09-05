@@ -1,0 +1,14 @@
+{
+  "totalMonitoredVolume": 1350,
+  "successfulPaymentsCount": 1142,
+  "failedPaymentsCount": 208,
+  "revenueAtRiskPaise": 440282700,
+  "grossRecoveredPaise": 0,
+  "netRecoveredPaise": 0,
+  "interventionCostPaise": 0,
+  "recoveryRatePct": 0.0,
+  "successRatePct": 0.0,
+  "policyApprovalsCount": 184,
+  "policyBlocksCount": 24,
+  "activeAnomaliesCount": 2
+}

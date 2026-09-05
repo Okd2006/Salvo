@@ -1,0 +1,2872 @@
+[
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_pol_2330befb",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_2bc27f92",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.796Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_exec_f197775f",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_d3c4022e",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim__3fail_smar_1"
+    },
+    "timestamp": "2026-08-24T05:50:22.796Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_comp_ca8f1df5",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_d3c4022e",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.796Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_blk_7ab39131",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_2bc27f92",
+      "strategy": "smart_retry",
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt."
+    },
+    "timestamp": "2026-08-24T05:50:22.801Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_157bf24b",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_6513d9fd",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.811Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_ff8ba634",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_6513d9fd",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.816Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_f732e61b",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_6513d9fd",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.817Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_08f4435f",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_6513d9fd",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_smar_1",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:22.817Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_e30e5d8a",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.824Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_34a03c21",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_41e09597_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:22.829Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_b139328a",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_41e09597_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:22.833Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_07ff7b2c",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_41e09597_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.835Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_324cfe66",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_41e09597_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_2",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:22.835Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_f122cd8e",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "payment_method_switch",
+      "selectedFallbackStrategy": "payment_link",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:22.840Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_564ba74c",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_219ecabb_3",
+      "strategy": "payment_link",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-24T05:50:22.844Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_336ece32",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_219ecabb_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-24T05:50:22.848Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_63bb7ade",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_219ecabb_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.849Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_d6693fe6",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_219ecabb_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_3",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:22.849Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_pol_7a657647",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_58ad0be1",
+      "strategy": "no_action",
+      "allowed": false,
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.859Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_blk_a5daf767",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_58ad0be1",
+      "strategy": "no_action",
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction."
+    },
+    "timestamp": "2026-08-24T05:50:22.863Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_750e1206",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9906b54b",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.868Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_329d9e73",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9906b54b",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.871Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_3283f5d8",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9906b54b",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.873Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_1dc601e9",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9906b54b",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-24T05:50:22.873Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_d463543a",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9906b54b",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.873Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_bb6d678f",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_02ef03d7",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.883Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_3c2ff730",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_02ef03d7",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.886Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_3a403891",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_02ef03d7",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.889Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_3af87826",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_02ef03d7",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_smar_1",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:22.889Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_ec6e993e",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.896Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_00df2913",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_0a0ebfc2_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:22.900Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_aaadfbd7",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_0a0ebfc2_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:22.905Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_d7d31a40",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_0a0ebfc2_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.907Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_2e772c18",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_0a0ebfc2_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_2",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:22.907Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_9fd285f5",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "payment_method_switch",
+      "selectedFallbackStrategy": "payment_link",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:22.912Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_5f0ab5b8",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_8fabe502_3",
+      "strategy": "payment_link",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-24T05:50:22.917Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_9f41b309",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_8fabe502_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-24T05:50:22.922Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_631c4d92",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_8fabe502_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.923Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_b7dced6e",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_8fabe502_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_3",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:22.923Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_6768f1f0",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_66068a0b",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.934Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_a480fa9d",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_66068a0b",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.938Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_35b34bcf",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_66068a0b",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.940Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_8fb2c39b",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_66068a0b",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-24T05:50:22.940Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_178f572f",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_66068a0b",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.940Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_c3e5c5a6",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9d8dfa86",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.950Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_1c8020b9",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9d8dfa86",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.954Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_d470cd65",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9d8dfa86",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.956Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_b5d2f3da",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9d8dfa86",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-24T05:50:22.956Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_934ba31e",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_9d8dfa86",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.956Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_919ce07f",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_6d8a8c34",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.973Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_ea09f304",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_6d8a8c34",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.977Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_2f5f12c4",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_6d8a8c34",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.979Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_994f9111",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_6d8a8c34",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-24T05:50:22.979Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_3af9a50c",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_6d8a8c34",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.979Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_09d24b31",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_a33b209d",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.989Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_app_7fdda3ef",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_a33b209d",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:22.994Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_start_ea35e3a7",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_a33b209d",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 380000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:22.996Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_exec_a1b10dd5",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_a33b209d",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim_llback_smar_1",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
+    },
+    "timestamp": "2026-08-24T05:50:22.996Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_fb_500d7de9",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.002Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_14db1d1a",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_e1838175_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:23.007Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_app_1a3b566b",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_e1838175_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:23.013Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_start_6d261434",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_e1838175_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 380000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:23.015Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_exec_42d3ab6c",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_e1838175_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "success": true,
+      "recoveredAmountPaise": 290700,
+      "providerReference": "rzp_test_sim_llback_paym_2"
+    },
+    "timestamp": "2026-08-24T05:50:23.015Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_comp_e5053ccf",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_e1838175_2",
+      "strategy": "payment_method_switch",
+      "recoveredAmountPaise": 290700,
+      "totalTransactionAmountPaise": 380000,
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:23.015Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_pol_02732544",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_8253bfce",
+      "strategy": "no_action",
+      "allowed": false,
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.026Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_blk_5c658a70",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_8253bfce",
+      "strategy": "no_action",
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction."
+    },
+    "timestamp": "2026-08-24T05:50:23.031Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_04_lowconf_pol_093d5044",
+    "transactionId": "txn_demo_scen_04_lowconf",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_04_lowconf_a8b8c438",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "CONFIDENCE_TOO_LOW",
+      "reason": "Diagnosis confidence is below deterministic minimum threshold.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.036Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_04_lowconf_blk_ca268fca",
+    "transactionId": "txn_demo_scen_04_lowconf",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_04_lowconf_a8b8c438",
+      "strategy": "smart_retry",
+      "reasonCode": "CONFIDENCE_TOO_LOW",
+      "reason": "Diagnosis confidence is below deterministic minimum threshold."
+    },
+    "timestamp": "2026-08-24T05:50:23.042Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_pol_7ee29780",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_ed4b3fb2",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.048Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_blk_9e6ed2f8",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_ed4b3fb2",
+      "strategy": "smart_retry",
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt."
+    },
+    "timestamp": "2026-08-24T05:50:23.052Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_f8f7c1a7",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_9078867c",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.058Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_527691ef",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_9078867c",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.062Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_24fe9de8",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_9078867c",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:23.064Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_e437ecdd",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_9078867c",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_smar_1",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:23.064Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_d33c78d4",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-24T05:50:23.071Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_aebdaf91",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_80d53bce_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:23.077Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_f0686702",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_80d53bce_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:23.082Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_41e1b252",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_80d53bce_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:23.084Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_8e60ff67",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_80d53bce_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_2",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:23.084Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_3549aa7d",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "payment_method_switch",
+      "selectedFallbackStrategy": "payment_link",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-24T05:50:23.090Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_a367d73d",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_485f59e1_3",
+      "strategy": "payment_link",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-24T05:50:23.096Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_00b22770",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_485f59e1_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-24T05:50:23.100Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_dee1c111",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_485f59e1_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-24T05:50:23.103Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_dc520abd",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_485f59e1_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_3",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-24T05:50:23.103Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_start_c3988ee9",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637940217",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:05:40.217Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_exec_ce1db00b",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637940217",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_xec_01_smar_1"
+    },
+    "timestamp": "2026-08-25T06:05:40.217Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_comp_9d44db9e",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637940217",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:05:40.217Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_blk_6eaad7cb",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_blocked",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637955431",
+      "strategy": "smart_retry",
+      "policyStatus": "pending",
+      "reason": "Execution refused: Action has not been approved by Policy Gate."
+    },
+    "timestamp": "2026-08-25T06:05:55.431Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_blk_e98bc18b",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_blocked",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637955431",
+      "strategy": "smart_retry",
+      "policyStatus": "blocked",
+      "reason": "Execution refused: Action has not been approved by Policy Gate."
+    },
+    "timestamp": "2026-08-25T06:06:00.456Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_start_38896f25",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637965477",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:06:05.477Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_exec_043e7db4",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637965477",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_xec_01_smar_1"
+    },
+    "timestamp": "2026-08-25T06:06:05.477Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_comp_3b4148fa",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787637965477",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:06:05.477Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_a92e0de9",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_aee97017",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:06:22.379Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_start_c7413e9e",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639136522",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:25:36.522Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_exec_26110d19",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639136522",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_xec_01_smar_1"
+    },
+    "timestamp": "2026-08-25T06:25:36.522Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_comp_e966e57d",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639136522",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:25:36.522Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_blk_f2dc453c",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_blocked",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639151624",
+      "strategy": "smart_retry",
+      "policyStatus": "pending",
+      "reason": "Execution refused: Action has not been approved by Policy Gate."
+    },
+    "timestamp": "2026-08-25T06:25:51.624Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_blk_ae1e2579",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_blocked",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639151624",
+      "strategy": "smart_retry",
+      "policyStatus": "blocked",
+      "reason": "Execution refused: Action has not been approved by Policy Gate."
+    },
+    "timestamp": "2026-08-25T06:25:56.647Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_949e53bf",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639144391",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:26:04.579Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_exec_93761020",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639161665",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_xec_01_smar_1"
+    },
+    "timestamp": "2026-08-25T06:26:01.665Z"
+  },
+  {
+    "eventId": "evt_txn_test_exec_01_comp_70d1b07b",
+    "transactionId": "txn_test_exec_01",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_test_1787639161665",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:26:01.665Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_975db70c",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639144391",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-25T06:26:09.594Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_b4309208",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639144391",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:26:09.594Z"
+  },
+  {
+    "eventId": "evt_txn_scen_a_01_pol_5a67939a",
+    "transactionId": "txn_scen_a_01",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_a_01_2092969a",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:26:59.160Z"
+  },
+  {
+    "eventId": "evt_txn_scen_a_01_app_499c3a4c",
+    "transactionId": "txn_scen_a_01",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_a_01_2092969a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:27:09.219Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_530ea099",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_087ba93a",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:27:17.259Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_app_003e3758",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_087ba93a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:27:27.303Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_start_ad594ea8",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_087ba93a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 380000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:27:32.316Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_exec_f15960c1",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_087ba93a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim_llback_smar_1",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
+    },
+    "timestamp": "2026-08-25T06:27:32.316Z"
+  },
+  {
+    "eventId": "evt_txn_scen_b_fb_app_63fe1672",
+    "transactionId": "txn_scen_b_fb",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_b_fb_ec88db99",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:27:50.154Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_13d91ecd",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_81ebe7aa_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:27:57.545Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_app_dc51ba81",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_81ebe7aa_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:28:07.605Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_start_9ca162fe",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_81ebe7aa_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 380000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:28:12.632Z"
+  },
+  {
+    "eventId": "evt_txn_scen_c_risk_pol_8d336559",
+    "transactionId": "txn_scen_c_risk",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_c_risk_f84ddd54",
+      "strategy": "no_action",
+      "allowed": false,
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:28:23.000Z"
+  },
+  {
+    "eventId": "evt_txn_scen_c_risk_blk_dba75224",
+    "transactionId": "txn_scen_c_risk",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_c_risk_f84ddd54",
+      "strategy": "no_action",
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction."
+    },
+    "timestamp": "2026-08-25T06:28:33.046Z"
+  },
+  {
+    "eventId": "evt_txn_scen_d_limit_diag_010ae26b",
+    "transactionId": "txn_scen_d_limit",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_scen_d_limit_1787639331437",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.9,
+      "recoverability": 0.9,
+      "predictedRecoveryPaise": 405000,
+      "model": "openrouter/free",
+      "evidenceCount": 4
+    },
+    "timestamp": "2026-08-25T06:28:51.437Z"
+  },
+  {
+    "eventId": "evt_txn_scen_d_limit_pol_cf0a7590",
+    "transactionId": "txn_scen_d_limit",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_d_limit_1787639331437",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:29:01.482Z"
+  },
+  {
+    "eventId": "evt_txn_scen_d_limit_blk_89f6e735",
+    "transactionId": "txn_scen_d_limit",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_d_limit_1787639331437",
+      "strategy": "smart_retry",
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt."
+    },
+    "timestamp": "2026-08-25T06:29:11.520Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_diag_12f3b875",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_1787639362477",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.82,
+      "recoverability": 0.85,
+      "predictedRecoveryPaise": 382500,
+      "model": "openrouter/free",
+      "evidenceCount": 3
+    },
+    "timestamp": "2026-08-25T06:29:22.477Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_pol_48b6d7db",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_1787639362477",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:29:32.515Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_app_1fc0454d",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_1787639362477",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:29:42.557Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_start_0ba7b981",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_1787639362477",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:29:47.581Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_exec_50d2e912",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_1787639362477",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim__3fail_smar_1"
+    },
+    "timestamp": "2026-08-25T06:29:47.581Z"
+  },
+  {
+    "eventId": "evt_txn_scen_f_3fail_comp_ca9d05f0",
+    "transactionId": "txn_scen_f_3fail",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_scen_f_3fail_1787639362477",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:29:47.581Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_pol_c26ef2ab",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_13fd81c4",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:30:22.511Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_blk_e470193a",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_13fd81c4",
+      "strategy": "smart_retry",
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt."
+    },
+    "timestamp": "2026-08-25T06:30:32.576Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_0690ee59",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_196fb38a",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:30:54.813Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_99679e22",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_196fb38a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:31:04.864Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_b5b537a4",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_196fb38a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:31:09.882Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_b6c3c4cc",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_196fb38a",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_smar_1",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-25T06:31:09.882Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_c46f0775",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:31:24.979Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_1d8abc8c",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_98f93c84_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:31:35.024Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_69d72d9a",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_98f93c84_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:31:45.068Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_189da23f",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_98f93c84_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:31:50.092Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_deb0ae1f",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_98f93c84_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_2",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-25T06:31:50.092Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_43425300",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "payment_method_switch",
+      "selectedFallbackStrategy": "payment_link",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:32:05.165Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_215212e4",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_4fea466c_3",
+      "strategy": "payment_link",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-25T06:32:15.208Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_7f9bbfc8",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_4fea466c_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3
+    },
+    "timestamp": "2026-08-25T06:32:25.358Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_a3711296",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_4fea466c_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:32:30.388Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_601ed683",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_4fea466c_3",
+      "strategy": "payment_link",
+      "attemptNumber": 3,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_3",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-25T06:32:30.388Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_diag_fe07cb4f",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_1787639572354",
+      "failureType": "risk",
+      "recommendedStrategy": "no_action",
+      "confidence": 0.9,
+      "recoverability": 0.1,
+      "predictedRecoveryPaise": 0,
+      "model": "openrouter/free",
+      "evidenceCount": 2
+    },
+    "timestamp": "2026-08-25T06:32:52.354Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_pol_7e1b5071",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_1787639572354",
+      "strategy": "no_action",
+      "allowed": false,
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:33:02.396Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_blk_b259e1be",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_1787639572354",
+      "strategy": "no_action",
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction."
+    },
+    "timestamp": "2026-08-25T06:33:12.434Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_diag_374f1fbc",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639608135",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.96,
+      "recoverability": 0.95,
+      "predictedRecoveryPaise": 450000,
+      "model": "openrouter/free",
+      "evidenceCount": 3
+    },
+    "timestamp": "2026-08-25T06:33:28.135Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_f1858395",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639608135",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:33:38.205Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_4e67d497",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639608135",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:33:48.291Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_bc824809",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639608135",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:33:53.317Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_518519c0",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639608135",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-25T06:33:53.317Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_8588b083",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639608135",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:33:53.317Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_diag_3ee2645d",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_1787639666201",
+      "failureType": "payment_method",
+      "recommendedStrategy": "payment_method_switch",
+      "confidence": 0.7,
+      "recoverability": 0.6,
+      "predictedRecoveryPaise": 320000,
+      "model": "openrouter/free",
+      "evidenceCount": 3
+    },
+    "timestamp": "2026-08-25T06:34:26.201Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_13cae9ab",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_1787639666201",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:34:36.240Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_98de7f43",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_1787639666201",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:34:46.284Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_af30ecda",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_1787639666201",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 1,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:34:51.304Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_45a10bf5",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_1787639666201",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_1",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-25T06:34:51.304Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_2cde936c",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "payment_method_switch",
+      "selectedFallbackStrategy": "payment_link",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:35:06.387Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_410d8f83",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_30af252d_2",
+      "strategy": "payment_link",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:35:16.422Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_705c53a7",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_30af252d_2",
+      "strategy": "payment_link",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:35:26.460Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_ac6c7aac",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_30af252d_2",
+      "strategy": "payment_link",
+      "attemptNumber": 2,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:35:31.504Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_5f0fadbb",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_30af252d_2",
+      "strategy": "payment_link",
+      "attemptNumber": 2,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_paym_2",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-25T06:35:31.504Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_diag_af8b3e12",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639752383",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.95,
+      "recoverability": 0.9,
+      "predictedRecoveryPaise": 405000,
+      "model": "openrouter/free",
+      "evidenceCount": 4
+    },
+    "timestamp": "2026-08-25T06:35:52.383Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_568f201d",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639752383",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:36:02.452Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_574d811d",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639752383",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:36:12.508Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_a789aacf",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639752383",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:36:17.528Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_5baad8c2",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639752383",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 405000,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-25T06:36:17.528Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_94ebd9a6",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639752383",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 405000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:36:17.528Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_diag_f474dda7",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639797921",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.95,
+      "recoverability": 0.95,
+      "predictedRecoveryPaise": 450000,
+      "model": "openrouter/free",
+      "evidenceCount": 4
+    },
+    "timestamp": "2026-08-25T06:36:37.921Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_8a5778d0",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639797921",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:36:47.960Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_2fa0b972",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639797921",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:36:58.025Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_093eb421",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639797921",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:37:03.042Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_1c2c4ad8",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639797921",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 450000,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-25T06:37:03.042Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_79815745",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_1787639797921",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 450000,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:37:03.042Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_pol_302a2b04",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_f69eb20c",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:37:24.598Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_app_70e03011",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_f69eb20c",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:37:34.653Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_start_ab16da2e",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_f69eb20c",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 450000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:37:39.674Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_exec_cbddeb60",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_f69eb20c",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": true,
+      "recoveredAmountPaise": 382500,
+      "providerReference": "rzp_test_sim_uccess_smar_1"
+    },
+    "timestamp": "2026-08-25T06:37:39.674Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_01_success_comp_c7650b31",
+    "transactionId": "txn_demo_scen_01_success",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_01_success_f69eb20c",
+      "strategy": "smart_retry",
+      "recoveredAmountPaise": 382500,
+      "totalTransactionAmountPaise": 450000,
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:37:39.674Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_diag_ce6d80e9",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_1787639880071",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.9,
+      "recoverability": 0.85,
+      "predictedRecoveryPaise": 323000,
+      "model": "openrouter/free",
+      "evidenceCount": 4
+    },
+    "timestamp": "2026-08-25T06:38:00.071Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_a3744f2e",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_1787639880071",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:38:10.116Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_app_a9eb5248",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_1787639880071",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:38:20.160Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_start_92e2d7e6",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_1787639880071",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 380000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:38:25.185Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_exec_78119703",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_1787639880071",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim_llback_smar_1",
+      "errorCode": "SUBOPTIMAL_STRATEGY_DECLINE",
+      "errorMessage": "Execution with \"smart_retry\" was rejected by payment switch. Alternative method required."
+    },
+    "timestamp": "2026-08-25T06:38:25.185Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_fb_b73a6e79",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:38:40.361Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_pol_7778d498",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_7a8384eb_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:38:50.397Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_app_184d9725",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_7a8384eb_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:39:00.439Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_start_502f9083",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_7a8384eb_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "amountPaise": 380000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:39:05.463Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_exec_6a042bea",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "action_executed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_7a8384eb_2",
+      "strategy": "payment_method_switch",
+      "attemptNumber": 2,
+      "success": true,
+      "recoveredAmountPaise": 290700,
+      "providerReference": "rzp_test_sim_llback_paym_2"
+    },
+    "timestamp": "2026-08-25T06:39:05.463Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_02_fallback_comp_51f4fc79",
+    "transactionId": "txn_demo_scen_02_fallback",
+    "eventType": "recovery_completed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_02_fallback_fb_7a8384eb_2",
+      "strategy": "payment_method_switch",
+      "recoveredAmountPaise": 290700,
+      "totalTransactionAmountPaise": 380000,
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:39:05.463Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_pol_81e24327",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_aec9ebe9",
+      "strategy": "no_action",
+      "allowed": false,
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:39:54.391Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_03_risk_blk_c85760b0",
+    "transactionId": "txn_demo_scen_03_risk",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_03_risk_aec9ebe9",
+      "strategy": "no_action",
+      "reasonCode": "RISK_BLOCK",
+      "reason": "Anti-fraud policy gate blocked recovery on suspected risk transaction."
+    },
+    "timestamp": "2026-08-25T06:40:04.434Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_04_lowconf_diag_23174635",
+    "transactionId": "txn_demo_scen_04_lowconf",
+    "eventType": "diagnosis_created",
+    "actor": "gemini_agent",
+    "details": {
+      "actionId": "act_txn_demo_scen_04_lowconf_1787640020295",
+      "failureType": "temporary",
+      "recommendedStrategy": "smart_retry",
+      "confidence": 0.5,
+      "recoverability": 0.5,
+      "predictedRecoveryPaise": 445000,
+      "model": "openrouter/free",
+      "evidenceCount": 4
+    },
+    "timestamp": "2026-08-25T06:40:20.295Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_04_lowconf_pol_e2ffde53",
+    "transactionId": "txn_demo_scen_04_lowconf",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_04_lowconf_1787640020295",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "CONFIDENCE_TOO_LOW",
+      "reason": "Diagnosis confidence is below deterministic minimum threshold.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:40:30.376Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_04_lowconf_blk_b5943658",
+    "transactionId": "txn_demo_scen_04_lowconf",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_04_lowconf_1787640020295",
+      "strategy": "smart_retry",
+      "reasonCode": "CONFIDENCE_TOO_LOW",
+      "reason": "Diagnosis confidence is below deterministic minimum threshold."
+    },
+    "timestamp": "2026-08-25T06:40:40.459Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_pol_c4bb84b1",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_7b81e41c",
+      "strategy": "smart_retry",
+      "allowed": false,
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:41:34.141Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_05_limit_blk_8fc37fe9",
+    "transactionId": "txn_demo_scen_05_limit",
+    "eventType": "action_blocked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_05_limit_7b81e41c",
+      "strategy": "smart_retry",
+      "reasonCode": "RETRY_LIMIT_EXCEEDED",
+      "reason": "Automated retry limit reached for this payment attempt."
+    },
+    "timestamp": "2026-08-25T06:41:44.235Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_ed70eda0",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_ca6a2dfd",
+      "strategy": "smart_retry",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:41:56.402Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_app_9679c9cb",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_approved",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_ca6a2dfd",
+      "strategy": "smart_retry",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:42:06.443Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_start_72621f98",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "action_execution_started",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_ca6a2dfd",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "amountPaise": 320000,
+      "mode": "test",
+      "isSimulation": true
+    },
+    "timestamp": "2026-08-25T06:42:11.458Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_exec_770cb432",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "execution_failed",
+    "actor": "razorpay_executor",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_ca6a2dfd",
+      "strategy": "smart_retry",
+      "attemptNumber": 1,
+      "success": false,
+      "recoveredAmountPaise": 0,
+      "providerReference": "rzp_test_sim__3fail_smar_1",
+      "errorCode": "UNRECOVERABLE_DECLINE",
+      "errorMessage": "Instrument declined permanently by issuer."
+    },
+    "timestamp": "2026-08-25T06:42:11.458Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_fb_f32da91b",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "fallback_selected",
+    "actor": "system",
+    "details": {
+      "failedStrategy": "smart_retry",
+      "selectedFallbackStrategy": "payment_method_switch",
+      "attemptNumber": 1
+    },
+    "timestamp": "2026-08-25T06:42:26.542Z"
+  },
+  {
+    "eventId": "evt_txn_demo_scen_06_3fail_pol_e848295d",
+    "transactionId": "txn_demo_scen_06_3fail",
+    "eventType": "policy_checked",
+    "actor": "policy_gate",
+    "details": {
+      "actionId": "act_txn_demo_scen_06_3fail_fb_1a5eec94_2",
+      "strategy": "payment_method_switch",
+      "allowed": true,
+      "reasonCode": "ALLOWED",
+      "reason": "All deterministic policy gate safety checks passed successfully.",
+      "attemptNumber": 2
+    },
+    "timestamp": "2026-08-25T06:42:36.586Z"
+  }
+]
