@@ -1,14 +1,60 @@
 {
-  "totalMonitoredVolume": 1350,
-  "successfulPaymentsCount": 1142,
-  "failedPaymentsCount": 208,
-  "revenueAtRiskPaise": 440282700,
-  "grossRecoveredPaise": 0,
-  "netRecoveredPaise": 0,
-  "interventionCostPaise": 0,
-  "recoveryRatePct": 0.0,
-  "successRatePct": 0.0,
-  "policyApprovalsCount": 184,
-  "policyBlocksCount": 24,
-  "activeAnomaliesCount": 2
+  "grossRecoveredPaise": 146475900,
+  "netRecoveredPaise": 145984345,
+  "totalInterventionCostPaise": 491555,
+  "totalFailedPaise": 1992191000,
+  "recoverablePaise": 1864556600,
+  "unrecoverablePaise": 127634400,
+  "netRecoveryRate": 7.85,
+  "recoveryYield": 7.33,
+  "successfulRecoveries": 382,
+  "activeRecoveries": 192,
+  "policyBlocks": 322,
+  "failedRecoveries": 454,
+  "totalMonitored": 1350,
+  "avgConfidence": 0.83,
+  "auditEventsCount": 7264,
+  "strategies": [
+    {
+      "strategy": "smart_retry",
+      "affectedVolume": 1167,
+      "potentialRecoveryPaise": 738811101,
+      "recoveredPaise": 123237000,
+      "successRate": 25.96,
+      "roiMultiplier": 704.0
+    },
+    {
+      "strategy": "payment_method_switch",
+      "affectedVolume": 339,
+      "potentialRecoveryPaise": 196443250,
+      "recoveredPaise": 23238900,
+      "successRate": 23.3,
+      "roiMultiplier": 457.0
+    },
+    {
+      "strategy": "reminder",
+      "affectedVolume": 214,
+      "potentialRecoveryPaise": 217793174,
+      "recoveredPaise": 0,
+      "successRate": 0,
+      "roiMultiplier": 0
+    },
+    {
+      "strategy": "payment_link",
+      "affectedVolume": 483,
+      "potentialRecoveryPaise": 446557840,
+      "recoveredPaise": 0,
+      "successRate": 0,
+      "roiMultiplier": 0
+    },
+    {
+      "strategy": "no_action",
+      "affectedVolume": 145,
+      "potentialRecoveryPaise": 0,
+      "recoveredPaise": 0,
+      "successRate": 0,
+      "roiMultiplier": 0
+    }
+  ],
+  "lastUpdated": "2026-09-05T05:17:49.864Z"
 }

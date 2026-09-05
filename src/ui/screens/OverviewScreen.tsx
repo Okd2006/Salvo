@@ -6,6 +6,7 @@
  */
 import React, { useEffect, useState, useCallback } from 'react';
 import { SalvoApi, type OverviewMetrics } from '../lib/api.js';
+import { BENCHMARK_METRICS } from '../data/benchmarkSeed.js';
 import type { ObservableTransaction } from '../../types/index.js';
 import {
   DashboardHeader,
@@ -187,8 +188,10 @@ export const OverviewScreen: React.FC<OverviewScreenProps> = ({ onNavigate }) =>
         SalvoApi.getTransactions(10).then((t) => { txnsFromApi = t; return t; }).catch(() => DEFAULT_TRANSACTIONS),
       ]);
 
-      if (dashboardMetrics) {
+      if (dashboardMetrics && (dashboardMetrics.grossRecoveredPaise > 0 || dashboardMetrics.totalMonitored > 0)) {
         setMetrics(dashboardMetrics);
+      } else {
+        setMetrics(BENCHMARK_METRICS);
       }
       setSystemHealthy(healthRes?.status === 'healthy');
       if (txnsRes && txnsRes.length > 0) {

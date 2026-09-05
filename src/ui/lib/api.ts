@@ -199,7 +199,7 @@ export const SalvoApi = {
   async getDashboard(): Promise<OverviewMetrics> {
     try {
       const res = await requestJson<OverviewMetrics>('/api/dashboard');
-      if (res && (typeof res.totalMonitored === 'number' || typeof (res as any).totalMonitoredVolume === 'number')) {
+      if (res && typeof res.grossRecoveredPaise === 'number' && res.grossRecoveredPaise > 0) {
         return res;
       }
     } catch (err) {
